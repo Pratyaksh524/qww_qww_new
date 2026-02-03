@@ -232,129 +232,124 @@ class SerialStreamReader:
     
     def get_device_version(self) -> Optional[str]:
         """
-        Get device version - COMMENTED OUT: hardware version command disabled
-        Returns None since hardware commands are disabled
-        """
-        # COMMENTED OUT: Hardware VERSION command disabled
-        # print("\n" + "="*60)
-        # print("🔍 VERSION COMMAND: Requesting device version...")
-        # print("="*60)
-        # 
-        # if not self.command_handler:
-        #     print("❌ VERSION COMMAND: Command handler not available")
-        #     return None
-        # 
-        # try:
-        #     success, version, response = self.command_handler.send_version_command()
-        #     if success and version:
-        #         self.device_version = version
-        #         print(f"✅ VERSION COMMAND: Success! Device version: '{version}'")
-        #         print("="*60 + "\n")
-        #         return version
-        #     else:
-        #         print(f"⚠️ VERSION COMMAND: Failed or no version received")
-        #         print(f"   Success: {success}, Version: {version}, Response: {response}")
-        #         print("="*60 + "\n")
-        #     return None
-        # except Exception as e:
-        #     print(f"❌ VERSION COMMAND: Error getting device version: {e}")
-        #     print("="*60 + "\n")
-        #     return None
+        Get device version from hardware using VERSION command.
         
-        # Hardware commands disabled - return None
-        return None
+        Returns:
+            str or None: Version string if available, otherwise None.
+        """
+        # Only available when serial + HardwareCommandHandler are available
+        if not hasattr(self, "command_handler") or not self.command_handler:
+            print("❌ VERSION COMMAND: Command handler not available")
+            return None
+
+        try:
+            print("\n" + "=" * 60)
+            print("🔍 VERSION COMMAND: Requesting device version...")
+            print("=" * 60)
+
+            success, version, response = self.command_handler.send_version_command()
+            if success and version:
+                self.device_version = version
+                print(f"✅ VERSION COMMAND: Success! Device version: '{version}'")
+                print("=" * 60 + "\n")
+                return version
+            else:
+                print("⚠️ VERSION COMMAND: Failed or no version received")
+                print(f"   Success: {success}, Version: {version}, Response: {response}")
+                print("=" * 60 + "\n")
+                return None
+        except Exception as e:
+            print(f"❌ VERSION COMMAND: Error getting device version: {e}")
+            import traceback
+            print(f"   Traceback: {traceback.format_exc()}")
+            print("=" * 60 + "\n")
+            return None
 
     def start(self):
-        """Start data acquisition - COMMENTED OUT: hardware commands disabled for now"""
+        """Start data acquisition using packet‑based protocol + hardware START command."""
         print(" Starting packet-based ECG data acquisition...")
-        
-        # COMMENTED OUT: Hardware command scanning and START command
-        # Get current port info before scanning
-        current_port = self.ser.port if hasattr(self.ser, 'port') else None
-        current_baudrate = self.ser.baudrate if hasattr(self.ser, 'baudrate') else 115200
-        current_port_open = self.ser.is_open if hasattr(self.ser, 'is_open') else False
-        
-        # COMMENTED OUT: Port scanning with START command
-        # Temporarily close current port if open (to avoid conflicts during scanning)
-        # if current_port_open:
-        #     try:
-        #         self.ser.close()
-        #     except:
-        #         pass
-        
-        # COMMENTED OUT: Scan all COM ports to find which one responds to START command
-        # Step 1: Scan all COM ports to find which one responds to START command
-        # Use slightly longer timeout (150ms) to give device time to respond
-        scan_result = None  # COMMENTED OUT: self.scan_and_detect_port(baudrate=current_baudrate, timeout=0.15)
-        
-        # COMMENTED OUT: All hardware command logic disabled
-        # if scan_result:
-        #     detected_port_name, detected_serial = scan_result
-        #     ... (all START command logic commented out)
-        # else:
-        #     ... (all START command logic commented out)
-        
-        # SIMPLIFIED: Just ensure port is open and ready (no hardware commands)
+
+        # Get current port info
+        current_port = self.ser.port if hasattr(self.ser, "port") else None
+        current_baudrate = self.ser.baudrate if hasattr(self.ser, "baudrate") else 115200
+        current_port_open = self.ser.is_open if hasattr(self.ser, "is_open") else False
+
+        # Ensure port is open
         if not current_port_open:
-            # Reopen the port if it was closed
             if current_port:
                 try:
-                    print(f"   🔄 Opening port {current_port}...")
-                    self.ser = serial.Serial(port=current_port, baudrate=current_baudrate, timeout=0.1)
+                    print(f"   🔄 Opening port {current_port} at {current_baudrate} baud...")
+                    self.ser = serial.Serial(
+                        port=current_port,
+                        baudrate=current_baudrate,
+                        timeout=0.1,
+                    )
                     print(f"   ✅ Port {current_port} opened")
                 except Exception as e:
                     print(f"   ❌ Failed to open port {current_port}: {e}")
                     raise RuntimeError(f"Cannot open port {current_port}: {e}")
-        
-        # COMMENTED OUT: Hardware START command
-        # Try sending START command on current port
-        # try:
-        #     self.ser.reset_input_buffer()
-        #     self.buf.clear()
-        #     if self.command_handler:
-        #         success, response = self.command_handler.send_start_command()
-        #         if not success:
-        #             print(" ⚠️ Warning: START command ACK not received on current port")
-        #             print("   Continuing anyway - device may still send data...")
-        #     else:
-        #         print(" ⚠️ Warning: Command handler not available")
-        # except Exception as e:
-        #     print(f" ⚠️ Warning: Error sending START command: {e}")
-        #     print("   Continuing anyway - device may still send data...")
-        
+
         # Verify port is open and ready
         if not self.ser.is_open:
-            raise RuntimeError(f"Serial port is not open. Cannot start data acquisition.")
-        
-        # Clear buffers (no hardware commands - device should send data automatically)
+            raise RuntimeError("Serial port is not open. Cannot start data acquisition.")
+
+        # Clear buffers before sending START
         try:
-            self.ser.reset_input_buffer()
+            if hasattr(self.ser, "reset_input_buffer"):
+                self.ser.reset_input_buffer()
             self.buf.clear()
         except Exception as e:
-            print(f" ⚠️ Warning: Could not clear buffers: {e}")
-        
+            print(f" ⚠️ Warning: Could not clear buffers before START: {e}")
+
+        # First: optionally request and print device version while device is IDLE
+        # (send STOP + VERSION, then we will START streaming below)
+        try:
+            version = self.get_device_version()
+            if version:
+                print(f" 🧬 ECG Device Version: {version}")
+        except Exception as e:
+            print(f" ⚠️ VERSION COMMAND skipped due to error: {e}")
+
+        # Now send hardware START command to begin ECG streaming
+        if hasattr(self, "command_handler") and self.command_handler:
+            try:
+                success, response = self.command_handler.send_start_command()
+                if not success:
+                    print(" ⚠️ Warning: START command ACK not received on current port")
+                    print("   Continuing anyway - device may still send data...")
+            except Exception as e:
+                print(f" ⚠️ Warning: Error sending START command: {e}")
+                print("   Continuing anyway - device may still send data...")
+        else:
+            print(" ⚠️ Warning: HardwareCommandHandler not available – skipping START command")
+
+        # Mark reader as running and reset statistics
         self.running = True
-        # Initialize packet loss tracking
         self.start_time = time.time()
         self.last_packet_time = time.time()
         self.data_count = 0
         self.total_packets_expected = 0
         self.total_packets_lost = 0
         self.packet_loss_percent = 0.0
-        print(f" ✅ Packet-based ECG device started on port {self.ser.port if hasattr(self.ser, 'port') else 'unknown'}")
+
+        port_name = self.ser.port if hasattr(self.ser, "port") else "unknown"
+        print(f" ✅ Packet-based ECG device started on port {port_name}")
         print(" 📡 Ready to receive data packets...")
 
     def stop(self):
-        """Stop data acquisition"""
+        """Stop data acquisition and send hardware STOP command."""
         print(" Stopping packet-based ECG data acquisition...")
         self.running = False
-        
-        # COMMENTED OUT: Hardware STOP command disabled
-        # Send STOP command to hardware
-        # success, response = self.command_handler.send_stop_command()
-        # if not success:
-        #     print(" ⚠️ Warning: STOP command ACK not received")
-        
+
+        # Send STOP command to hardware if handler is available
+        if hasattr(self, "command_handler") and self.command_handler:
+            try:
+                success, response = self.command_handler.send_stop_command()
+                if not success:
+                    print(" ⚠️ Warning: STOP command ACK not received")
+            except Exception as e:
+                print(f" ⚠️ Warning: Error sending STOP command: {e}")
+
         # Final packet loss statistics
         if hasattr(self, 'start_time') and self.start_time > 0:
             elapsed_time = time.time() - self.start_time

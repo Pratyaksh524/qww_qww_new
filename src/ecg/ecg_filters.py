@@ -218,22 +218,22 @@ def apply_emg_filter(signal: np.ndarray, sampling_rate: float, emg_filter: str) 
     
     try:
         cutoff_freq = float(emg_filter)
-        # Use 35-40 Hz range for EMG suppression (low-pass, not high-pass)
-        # if cutoff_freq < 35:
-        #     cutoff_freq = 35.0
-        # elif cutoff_freq > 40:
-        #     cutoff_freq = 40.0
-        
-        # Design low-pass Butterworth filter
         nyquist = sampling_rate / 2.0
-        
+
+        # Safety: if sampling_rate is unexpectedly low, fall back to 500 Hz
+        if sampling_rate < 100:  # hardware should be 500 Hz; avoid unstable filters
+            nyquist = 500.0 / 2.0
+            sampling_rate = 500.0
+
+        # Clamp cutoff so it is always below Nyquist for a valid low‑pass filter
+        max_allowed = nyquist * 0.9
+        if cutoff_freq >= max_allowed:
+            cutoff_freq = max_allowed
+        if cutoff_freq <= 0:
+            return signal
+
         # Normalize cutoff frequency
         normalized_cutoff = cutoff_freq / nyquist
-        
-        # Ensure cutoff is within valid range
-        if normalized_cutoff <= 0 or normalized_cutoff >= 1:
-            print(f" EMG filter cutoff {cutoff_freq}Hz is invalid for sampling rate {sampling_rate}Hz")
-            return signal
         
         # Design 4th order low-pass Butterworth filter (zero-phase)
         b, a = butter(4, normalized_cutoff, btype='low')

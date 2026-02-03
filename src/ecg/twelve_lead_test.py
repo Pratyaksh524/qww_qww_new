@@ -5393,26 +5393,22 @@ class ECGTestPage(QWidget):
         port = self.settings_manager.get_serial_port()
         baud = self.settings_manager.get_baud_rate()
 
-        print(f"Starting acquisition with Port: {port}, Baud: {baud}")
+        print(f"Starting acquisition with configured Port: {port}, Baud: {baud}")
 
-        if port == "Select Port" or baud == "Select Baud Rate" or port is None or baud is None:
-            self.show_connection_warning("Please configure serial port and baud rate in System Setup first.")
-            return
-        
-        # Ensure the selected COM port is actually connected/available before starting
+        # If user has not configured a port/baud, fall back to auto‑scan instead of blocking
+        if port in ("Select Port", None):
+            print(" No COM port configured in System Setup – will auto‑scan all ports for ECG device.")
+        if baud in ("Select Baud Rate", None):
+            print(" No baud rate configured in System Setup – will use default 115200 for auto‑scan.")
+
+        # Try to list available ports for logging only (do not block auto‑scan)
         try:
-            available_ports = []
-            try:
-                available_ports = [p.device for p in serial.tools.list_ports.comports()]
-            except Exception:
-                available_ports = []
-            if (not available_ports) or (port not in available_ports):
-                self.show_connection_warning("Connect device and select a valid COM port before starting.")
-                return
-        except Exception:
-            # If we cannot verify ports reliably, be safe and block start
-            self.show_connection_warning("Unable to detect COM ports. Please connect device and select a valid port.")
-            return
+            available_ports = [p.device for p in serial.tools.list_ports.comports()]
+            print(f" Available COM ports: {available_ports}")
+            if port and port not in ("Select Port",) and port not in available_ports:
+                print(f" Configured port {port} not present – will rely on auto‑scan.")
+        except Exception as ports_err:
+            print(f" Warning: could not list COM ports: {ports_err} (will still auto‑scan)")
         
         try:
             # Convert baud rate to integer with error handling
@@ -5448,68 +5444,37 @@ class ECGTestPage(QWidget):
             else:
                 print(" Restart - preserving existing metric values from machine serial data")
             
+            # --- NEW: Scan all COM ports with START command and pick the one that ACKs ---
+            port_to_use = port
             try:
-                # Use new packet-based SerialStreamReader instead of old SerialECGReader
-                self.serial_reader = SerialStreamReader(port, baud_int)
+                scan_result = SerialStreamReader.scan_and_detect_port(baudrate=baud_int, timeout=0.2)
+                if scan_result:
+                    detected_port, detected_serial = scan_result
+                    port_to_use = detected_port
+                    print(f" Auto‑detected ECG device on port {detected_port} (START ACK received)")
+                    # Remember working port in settings
+                    if hasattr(self, 'settings_manager'):
+                        self.settings_manager.set_serial_port(detected_port)
+            except Exception as scan_err:
+                print(f" Port scan failed, falling back to configured port {port}: {scan_err}")
+
+            try:
+                # Use new packet-based SerialStreamReader on the detected/selected port
+                self.serial_reader = SerialStreamReader(port_to_use, baud_int)
                 # Pass user details to serial reader for error reporting (already set in __init__)
                 if hasattr(self, 'user_details'):
                     self.serial_reader.user_details = self.user_details
                 self.serial_reader.start()
-                print(" Serial connection established successfully!")
-                
-                # COMMENTED OUT: Hardware version command disabled
-                # Get and log device version
-                # try:
-                #     version = self.serial_reader.get_device_version()
-                #     if version:
-                #         print(f" Device version retrieved: {version}")
-                # except Exception as ver_error:
-                #     print(f" Warning: Could not retrieve device version: {ver_error}")
-                
+                print(f" Serial connection established successfully on {port_to_use}!")
+
             except Exception as e:
-                print(f" Failed to connect to configured port {port}: {e}")
-                
-                # Try auto-detection
-                auto_port, auto_msg = self.auto_detect_serial_port()
-                if auto_port:
-                    print(f" Trying auto-detected port: {auto_port}")
-                    try:
-                        # Use new packet-based SerialStreamReader instead of old SerialECGReader
-                        self.serial_reader = SerialStreamReader(auto_port, baud_int)
-                        # Pass user details to serial reader for error reporting (already set in __init__)
-                        if hasattr(self, 'user_details'):
-                            self.serial_reader.user_details = self.user_details
-                        self.serial_reader.start()
-                        
-                        # COMMENTED OUT: Hardware version command disabled
-                        # Get and log device version
-                        # try:
-                        #     version = self.serial_reader.get_device_version()
-                        #     if version:
-                        #         print(f" Device version retrieved: {version}")
-                        # except Exception as ver_error:
-                        #     print(f" Warning: Could not retrieve device version: {ver_error}")
-                        
-                        # Update settings with the working port
-                        self.settings_manager.set_serial_port(auto_port)
-                        print(f" Connected to auto-detected port: {auto_port}")
-                        
-                        # Show info to user
-                        QMessageBox.information(self, "Port Auto-Detected", 
-                            f"Could not connect to configured port {port}.\n\n"
-                            f"Successfully connected to: {auto_port}\n"
-                            f"This port has been saved to your settings.")
-                        
-                    except Exception as e2:
-                        print(f" Auto-detection also failed: {e2}")
-                        raise e2
-                else:
-                    raise e
+                print(f" Failed to connect to port {port_to_use}: {e}")
+                raise e
             
-            # OPTIMIZED: Reduced timer interval to process packets faster and prevent packet loss
-            # At 500 Hz, we get 500 packets/second = ~16-17 packets per 33ms timer interval
-            # Using 33ms (30 FPS) for better packet processing and reduced packet loss
-            timer_interval = 33  # 30 FPS - faster processing to prevent packet loss
+            # OPTIMIZED: Timer interval for smooth wave display without jitter
+            # At 500 Hz, we get 500 packets/second = ~8-10 packets per 16ms timer interval
+            # Using 16ms (60 FPS) for smooth, jitter-free wave flow
+            timer_interval = 16  # 60 FPS - smooth flow without jitter
             # Using default timer type - works fine in EXE with proper interval
             self.timer.start(timer_interval)
             # INSTANT DISPLAY: Trigger immediate first update to show waves right away
@@ -7718,8 +7683,8 @@ class ECGTestPage(QWidget):
                                 try:
                                     from scipy.ndimage import gaussian_filter1d
                                     if len(src) > 5:
-                                        # Smooth source data first (sigma=0.8) to reduce jitter
-                                        src = gaussian_filter1d(src, sigma=0.8)
+                                        # Smooth source data first (sigma=1.5) to reduce jitter and ensure smooth flow
+                                        src = gaussian_filter1d(src, sigma=1.5)
                                 except ImportError:
                                     # Fallback: simple moving average if scipy not available
                                     if len(src) > 5:
@@ -7735,8 +7700,8 @@ class ECGTestPage(QWidget):
                             try:
                                 from scipy.ndimage import gaussian_filter1d
                                 if len(resampled) > 5:
-                                    # Additional smoothing (sigma=1.2) after interpolation for maximum smoothness
-                                    resampled = gaussian_filter1d(resampled, sigma=1.2)
+                                    # Additional smoothing (sigma=2.0) after interpolation for maximum smoothness and jitter-free flow
+                                    resampled = gaussian_filter1d(resampled, sigma=2.0)
                             except ImportError:
                                 # Fallback: simple moving average if scipy not available
                                 if len(resampled) > 5:
