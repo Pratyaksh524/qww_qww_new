@@ -1138,7 +1138,7 @@ class ECGTestPage(QWidget):
         btn_layout = QHBoxLayout()
         self.start_btn = QPushButton("Start")
         self.stop_btn = QPushButton("Stop")
-        self.ports_btn = QPushButton("Ports")
+        # self.ports_btn = QPushButton("Ports") # Commented out
         self.generate_report_btn = QPushButton("Generate Report")
         # self.export_csv_btn = QPushButton("Export as CSV")  # Commented out
         # self.sequential_btn = QPushButton("Show All Leads Sequentially")  # Commented out
@@ -1147,7 +1147,7 @@ class ECGTestPage(QWidget):
         self.back_btn = QPushButton("Back")
 
         # Make all buttons responsive and compact
-        for btn in [self.start_btn, self.stop_btn, self.ports_btn, self.generate_report_btn, 
+        for btn in [self.start_btn, self.stop_btn, self.generate_report_btn, 
                    self.twelve_leads_btn, self.six_leads_btn, self.back_btn]:
             btn.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
             btn.setMinimumHeight(32)
@@ -1182,7 +1182,7 @@ class ECGTestPage(QWidget):
         # Apply medical green style to all buttons
         self.start_btn.setStyleSheet(green_color)
         self.stop_btn.setStyleSheet(green_color)
-        self.ports_btn.setStyleSheet(green_color)
+        # self.ports_btn.setStyleSheet(green_color) # Commented out
         self.generate_report_btn.setStyleSheet(green_color)
         # self.export_csv_btn.setStyleSheet(green_color)  # Commented out
         # self.sequential_btn.setStyleSheet(green_color)  # Commented out
@@ -1194,7 +1194,7 @@ class ECGTestPage(QWidget):
         btn_layout.setContentsMargins(4, 4, 4, 4)
         btn_layout.addWidget(self.start_btn)
         btn_layout.addWidget(self.stop_btn)
-        btn_layout.addWidget(self.ports_btn)
+        # btn_layout.addWidget(self.ports_btn) # Commented out
         btn_layout.addWidget(self.generate_report_btn)
         # btn_layout.addWidget(self.export_csv_btn)  # Commented out
         # btn_layout.addWidget(self.sequential_btn)  # Commented out
@@ -1228,7 +1228,7 @@ class ECGTestPage(QWidget):
 
         self.start_btn.setToolTip("Start ECG recording from the selected port")
         self.stop_btn.setToolTip("Stop current ECG recording")
-        self.ports_btn.setToolTip("Configure COM port and baud rate settings")
+        # self.ports_btn.setToolTip("Configure COM port and baud rate settings") # Commented out
         self.generate_report_btn.setToolTip("Generate ECG PDF report and add to Recent Reports")
         # self.export_csv_btn.setToolTip("Export ECG data as CSV file")  # Commented out
 
@@ -1249,7 +1249,7 @@ class ECGTestPage(QWidget):
         """)
         help_btn.clicked.connect(self.show_help)
 
-        self.ports_btn.clicked.connect(self.show_ports_dialog)
+        # self.ports_btn.clicked.connect(self.show_ports_dialog) # Commented out
         self.generate_report_btn.clicked.connect(self.generate_pdf_report)
         # self.export_csv_btn.clicked.connect(self.export_csv)  # Commented out
         # self.sequential_btn.clicked.connect(self.show_sequential_view)  # Commented out
@@ -1327,7 +1327,6 @@ class ECGTestPage(QWidget):
         for attr, key in [
             ('start_btn', "Start"),
             ('stop_btn', "Stop"),
-            ('ports_btn', "Ports"),
             ('generate_report_btn', "Generate Report"),
             ('twelve_leads_btn', "12:1"),
             ('six_leads_btn', "6:2"),
@@ -5329,6 +5328,14 @@ class ECGTestPage(QWidget):
 
     def start_acquisition(self):
 
+        # CHECK: Ensure no other test is running
+        if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
+            if not self.dashboard_instance.can_start_test("12_lead_test"):
+                print(" Start aborted: Another test is currently running.")
+                return
+            # Set state to running
+            self.dashboard_instance.update_test_state("12_lead_test", True)
+
         try:
             if hasattr(self, 'demo_toggle') and self.demo_toggle.isChecked():
                 print(" Switching from Demo to Real: turning off demo...")
@@ -5584,6 +5591,10 @@ class ECGTestPage(QWidget):
     # ---------------------- Stop Button Functionality ----------------------
 
     def stop_acquisition(self):
+        # UPDATE STATE: Test stopped
+        if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
+            self.dashboard_instance.update_test_state("12_lead_test", False)
+
         port = self.settings_manager.get_serial_port()
         baud = self.settings_manager.get_baud_rate()
         
@@ -7836,8 +7847,19 @@ class ECGTestPage(QWidget):
             if is_packet_reader:
                 # NEW: Use packet-based reading with error handling for 500 Hz
                 try:
+                    # Check connection state before reading
+                    was_running = self.serial_reader.running
+
                     # OPTIMIZED FOR 500 Hz: Read packets aggressively to prevent buffer overflow
                     packets = self.serial_reader.read_packets(max_packets=max_packets)
+
+                    # Check if reader stopped due to error during read_packets (Disconnection detection)
+                    if was_running and not self.serial_reader.running:
+                        print("CRITICAL: Device disconnected during test!")
+                        self.stop_acquisition()
+                        QMessageBox.critical(self, "Test Failed", "Test failed, Please check if device is properly connected")
+                        self.go_back()
+                        return
                     
                     # Safety check: If buffer is accumulating too fast, warn and clear it
                     if hasattr(self.serial_reader, 'buf') and len(self.serial_reader.buf) > 100000:

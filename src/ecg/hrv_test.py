@@ -66,6 +66,7 @@ class HRVTestWindow(QWidget):
     
     def __init__(self, parent=None, username=None):
         super().__init__(parent)
+        self.dashboard_instance = parent  # Store reference to dashboard
         self.username = username
         self.setWindowTitle("HRV Test - Lead II")
         self.setMinimumSize(1200, 700)
@@ -172,19 +173,6 @@ class HRVTestWindow(QWidget):
         
         # Control buttons
         controls = QHBoxLayout()
-        
-        # COM port selection
-        com_label = QLabel("COM Port:")
-        com_label.setFont(QFont("Arial", 11))
-        controls.addWidget(com_label)
-        
-        self.com_combo = QComboBox()
-        self.com_combo.setMinimumWidth(150)
-        self.com_combo.setStyleSheet("padding: 5px; border: 1px solid #ccc; border-radius: 5px;")
-        self.refresh_com_ports()
-        controls.addWidget(self.com_combo)
-        
-        controls.addSpacing(20)
         
         # Start button
         self.start_btn = QPushButton("Start Capture")
@@ -345,40 +333,62 @@ class HRVTestWindow(QWidget):
         
     def refresh_com_ports(self):
         """Refresh available COM ports"""
-        self.com_combo.clear()
-        if SERIAL_AVAILABLE:
-            try:
-                ports = serial.tools.list_ports.comports()
-                for port in ports:
-                    self.com_combo.addItem(port.device, port.device)
-                if len(ports) == 0:
-                    self.com_combo.addItem("No ports available", None)
-            except Exception as e:
-                print(f" Error listing COM ports: {e}")
-                self.com_combo.addItem("Error listing ports", None)
-        else:
-            self.com_combo.addItem("Serial not available", None)
+        pass
     
     def start_capture(self):
         """Start capturing selected lead data"""
+        # CHECK: Ensure no other test is running
+        if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
+            # Check if dashboard has the can_start_test method
+            if hasattr(self.dashboard_instance, 'can_start_test'):
+                if not self.dashboard_instance.can_start_test("hrv_test"):
+                    return
+                # Set state to running
+                self.dashboard_instance.update_test_state("hrv_test", True)
+
         if not SERIAL_AVAILABLE or not ECG_TEST_AVAILABLE:
             QMessageBox.warning(self, "Serial Not Available", 
                               "Serial/ECG modules are not available. Please install pyserial and restart.")
             return
         
-        port = self.com_combo.currentData()
-        if not port:
-            QMessageBox.warning(self, "No Port Selected", 
-                              "Please select a COM port.")
-            return
+        # Get port from settings or auto-detect
+        port_to_use = self.settings_manager.get_serial_port()
+        baudrate = int(self.settings_manager.get_setting("baud_rate", "115200"))
+        
+        if not port_to_use or port_to_use == "Select Port":
+            print(" No COM port configured in System Setup – will auto‑scan all ports.")
+            try:
+                scan_result = SerialStreamReader.scan_and_detect_port(baudrate=baudrate, timeout=0.2)
+                if scan_result:
+                    detected_port, detected_serial = scan_result
+                    port_to_use = detected_port
+                    print(f" Auto‑detected ECG device on port {detected_port}")
+                    
+                    # Close the detected serial object
+                    try:
+                        if detected_serial and detected_serial.is_open:
+                            detected_serial.close()
+                    except Exception as e:
+                        print(f" Warning: Failed to close detected serial port: {e}")
+
+                    # Save to settings
+                    if hasattr(self, 'settings_manager'):
+                        self.settings_manager.set_setting("serial_port", detected_port)
+                        self.settings_manager.save_settings()
+                else:
+                    QMessageBox.warning(self, "No Device Found", 
+                                      "Could not auto-detect ECG device. Please check connection.")
+                    return
+            except Exception as scan_err:
+                print(f" Port scan failed: {scan_err}")
+                QMessageBox.warning(self, "Scan Failed", f"Port scan failed: {scan_err}")
+                return
         
         try:
-            # Get baud rate from settings
-            baudrate = int(self.settings_manager.get_setting("baud_rate", "115200"))
             
             # Initialize serial reader using SerialStreamReader (new packet-based logic)
             # This reads lead II directly from packets
-            self.serial_reader = SerialStreamReader(port, baudrate)
+            self.serial_reader = SerialStreamReader(port_to_use, baudrate)
             self.serial_reader.start()
             
             # Reset data - use HISTORY_LENGTH for sufficient buffer size
@@ -427,6 +437,11 @@ class HRVTestWindow(QWidget):
     
     def stop_capture(self):
         """Stop capturing data"""
+        # UPDATE STATE: Test stopped
+        if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
+            if hasattr(self.dashboard_instance, 'update_test_state'):
+                self.dashboard_instance.update_test_state("hrv_test", False)
+
         self.is_capturing = False
         
         if self.serial_reader:

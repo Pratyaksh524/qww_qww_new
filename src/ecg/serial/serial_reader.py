@@ -511,8 +511,12 @@ class SerialStreamReader:
             )
             
             # If device is disconnected (Errno 6) or too many consecutive errors, stop
-            if "Device not configured" in str(e) or "[Errno 6]" in str(e) or self.consecutive_errors > 20:
-                print(" Critical serial error - stopping acquisition")
+            error_str = str(e)
+            if "Device not configured" in error_str or "[Errno 6]" in error_str or \
+               "ClearCommError" in error_str or "Access is denied" in error_str or \
+               "PermissionError" in error_str or "element not found" in error_str.lower() or \
+               self.consecutive_errors > 20:
+                print(f" Critical serial error ({error_str}) - stopping acquisition")
                 self.running = False
             
         return out
