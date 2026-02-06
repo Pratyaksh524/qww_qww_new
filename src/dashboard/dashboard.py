@@ -12,6 +12,11 @@ except ImportError:
 import sys
 import platform
 import numpy as np
+from ecg.serial.serial_reader import SerialStreamReader, SERIAL_AVAILABLE
+import serial.tools.list_ports
+if SERIAL_AVAILABLE:
+    from ecg.serial.hardware_commands import HardwareCommandHandler
+    import serial
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
@@ -206,6 +211,13 @@ class Dashboard(QWidget):
         self.username = username
         self.role = role
         self.user_details = user_details or {}
+
+        # Flags to track which test is currently running
+        self.test_states = {
+            "12_lead_test": False,
+            "hrv_test": False,
+            "hyperkalemia_test": False
+        }
         
         # Initialize standard values flag
         self._use_standard_values = True
@@ -316,6 +328,12 @@ class Dashboard(QWidget):
         self.status_timer = QTimer(self)
         self.status_timer.timeout.connect(self.update_internet_status)
         self.status_timer.start(3000)
+
+        # Device Status Label
+        self.device_status_label = QLabel("Device Disconnected")
+        self.device_status_label.setFont(QFont("Arial", 10, QFont.Bold))
+        self.device_status_label.setStyleSheet("color: red; margin-right: 10px;")
+        header.addWidget(self.device_status_label)
         
         self.medical_btn = QPushButton("Medical Mode")
         self.medical_btn.setCheckable(True)
@@ -380,6 +398,17 @@ class Dashboard(QWidget):
         self.apply_language(self.current_language)
         
         dashboard_layout.addLayout(header)
+
+        # --- Device Connection Monitor ---
+        self.device_connected = False
+        self.device_port = None
+        self.settings_manager = SettingsManager()
+        self.device_check_timer = QTimer(self)
+        self.device_check_timer.timeout.connect(self.check_device_connection)
+        self.device_check_timer.start(100) # Check every 0.1 second
+
+        # Initialize UI as disconnected
+        self.update_device_ui(False)
 
         # --- Cloud Auto Sync: periodically back up reports when online ---
         self._cloud_sync_in_progress = False
@@ -3841,6 +3870,32 @@ class Dashboard(QWidget):
             print(f" Error cleaning up ECG test page: {e}")
         
         self.close()
+
+    def update_test_state(self, test_name, is_running):
+        """Update the running state of a specific test."""
+        if test_name in self.test_states:
+            self.test_states[test_name] = is_running
+            print(f" Test State Updated: {test_name} = {is_running}")
+            # Force UI update if needed
+            QApplication.processEvents()
+
+    def can_start_test(self, test_name):
+        """
+        Check if a test can be started. 
+        Returns True if no other test is running.
+        Returns False and shows a popup if another test is already running.
+        """
+        for name, is_running in self.test_states.items():
+            if is_running and name != test_name:
+                # Another test is running
+                running_test_display = name.replace("_", " ").title()
+                QMessageBox.warning(
+                    self, 
+                    "Test Already Running", 
+                    f"Cannot start {test_name.replace('_', ' ').title()} because {running_test_display} is currently running.\n\nPlease stop the running test first."
+                )
+                return False
+        return True
         
     def open_hyperkalemia_test(self):
         """Open Hyperkalemia Test window in a new window"""
@@ -3887,6 +3942,121 @@ class Dashboard(QWidget):
         self.page_stack.setCurrentWidget(self.dashboard_page)
         # Update metrics when returning to dashboard
         self.update_dashboard_metrics_from_ecg()
+
+    # Resume device check if needed
+    def check_device_connection(self):
+        """Check for device connection or scan if disconnected"""
+        # Skip if any test window is open (HRV or Hyperkalemia)
+        if hasattr(self, 'hrv_window') and self.hrv_window and self.hrv_window.isVisible():
+            return
+        if hasattr(self, 'hyperkalemia_window') and self.hyperkalemia_window and self.hyperkalemia_window.isVisible():
+            return
+        # Skip if on ECG Test Page (stacked widget)
+        if self.page_stack.currentWidget() == getattr(self, 'ecg_test_page', None):
+            return
+
+        if not SERIAL_AVAILABLE:
+            return
+
+        if self.device_connected and self.device_port:
+            # Device is supposed to be connected, verify it
+            try:
+                available_ports = [p.device for p in serial.tools.list_ports.comports()]
+                if self.device_port not in available_ports:
+                    print(f"⚠️ Port {self.device_port} disconnected.")
+                    self.device_connected = False
+                    self.device_port = None
+                    self.update_device_ui(False)
+            except Exception:
+                pass
+        else:
+            # Not connected, scan for device
+            self.scan_for_device_version()
+
+    def scan_for_device_version(self):
+        """Scan all available ports for the device using version command"""
+        try:
+            scan_start = time.time()
+            ports = list(serial.tools.list_ports.comports())
+            if not ports:
+                self.update_device_ui(False)
+                return
+
+            # Prioritize the last saved port to speed up connection
+            if hasattr(self, 'settings_manager'):
+                saved_port = self.settings_manager.get_setting("serial_port")
+                if saved_port:
+                    # Move saved port to the front of the list
+                    ports.sort(key=lambda p: 0 if p.device == saved_port else 1)
+
+            for port in ports:
+                try:
+                    # Quick check
+                    ser = serial.Serial(port.device, 115200, timeout=0.1)
+                    handler = HardwareCommandHandler(ser)
+                    success, version, _ = handler.send_version_command(timeout=0.2)
+                    ser.close()
+                    
+                    if success:
+                        self.device_port = port.device
+                        self.device_connected = True
+                        self.update_device_ui(True)
+
+                        # Save to settings so test pages can use it
+                        if hasattr(self, 'settings_manager'):
+                            self.settings_manager.set_setting("serial_port", port.device)
+                            self.settings_manager.set_setting("baud_rate", "115200")
+                            self.settings_manager.save_settings()
+                            elapsed = time.time() - scan_start
+                            print(f"✅ Device found on {port.device} in {elapsed:.2f}s, saved to settings.")
+                        return
+                except Exception:
+                    continue
+
+            # If loop finishes without success
+            self.update_device_ui(False)
+            
+        except Exception:
+            pass
+
+    def update_device_ui(self, connected):
+        """Update UI elements based on device connection status"""
+        if connected:
+            self.device_status_label.setText("Device Connected")
+            self.device_status_label.setStyleSheet("color: green; margin-right: 10px; font-weight: bold;")
+            
+            # Enable test buttons
+            if hasattr(self, 'hrv_test_btn'):
+                self.hrv_test_btn.setEnabled(True)
+                self.hrv_test_btn.setStyleSheet("background: #dc3545; color: white; border-radius: 16px; padding: 8px 24px;")
+
+            if hasattr(self, 'hyperkalemia_test_btn'):
+                self.hyperkalemia_test_btn.setEnabled(True)
+                self.hyperkalemia_test_btn.setStyleSheet("background: #d2691e; color: white; border-radius: 16px; padding: 8px 24px;")
+
+            if hasattr(self, 'date_btn'): # ECG Lead Test 12
+                self.date_btn.setEnabled(True)
+                self.date_btn.setStyleSheet("background: #ff6600; color: white; border-radius: 16px; padding: 8px 24px;")
+        else:
+            self.device_status_label.setText("Device Disconnected")
+            self.device_status_label.setStyleSheet("color: red; margin-right: 10px; font-weight: bold;")
+            
+            # Disable test buttons
+            
+            grey_style = "background: #cccccc; color: #666666; border-radius: 16px; padding: 8px 24px;"
+
+            if hasattr(self, 'hrv_test_btn'):
+                self.hrv_test_btn.setEnabled(False)
+                self.hrv_test_btn.setStyleSheet(grey_style)
+
+            if hasattr(self, 'hyperkalemia_test_btn'):
+                self.hyperkalemia_test_btn.setEnabled(False)
+                self.hyperkalemia_test_btn.setStyleSheet(grey_style)
+
+            if hasattr(self, 'date_btn'):
+                self.date_btn.setEnabled(False)
+                self.date_btn.setStyleSheet(grey_style)
+
     def update_internet_status(self):
         import socket
         try:

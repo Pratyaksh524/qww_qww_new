@@ -513,9 +513,12 @@ class HardwareCommandHandler:
         pkt[21] = END_BYTE
         return bytes(pkt)
     
-    def _send_stop(self) -> bool:
+    def _send_stop(self, timeout: float = 3.0) -> bool:
         """
         Send STOP command to put device in IDLE state
+
+        Args:
+            timeout: Timeout in seconds
         
         Returns:
             bool: True if STOP ACK received successfully
@@ -526,11 +529,11 @@ class HardwareCommandHandler:
         self.ser.write(pkt)
         self.ser.flush()
         
-        ack = self._wait_for_ack(OPCODE_STOP)
+        ack = self._wait_for_ack(OPCODE_STOP, timeout=timeout)
         print("📥 STOP ACK ←", ack.hex(" ").upper())
         return True
     
-    def send_version_command(self, counter: int = 0) -> Tuple[bool, Optional[str], Optional[Dict]]:
+    def send_version_command(self, counter: int = 0, timeout: float = 2.0) -> Tuple[bool, Optional[str], Optional[Dict]]:
         """
         Hardware protocol:
         App → 0x14
@@ -555,7 +558,7 @@ class HardwareCommandHandler:
         try:
             # First, stop the device if it's streaming
             try:
-                self._send_stop()
+                self._send_stop(timeout=timeout)
                 print("✅ STOP confirmed")
                 time.sleep(0.1)
             except TimeoutError:
@@ -572,11 +575,11 @@ class HardwareCommandHandler:
             self.ser.flush()
             
             # Wait for ACK (filters out ECG_STREAM frames)
-            ack = self._wait_for_ack(CMD_VERSION)
+            ack = self._wait_for_ack(CMD_VERSION, timeout=timeout)
             print("📥 VERSION ACK ←", ack.hex(" ").upper())
             
             # Wait for DATA (filters out ECG_STREAM frames)
-            data = self._wait_for_data()
+            data = self._wait_for_data(timeout=timeout)
             print("📥 VERSION DATA ←", data.hex(" ").upper())
             
             # Decode version from bytes 5-21
