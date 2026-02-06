@@ -10,8 +10,15 @@ from PyQt5.QtWidgets import (
     QApplication,
     QFileDialog,
     QLineEdit,
+    QComboBox,
+    QLabel,
+    QDateEdit,
+    QGridLayout,
+    QFrame,
+    QScrollArea,
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDate
+from PyQt5.QtGui import QFont
 import os
 import json
 import datetime
@@ -42,28 +49,157 @@ class HistoryWindow(QDialog):
         
         # Make window responsive to screen size
         screen = QApplication.desktop().screenGeometry()
-        window_width = int(screen.width() * 0.8)
-        window_height = int(screen.height() * 0.7)
+        window_width = int(screen.width() * 0.85)
+        window_height = int(screen.height() * 0.75)
         self.resize(window_width, window_height)
         
         # Set minimum size for usability
-        self.setMinimumSize(800, 400)
+        self.setMinimumSize(900, 500)
+        
+        # Enable responsive design
+        self.setStyleSheet("""
+            QDialog {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }
+            QTableWidget {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background-color: white;
+                gridline-color: #e9ecef;
+                selection-background-color: #007bff;
+                selection-color: white;
+            }
+            QTableWidget::item {
+                padding: 8px;
+                border-bottom: 1px solid #e9ecef;
+            }
+            QTableWidget::item:selected {
+                background-color: #007bff;
+                color: white;
+            }
+            QPushButton {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-weight: bold;
+                min-height: 20px;
+            }
+            QPushButton:hover {
+                background-color: #0056b3;
+            }
+            QPushButton:pressed {
+                background-color: #004085;
+            }
+            QLineEdit {
+                border: 2px solid #dee2e6;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 14px;
+                background-color: white;
+            }
+            QLineEdit:focus {
+                border-color: #007bff;
+            }
+            QComboBox {
+                border: 2px solid #dee2e6;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 14px;
+                background-color: white;
+                min-width: 120px;
+            }
+            QDateEdit {
+                border: 2px solid #dee2e6;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 14px;
+                background-color: white;
+                min-width: 120px;
+            }
+            QLabel {
+                font-weight: bold;
+                color: #495057;
+                margin: 2px;
+            }
+        """)
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
 
-        # Search bar
-        search_layout = QHBoxLayout()
-        search_label = QPushButton("Search by Name:")
-        search_label.setStyleSheet("background: #007bff; color: white; border-radius: 5px; padding: 5px 10px;")
-        search_label.setEnabled(False)  # Make it look like a label
+        # Enhanced search section with date filtering
+        search_frame = QFrame()
+        search_frame.setFrameStyle(QFrame.Box)
+        search_frame.setStyleSheet("""
+            QFrame {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background-color: white;
+                padding: 10px;
+            }
+        """)
+        
+        search_layout = QGridLayout(search_frame)
+        search_layout.setSpacing(10)
+        
+        # First row: Search type selector
+        search_type_label = QLabel("Search By:")
+        self.search_type_combo = QComboBox()
+        self.search_type_combo.addItems(["Patient Name", "Date Range", "Single Date"])
+        self.search_type_combo.currentTextChanged.connect(self.on_search_type_changed)
+        
+        search_layout.addWidget(search_type_label, 0, 0)
+        search_layout.addWidget(self.search_type_combo, 0, 1)
+        
+        # Second row: Name search (default visible)
+        self.name_search_label = QLabel("Patient Name:")
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText("Enter patient name to search...")
         self.search_input.textChanged.connect(self.filter_table)
-        search_layout.addWidget(search_label)
-        search_layout.addWidget(self.search_input)
-        layout.addLayout(search_layout)
+        
+        search_layout.addWidget(self.name_search_label, 1, 0)
+        search_layout.addWidget(self.search_input, 1, 1)
+        
+        # Third row: Date range search (initially hidden)
+        self.date_range_label = QLabel("Date Range:")
+        self.start_date_edit = QDateEdit()
+        self.start_date_edit.setCalendarPopup(True)
+        self.start_date_edit.setDate(QDate.currentDate().addDays(-30))  # Default: last 30 days
+        self.start_date_edit.dateChanged.connect(self.filter_table)
+        
+        self.to_label = QLabel("to")
+        self.end_date_edit = QDateEdit()
+        self.end_date_edit.setCalendarPopup(True)
+        self.end_date_edit.setDate(QDate.currentDate())
+        self.end_date_edit.dateChanged.connect(self.filter_table)
+        
+        search_layout.addWidget(self.date_range_label, 2, 0)
+        search_layout.addWidget(self.start_date_edit, 2, 1)
+        search_layout.addWidget(self.to_label, 2, 2)
+        search_layout.addWidget(self.end_date_edit, 2, 3)
+        
+        # Fourth row: Single date search (initially hidden)
+        self.single_date_label = QLabel("Date:")
+        self.single_date_edit = QDateEdit()
+        self.single_date_edit.setCalendarPopup(True)
+        self.single_date_edit.setDate(QDate.currentDate())
+        self.single_date_edit.dateChanged.connect(self.filter_table)
+        
+        search_layout.addWidget(self.single_date_label, 3, 0)
+        search_layout.addWidget(self.single_date_edit, 3, 1)
+        
+        # Initially hide date search options
+        self.date_range_label.hide()
+        self.start_date_edit.hide()
+        self.to_label.hide()
+        self.end_date_edit.hide()
+        self.single_date_label.hide()
+        self.single_date_edit.hide()
+        
+        layout.addWidget(search_frame)
 
         self.table = QTableWidget()
         self.table.setColumnCount(10)
@@ -99,41 +235,61 @@ class HistoryWindow(QDialog):
         # Connect double-click signal to open report
         self.table.cellDoubleClicked.connect(self.on_row_double_clicked)
 
-        # Buttons row
-        btn_row = QHBoxLayout()
-        self.open_btn = QPushButton("Open Report")
-        self.open_btn.setStyleSheet(
-            "background: #ff6600; color: white; border-radius: 10px; padding: 6px 18px;"
-        )
+        # Enhanced buttons row with responsive design
+        buttons_frame = QFrame()
+        buttons_frame.setFrameStyle(QFrame.NoFrame)
+        btn_row = QHBoxLayout(buttons_frame)
+        btn_row.setSpacing(10)
+        
+        # Create responsive buttons with icons and better styling
+        self.open_btn = QPushButton("📄 Open Report")
+        self.open_btn.setMinimumHeight(40)
         self.open_btn.clicked.connect(self.open_selected_report)
         btn_row.addWidget(self.open_btn)
 
-        self.export_all_btn = QPushButton("Export All")
-        self.export_all_btn.setStyleSheet(
-            "background: #28a745; color: white; border-radius: 10px; padding: 6px 18px;"
-        )
+        self.export_all_btn = QPushButton("📊 Export All")
+        self.export_all_btn.setMinimumHeight(40)
         self.export_all_btn.clicked.connect(self.export_all_reports)
         btn_row.addWidget(self.export_all_btn)
 
-        self.send_review_btn = QPushButton("Send for Review")
-        self.send_review_btn.setStyleSheet(
-            "background: #17a2b8; color: white; border-radius: 10px; padding: 6px 18px;"
-        )
+        self.send_review_btn = QPushButton("📤 Send for Review")
+        self.send_review_btn.setMinimumHeight(40)
         self.send_review_btn.clicked.connect(self.send_report_for_review)
         btn_row.addWidget(self.send_review_btn)
 
         btn_row.addStretch(1)
 
-        self.close_btn = QPushButton("Close")
+        self.close_btn = QPushButton("❌ Close")
+        self.close_btn.setMinimumHeight(40)
         self.close_btn.clicked.connect(self.close)
         btn_row.addWidget(self.close_btn)
 
-        layout.addLayout(btn_row)
+        layout.addWidget(buttons_frame)
 
         self.load_history()
         
-        # Connect resize event to update column widths
-        self.table.horizontalHeader().sectionResizeMode(self.table.horizontalHeader().Stretch)
+        # Connect resize event for responsive design
+        self.resizeEvent = self.on_resize_event
+
+    def on_resize_event(self, event):
+        """Handle window resize for responsive design."""
+        super().resizeEvent(event)
+        
+        # Adjust column widths based on window size
+        width = event.size().width()
+        
+        if width < 1200:
+            # Small screens: compact layout
+            self.table.horizontalHeader().setDefaultSectionSize(80)
+        elif width < 1600:
+            # Medium screens: balanced layout
+            self.table.horizontalHeader().setDefaultSectionSize(100)
+        else:
+            # Large screens: spacious layout
+            self.table.horizontalHeader().setDefaultSectionSize(120)
+        
+        # Ensure table fills available space
+        self.table.horizontalHeader().setSectionResizeMode(self.table.horizontalHeader().Stretch)
 
     def load_history(self):
         """Load history entries from both ecg_history.json and reports/index.json into the table."""
@@ -269,17 +425,84 @@ class HistoryWindow(QDialog):
                 self.all_history_entries.append(entry)
                 self.add_row(entry)
 
+    def on_search_type_changed(self, search_type):
+        """Handle search type change to show/hide appropriate search options."""
+        if search_type == "Patient Name":
+            # Show name search, hide date searches
+            self.name_search_label.show()
+            self.search_input.show()
+            self.date_range_label.hide()
+            self.start_date_edit.hide()
+            self.to_label.hide()
+            self.end_date_edit.hide()
+            self.single_date_label.hide()
+            self.single_date_edit.hide()
+        elif search_type == "Date Range":
+            # Show date range search, hide others
+            self.name_search_label.hide()
+            self.search_input.hide()
+            self.date_range_label.show()
+            self.start_date_edit.show()
+            self.to_label.show()
+            self.end_date_edit.show()
+            self.single_date_label.hide()
+            self.single_date_edit.hide()
+        elif search_type == "Single Date":
+            # Show single date search, hide others
+            self.name_search_label.hide()
+            self.search_input.hide()
+            self.date_range_label.hide()
+            self.start_date_edit.hide()
+            self.to_label.hide()
+            self.end_date_edit.hide()
+            self.single_date_label.show()
+            self.single_date_edit.show()
+        
+        # Trigger filter update
+        self.filter_table()
+
     def filter_table(self):
-        """Filter table rows based on search input for patient name."""
-        search_text = self.search_input.text().strip().lower()
+        """Filter table rows based on search input (name or date)."""
+        search_type = self.search_type_combo.currentText()
         
         # Clear current table
         self.table.setRowCount(0)
         
         # Re-add entries that match the search
         for entry in self.all_history_entries:
-            patient_name = entry.get("patient_name", "").lower()
-            if search_text == "" or search_text in patient_name:
+            should_show = False
+            
+            if search_type == "Patient Name":
+                search_text = self.search_input.text().strip().lower()
+                patient_name = entry.get("patient_name", "").lower()
+                should_show = search_text == "" or search_text in patient_name
+                
+            elif search_type == "Date Range":
+                start_date = self.start_date_edit.date().toPyDate()
+                end_date = self.end_date_edit.date().toPyDate()
+                entry_date_str = entry.get("date", "")
+                if entry_date_str:
+                    try:
+                        entry_date = datetime.datetime.strptime(entry_date_str, "%Y-%m-%d").date()
+                        should_show = start_date <= entry_date <= end_date
+                    except ValueError:
+                        should_show = False
+                else:
+                    should_show = False
+                    
+            elif search_type == "Single Date":
+                search_date = self.single_date_edit.date().toPyDate()
+                entry_date_str = entry.get("date", "")
+                if entry_date_str:
+                    try:
+                        entry_date = datetime.datetime.strptime(entry_date_str, "%Y-%m-%d").date()
+                        should_show = entry_date == search_date
+                    except ValueError:
+                        should_show = False
+                else:
+                    should_show = False
+            
+            if should_show:
                 self.add_row(entry)
 
     def _get_report_datetime(self, patient_name, reports_index):
