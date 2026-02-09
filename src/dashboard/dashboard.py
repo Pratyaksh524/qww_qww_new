@@ -1063,7 +1063,7 @@ class Dashboard(QWidget):
         
         # --- ECG Animation Setup ---
         self.ecg_x = np.linspace(0, 2, 500)
-        self.ecg_y = 150 * np.sin(2 * np.pi * 2 * self.ecg_x) + 30 * np.random.randn(500)  # Smaller amplitude to prevent cropping
+        self.ecg_y = 2048 + 150 * np.sin(2 * np.pi * 2 * self.ecg_x) + 30 * np.random.randn(500)  # Centered at 2048 for 0-4096 range
         self.ecg_line, = self.ecg_canvas.axes.plot(self.ecg_x, self.ecg_y, color="#ff6600", linewidth=0.5, antialiased=True)
         # Reduce CPU/GPU usage: lower refresh rate slightly and disable frame caching
         self.anim = FuncAnimation(
@@ -2586,12 +2586,13 @@ class Dashboard(QWidget):
                                 
                                 # Final zero-centering to ensure it sits on the line
                                 current_dc = np.nanmean(src) if len(src) > 0 else 0.0
-                                src = src - current_dc
+                                # Shift to 2048 (middle of 0-4096 range) instead of 0
+                                src = src - current_dc + 2048.0
                                 
                         except Exception as e:
-                            # Fallback: simple mean subtraction
+                            # Fallback: simple mean subtraction and shift to 2048
                             if len(src) > 0:
-                                src = src - np.nanmean(src)
+                                src = src - np.nanmean(src) + 2048.0
 
                         display_len = len(self.ecg_x)
                         if src.size <= 1:
