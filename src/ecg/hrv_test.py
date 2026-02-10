@@ -355,8 +355,20 @@ class HRVTestWindow(QWidget):
         port_to_use = self.settings_manager.get_serial_port()
         baudrate = int(self.settings_manager.get_setting("baud_rate", "115200"))
         
-        if not port_to_use or port_to_use == "Select Port":
-            print(" No COM port configured in System Setup – will auto‑scan all ports.")
+        # Check if port needs scanning (not set or not in available ports)
+        scan_needed = (not port_to_use or port_to_use == "Select Port")
+        
+        if not scan_needed:
+            try:
+                available_ports = [p.device for p in serial.tools.list_ports.comports()]
+                if port_to_use not in available_ports:
+                    print(f" Configured port {port_to_use} not found in available ports. forcing scan.")
+                    scan_needed = True
+            except Exception:
+                pass
+        
+        if scan_needed:
+            print(" No COM port configured or port not found – will auto‑scan all ports.")
             try:
                 scan_result = SerialStreamReader.scan_and_detect_port(baudrate=baudrate, timeout=0.2)
                 if scan_result:
@@ -378,6 +390,8 @@ class HRVTestWindow(QWidget):
                 else:
                     QMessageBox.warning(self, "No Device Found", 
                                       "Could not auto-detect ECG device. Please check connection.")
+                    if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
+                        self.dashboard_instance.update_test_state("hrv_test", False)
                     return
             except Exception as scan_err:
                 print(f" Port scan failed: {scan_err}")
@@ -581,14 +595,31 @@ class HRVTestWindow(QWidget):
                     emg_val = self.settings_manager.get_setting("filter_emg", "35")
                     
                     fs = self.sampling_rate if self.sampling_rate > 0 else 500.0
+
+                    # Pad data to reduce transient response at start and end
+                    # This fixes the "noise" at the start of acquisition
+                    pad_len = 50
+                    if len(buffer_data) > pad_len:
+                        start_pad = np.full(pad_len, buffer_data[0])
+                        end_pad = np.full(pad_len, buffer_data[-1])
+                        padded_data = np.concatenate((start_pad, buffer_data, end_pad))
+                    else:
+                        padded_data = buffer_data
+                        pad_len = 0
                     
                     # Apply AC Filter
                     if ac_val != "Off" and ac_val != "off":
-                        buffer_data = apply_ac_filter(buffer_data, fs, ac_val)
+                        padded_data = apply_ac_filter(padded_data, fs, ac_val)
                         
                     # Apply EMG Filter
                     if emg_val != "Off" and emg_val != "off":
-                        buffer_data = apply_emg_filter(buffer_data, fs, emg_val)
+                        padded_data = apply_emg_filter(padded_data, fs, emg_val)
+
+                    # Trim padding
+                    if pad_len > 0:
+                        buffer_data = padded_data[pad_len:-pad_len]
+                    else:
+                        buffer_data = padded_data
 
                 if len(buffer_data) > 0:
                     # Create time axis based on sampling rate

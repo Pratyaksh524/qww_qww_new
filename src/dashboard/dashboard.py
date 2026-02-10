@@ -12,6 +12,7 @@ except ImportError:
 import sys
 import platform
 import numpy as np
+from scipy.ndimage import gaussian_filter1d
 from ecg.serial.serial_reader import SerialStreamReader, SERIAL_AVAILABLE
 import serial.tools.list_ports
 if SERIAL_AVAILABLE:
@@ -2497,16 +2498,41 @@ class Dashboard(QWidget):
                     except Exception as e:
                         print(f" Error converting Lead II data to array: {e}")
                         return self._fallback_wave_update(frame)
+
+                    # Get actual sampling rate from ECG test page
+                    actual_sampling_rate = 80  # Default to 80Hz
+                    try:
+                        if (hasattr(self.ecg_test_page, 'sampler') and 
+                            hasattr(self.ecg_test_page.sampler, 'sampling_rate') and 
+                            self.ecg_test_page.sampler.sampling_rate):
+                            actual_sampling_rate = float(self.ecg_test_page.sampler.sampling_rate)
+                            if actual_sampling_rate <= 0 or actual_sampling_rate > 1000:
+                                actual_sampling_rate = 80
+                    except Exception as e:
+                        print(f" Error getting sampling rate: {e}")
+                        actual_sampling_rate = 80
                     
                     # Apply filters matching 12-lead page (smoothness)
                     try:
-                        from ecg.ecg_filters import apply_ecg_filters_from_settings
+                        from ecg.ecg_filters import apply_ecg_filters
                         
-                        # Use settings to match 12-lead page configuration
-                        original_data = apply_ecg_filters_from_settings(
-                            original_data,
+                        # Get settings manually to handle low sampling rate case
+                        ac_setting = self.settings_manager.get_setting("filter_ac", "50")
+                        
+                        # Disable AC filter if sampling rate is too low (Nyquist limit)
+                        # Need at least 2x frequency. 50Hz needs >100Hz.
+                        if actual_sampling_rate < 101:
+                             ac_setting = "off"
+                        
+                        emg_setting = self.settings_manager.get_setting("filter_emg", "150")
+                        dft_setting = self.settings_manager.get_setting("filter_dft", "0.5")
+
+                        original_data = apply_ecg_filters(
+                            signal=original_data,
                             sampling_rate=actual_sampling_rate,
-                            settings_manager=self.settings_manager
+                            ac_filter=ac_setting,
+                            emg_filter=emg_setting,
+                            dft_filter=dft_setting
                         )
                         
                         # Apply Gaussian smoothing (same as 12-lead page)
@@ -2522,19 +2548,6 @@ class Dashboard(QWidget):
                     if np.any(np.isnan(original_data)) or np.any(np.isinf(original_data)):
                         print(" Invalid values (NaN/Inf) in Lead II data")
                         return self._fallback_wave_update(frame)
-                    
-                    # Get actual sampling rate from ECG test page
-                    actual_sampling_rate = 80  # Default to 80Hz
-                    try:
-                        if (hasattr(self.ecg_test_page, 'sampler') and 
-                            hasattr(self.ecg_test_page.sampler, 'sampling_rate') and 
-                            self.ecg_test_page.sampler.sampling_rate):
-                            actual_sampling_rate = float(self.ecg_test_page.sampler.sampling_rate)
-                            if actual_sampling_rate <= 0 or actual_sampling_rate > 1000:
-                                actual_sampling_rate = 80
-                    except Exception as e:
-                        print(f" Error getting sampling rate: {e}")
-                        actual_sampling_rate = 80
 
                     # Determine visible window based on wave speed (display feature only)
                     try:

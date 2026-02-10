@@ -673,7 +673,7 @@ class ECGTestPage(QWidget):
         self.SMOOTH_SIGMA = 0.8
         self.INTERP_FACTOR = 4
         # 50 Hz NOTCH FILTER
-        self.b_notch, self.a_notch = iirnotch(w0=50.0, Q=30.0, fs=self.SAMPLE_RATE)
+        self.b_notch, self.a_notch = iirnotch(w0=10.0, Q=30.0, fs=self.SAMPLE_RATE)
 
         # Track overlay state and current layout (12:1 vs 6:2)
         self._overlay_active = False
@@ -3602,7 +3602,32 @@ class ECGTestPage(QWidget):
         metric_labels = getattr(self, 'metric_labels', {})
         last_heart_rate = getattr(self, 'last_heart_rate', None)
         sampler = getattr(self, 'sampler', None)
-        return get_current_metrics_from_labels(metric_labels, self.data, last_heart_rate, sampler)
+        # return get_current_metrics_from_labels(metric_labels, self.data, last_heart_rate, sampler)
+        # 1. Try getting from labels first (legacy behavior)
+        metrics = get_current_metrics_from_labels(metric_labels, self.data, last_heart_rate, sampler)
+        
+        # 2. Fallback/Override with internal attributes for headless use (e.g. Hyperkalemia test)
+        # Helper to check if a metric is invalid/missing
+        def is_invalid(val):
+            return val is None or val == '0' or val == '' or val == '--'
+
+        # Heart Rate
+        if is_invalid(metrics.get('heart_rate')) and hasattr(self, 'last_heart_rate') and self.last_heart_rate > 0:
+            metrics['heart_rate'] = str(int(self.last_heart_rate))
+            
+        # PR Interval
+        if is_invalid(metrics.get('pr_interval')) and hasattr(self, 'pr_interval') and self.pr_interval > 0:
+            metrics['pr_interval'] = str(int(round(self.pr_interval)))
+
+        # QRS Duration
+        if is_invalid(metrics.get('qrs_duration')) and hasattr(self, 'last_qrs_duration') and self.last_qrs_duration > 0:
+            metrics['qrs_duration'] = str(int(round(self.last_qrs_duration)))
+            
+        # QTc Interval
+        if is_invalid(metrics.get('qtc_interval')) and hasattr(self, 'last_qtc_interval') and self.last_qtc_interval > 0:
+            metrics['qtc_interval'] = str(int(round(self.last_qtc_interval)))
+            
+        return metrics
 
     def get_latest_rhythm_interpretation(self):
         """Expose latest arrhythmia interpretation string for the dashboard."""

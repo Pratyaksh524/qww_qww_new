@@ -99,7 +99,10 @@ class HyperkalemiaTestWindow(QWidget):
         }
         
         # Lead mapping: name -> index in ecg_calculator.data
-        self.lead_indices = {'II': 1, 'V1': 6, 'V2': 7, 'V3': 8, 'V4': 9, 'V5': 10, 'V6': 11}
+        self.lead_indices = {
+            'I': 0, 'II': 1, 'III': 2, 'aVR': 3, 'aVL': 4, 'aVF': 5,
+            'V1': 6, 'V2': 7, 'V3': 8, 'V4': 9, 'V5': 10, 'V6': 11
+        }
         
         self.start_time = None
         self.capture_duration = 30  # 30 seconds for hyperkalemia detection
@@ -439,8 +442,20 @@ class HyperkalemiaTestWindow(QWidget):
         port_to_use = self.settings_manager.get_serial_port()
         baudrate = int(self.settings_manager.get_setting("baud_rate", "115200"))
         
-        if not port_to_use or port_to_use == "Select Port":
-            print(" No COM port configured in System Setup – will auto‑scan all ports.")
+        # Check if port needs scanning (not set or not in available ports)
+        scan_needed = (not port_to_use or port_to_use == "Select Port")
+        
+        if not scan_needed:
+            try:
+                available_ports = [p.device for p in serial.tools.list_ports.comports()]
+                if port_to_use not in available_ports:
+                    print(f" Configured port {port_to_use} not found in available ports. forcing scan.")
+                    scan_needed = True
+            except Exception:
+                pass
+        
+        if scan_needed:
+            print(" No COM port configured or port not found – will auto‑scan all ports.")
             try:
                 scan_result = SerialStreamReader.scan_and_detect_port(baudrate=baudrate, timeout=0.2)
                 if scan_result:
@@ -612,10 +627,11 @@ class HyperkalemiaTestWindow(QWidget):
                                 self.ecg_calculator.data[idx][-1] = raw_value
                                 
                                 # Store smoothed data for plotting
-                                self.lead_data[lead_name].append({
-                                    'time': packet_time,
-                                    'value': raw_value
-                                })
+                                if lead_name in self.lead_data:
+                                    self.lead_data[lead_name].append({
+                                        'time': packet_time,
+                                        'value': raw_value
+                                    })
                                 
                                 # Primary Lead II backup
                                 if lead_name == 'II':
@@ -849,6 +865,7 @@ class HyperkalemiaTestWindow(QWidget):
             msg += f"Heart Rate: {hr} BPM<br>"
             msg += f"PR Interval: {pr} ms<br>"
             msg += f"QRS Duration: {qrs} ms<br>"
+            msg += f"QT Interval: {qt} ms<br>"
             msg += f"QTc Interval: {qtc} ms<br><br>"
             if indicators:
                 msg += "<b>Indicators:</b><br>" + "<br>".join(["- " + i for i in indicators])
