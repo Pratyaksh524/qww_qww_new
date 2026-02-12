@@ -38,6 +38,8 @@ except ImportError:
     measure_qrs_duration_from_median_beat = None
     measure_qt_from_median_beat = None
 
+from ecg.signal.signal_processing import extract_low_frequency_baseline
+
 class PQRSTAnalyzer:
     """Analyze ECG signal to detect P, Q, R, S, T waves and calculate metrics"""
     
@@ -970,7 +972,7 @@ class ExpandedLeadView(QDialog):
             
             if len(self.ecg_data) > 0:
                 # Extract low-frequency baseline estimate (removes respiration 0.1-0.35 Hz)
-                baseline_estimate = self._extract_low_frequency_baseline(self.ecg_data, self.sampling_rate)
+                baseline_estimate = extract_low_frequency_baseline(self.ecg_data, self.sampling_rate)
                 
                 # Update anchor with slow EMA (tracks only very-low-frequency drift)
                 self._baseline_anchor = (1 - self._baseline_alpha_slow) * self._baseline_anchor + self._baseline_alpha_slow * baseline_estimate

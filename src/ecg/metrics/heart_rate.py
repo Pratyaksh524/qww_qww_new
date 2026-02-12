@@ -104,7 +104,7 @@ def calculate_heart_rate_from_signal(lead_data, sampling_rate=None, sampler=None
             peaks_conservative, _ = find_peaks(
                 filtered_signal,
                 height=height_threshold,
-                distance=int(0.4 * fs),  # 400ms
+                distance=int(0.35 * fs),  # 350ms (allows ~170 BPM max, filters noise better)
                 prominence=prominence_threshold
             )
             if len(peaks_conservative) >= 2:
@@ -119,7 +119,7 @@ def calculate_heart_rate_from_signal(lead_data, sampling_rate=None, sampler=None
             peaks_normal, _ = find_peaks(
                 filtered_signal,
                 height=height_threshold,
-                distance=int(0.3 * fs),  # 240ms
+                distance=int(0.22 * fs),  # 220ms (allows ~270 BPM max)
                 prominence=prominence_threshold
             )
             if len(peaks_normal) >= 2:
@@ -134,7 +134,7 @@ def calculate_heart_rate_from_signal(lead_data, sampling_rate=None, sampler=None
             peaks_tight, _ = find_peaks(
                 filtered_signal,
                 height=height_threshold,
-                distance=int(0.2 * fs),  # 160ms
+                distance=int(0.12 * fs),  # 120ms (allows ~500 BPM max)
                 prominence=prominence_threshold
             )
             if len(peaks_tight) >= 2:
@@ -146,9 +146,36 @@ def calculate_heart_rate_from_signal(lead_data, sampling_rate=None, sampler=None
                     detection_results.append(('tight', peaks_tight, bpm_tight, std_tight))
             
             # Select based on BPM consistency (lowest std deviation = most stable)
+            # ENHANCED SELECTION LOGIC: Prefer higher valid rates to avoid aliasing (harmonics)
+            # If a faster strategy finds ~2x or ~1.5x the rate of a slower one, it's likely the real rate
+            # unless the faster one is very unstable.
             if detection_results:
-                detection_results.sort(key=lambda x: x[3])  # Sort by std
-                best_method, peaks, best_bpm, best_std = detection_results[0]
+                # Sort by BPM descending first to check fastest valid rates
+                detection_results.sort(key=lambda x: x[2], reverse=True)
+                
+                best_candidate = None
+                
+                # Check candidates from fastest to slowest
+                for i in range(len(detection_results)):
+                    method, peaks, bpm, std = detection_results[i]
+                    
+                    # 1. Stability Check: If std dev is high (>10% of BPM or >15), it's likely noise
+                    if std > 15 or std > (bpm * 0.15):
+                        continue
+                        
+                    # 2. Harmonics Check: Compare with slower reliable strategies
+                    # If this is the fastest strategy, accept it if it's stable
+                    if best_candidate is None:
+                        best_candidate = detection_results[i]
+                        continue
+                        
+                # If we found a stable candidate, use it
+                if best_candidate:
+                     best_method, peaks, best_bpm, best_std = best_candidate
+                else:
+                    # Fallback: Sort by stability (original logic) if no high-rate candidate is stable
+                    detection_results.sort(key=lambda x: x[3])
+                    best_method, peaks, best_bpm, best_std = detection_results[0]
             else:
                 # Fallback - use conservative distance
                 peaks, _ = find_peaks(
