@@ -5746,29 +5746,28 @@ class ECGTestPage(QWidget):
             # Keep start_time so we can resume from this point
 
         # --- Calculate and update metrics on dashboard ---
-        if hasattr(self, 'dashboard_callback'):
-            # Get Lead II data (index 1 in the 12-lead array)
-            lead2_data = self.data[1][-500:] if len(self.data) > 1 else []
-            lead_I_data = self.data[0][-500:] if len(self.data) > 0 else []  # Lead I (index 0)
-            lead_aVF_data = self.data[5][-500:] if len(self.data) > 5 else []  # Lead aVF (index 5)
-            heart_rate = None
-            pr_interval = None
-            qrs_duration = None
-            qt_interval = None
-            qtc_interval = None
-            st_segment = "--"
-            # Fixed Bug PR-1: Use centralized metrics instead of legacy inline calculation
-            # Use data already calculated and displayed on the screen
-            from .ui.display_updates import get_current_metrics_from_labels
-            current_metrics = get_current_metrics_from_labels(getattr(self, 'metric_labels', {}))
-            
-            self.dashboard_callback({
-                'heart_rate': current_metrics.get('heart_rate'),
-                'pr_interval': current_metrics.get('pr_interval'),
-                'qrs_duration': current_metrics.get('qrs_duration'),
-                'qtc_interval': current_metrics.get('qtc_interval'),
-                'st_interval': current_metrics.get('st_interval')
-            })
+        try:
+            if hasattr(self, 'dashboard_callback'):
+                # Fixed Bug: get_current_metrics_from_labels requires (metric_labels, data, last_heart_rate, sampler)
+                # However, display_updates.py shows it actually needs (metric_labels, data, last_heart_rate=None, sampler=None)
+                from .ui.display_updates import get_current_metrics_from_labels
+                
+                # Use data from the screen if possible, with safety fallbacks
+                current_metrics = get_current_metrics_from_labels(
+                    getattr(self, 'metric_labels', {}),
+                    getattr(self, 'data', []),
+                    sampler=getattr(self, 'sampler', None)
+                )
+                
+                self.dashboard_callback({
+                    'heart_rate': current_metrics.get('heart_rate'),
+                    'pr_interval': current_metrics.get('pr_interval'),
+                    'qrs_duration': current_metrics.get('qrs_duration'),
+                    'qtc_interval': current_metrics.get('qtc_interval'),
+                    'st_interval': current_metrics.get('st_interval')
+                })
+        except Exception as e:
+            print(f"⚠️ Error updating dashboard metrics during stop: {e}")
         
         # Re-enable demo mode when hardware acquisition stops
         try:

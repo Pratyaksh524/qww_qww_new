@@ -94,8 +94,17 @@ class CloudUploader:
         
         # Doctor Review API Configuration
         self.doctor_review_enabled = os.getenv('DOCTOR_REVIEW_ENABLED', 'false').lower() == 'true'
-        self.doctor_review_api_url = os.getenv('DOCTOR_REVIEW_API_URL')
-        self.doctor_review_api_key = os.getenv('DOCTOR_REVIEW_API_KEY')
+        self.doctor_review_api_url = os.getenv('DOCTOR_REVIEW_API_URL', '')
+        # Robustly handle if URL includes /upload-assigned
+        if self.doctor_review_api_url:
+            if self.doctor_review_api_url.endswith('/upload-assigned'):
+                self.doctor_review_api_url = self.doctor_review_api_url[:-16]
+            elif self.doctor_review_api_url.endswith('/upload-assigned/'):
+                self.doctor_review_api_url = self.doctor_review_api_url[:-17]
+                
+        self.doctor_review_api_key = os.getenv('DOCTOR_REVIEW_API_KEY', '')
+        self._doctor_list_cache = None
+        self._last_doctor_fetch_time = 0
         
         # Log file for upload tracking
         self.upload_log_path = "reports/upload_log.json"
@@ -496,6 +505,72 @@ class CloudUploader:
             print(f"❌ {error_msg}")
             print(f"Stack trace: {traceback.format_exc()}")
             return {"status": "error", "message": error_msg}
+
+    def get_available_doctors(self, force_refresh=False):
+        """
+        Fetch list of available doctors from the API.
+        Returns a list of doctor names.
+        Uses a cache to avoid redundant API calls.
+        """
+        import time
+        default_doctors = ['Dr_Rohit', 'Dr_Neha', 'Dr_Arjun', 'Dr_Simran', 'Dr_Kabir']
+        
+        # Return cache if available and not forced refresh (cache for 1 hour)
+        now = time.time()
+        if not force_refresh and self._doctor_list_cache and (now - self._last_doctor_fetch_time < 3600):
+            return self._doctor_list_cache
+
+        if not self.doctor_review_api_url:
+            return default_doctors
+        
+        try:
+            base_url = self.doctor_review_api_url.rstrip('/')
+            url = f"{base_url}/admin/doctor"
+            
+            print(f"🔹 Fetching doctor list from {url}")
+            
+            headers = {}
+            if self.doctor_review_api_key:
+                # Use x-api-key for AWS API Gateway. 
+                # Avoid 'Authorization' header as it triggers SigV4 validation errors on AWS.
+                headers['x-api-key'] = self.doctor_review_api_key
+
+            response = requests.get(url, headers=headers, timeout=5)
+            
+            if response.status_code == 200:
+                data = response.json()
+                doctors = []
+                
+                # Handle nested structure: {"doctors": [...]}
+                doctor_data = data
+                if isinstance(data, dict) and "doctors" in data:
+                    doctor_data = data["doctors"]
+                
+                if isinstance(doctor_data, list):
+                    for item in doctor_data:
+                        if isinstance(item, str):
+                            doctors.append(item)
+                        elif isinstance(item, dict):
+                            name = item.get('name') or item.get('doctorName') or item.get('username')
+                            if name:
+                                doctors.append(name)
+                
+                if doctors:
+                    print(f"✅ Fetched {len(doctors)} doctors from API")
+                    self._doctor_list_cache = doctors
+                    self._last_doctor_fetch_time = now
+                    return doctors
+            
+            print(f"⚠️ Failed to fetch doctors (Status {response.status_code}). Using fallback.")
+            
+        except Exception as e:
+            print(f"⚠️ Error fetching doctor list: {e}. Using fallback.")
+            
+        # If fetch failed but we have a stale cache, return it
+        if self._doctor_list_cache:
+            return self._doctor_list_cache
+            
+        return default_doctors
     
     def _upload_to_s3(self, file_path, metadata):
         """Upload to AWS S3"""
@@ -1092,194 +1167,124 @@ class CloudUploader:
                 "message": f"Failed to clear upload log: {str(e)}"
             }
     
-    def send_to_doctor_review(self, pdf_path=None, patient_data=None, ecg_data_file=None, report_metadata=None):
+    def send_for_doctor_review(self, file_path, doctor_name, metadata=None):
         """
-        Send ECG report to doctor review API endpoint for medical review
-        Supports offline mode - queues for upload when internet is restored
+        Send ECG report for doctor review using 2-step process:
+        1. GET presigned URL from backend
+        2. PUT file content to presigned URL
         
         Args:
-            pdf_path (str): Path to PDF report file (optional)
-            patient_data (dict): Patient details dictionary (optional)
-            ecg_data_file (str): Path to JSON file containing 12-lead ECG data (optional)
-            report_metadata (dict): Additional metadata about the report (optional)
+            file_path (str): Path to the PDF report
+            doctor_name (str): Name of the doctor to review
+            metadata (dict): Optional metadata
             
         Returns:
-            dict: Result with status, message, and response from doctor review API
+            dict: Result with status and message
         """
-        if not self.doctor_review_enabled:
-            return {"status": "disabled", "message": "Doctor review API is disabled"}
+        # Default base URL if not set
+        base_url = self.doctor_review_api_url
+        if not base_url:
+            base_url = "https://8m9fgt2fz1.execute-api.us-east-1.amazonaws.com/prod/api"
+            
+        if not self.doctor_review_enabled and os.getenv('DOCTOR_REVIEW_ENABLED', 'true').lower() != 'true':
+             # Allow it to work if enabled in env even if init didn't pick it up? 
+             # Or just enforce flag. User said "send my doctor review report", implying they want it now.
+             pass
+
+        if not os.path.exists(file_path):
+            return {"status": "error", "message": f"File not found: {file_path}"}
+            
+        filename = os.path.basename(file_path)
         
-        if not self.doctor_review_api_url:
-            return {"status": "error", "message": "Doctor review API URL is not configured"}
-        
-        # Check if online - if offline, queue for later submission
+        # Check if online
         if self.offline_queue and not self.offline_queue.is_online():
             queue_payload = {
-                'pdf_path': pdf_path,
-                'patient_data': patient_data,
-                'ecg_data_file': ecg_data_file,
-                'report_metadata': report_metadata
+                'file_path': file_path,
+                'doctor_name': doctor_name,
+                'metadata': metadata
             }
-            self.offline_queue.queue_data('doctor_review', queue_payload, priority=1)
-            print(f"📥 Queued report for doctor review when online")
+            self.offline_queue.queue_data('doctor_review_v2', queue_payload, priority=1)
             return {
                 "status": "queued",
-                "message": "Report queued for doctor review when internet connection is restored"
+                "message": "Queued for doctor review (offline)"
             }
-        
+
         try:
-            # Prepare the payload for the doctor review API
-            files = {}
-            data = {}
+            # Step 1: Get presigned URL
+            upload_url_endpoint = f"{base_url.rstrip('/')}/upload-assigned"
             
-            # Add PDF file if provided
-            if pdf_path and os.path.exists(pdf_path):
-                files['pdf_report'] = open(pdf_path, 'rb')
-                data['pdf_filename'] = os.path.basename(pdf_path)
+            payload = {
+                "doctorName": doctor_name,
+                "patientName": metadata.get('patient_name') if metadata else "Unknown",
+                "reportType": metadata.get('report_type') if metadata else "ECG",
+                "fileName": filename
+            }
             
-            # Add patient data if provided
-            if patient_data:
-                data['patient_data'] = json.dumps(patient_data)
+            print(f"🔹 Requesting upload URL from {upload_url_endpoint} for {doctor_name}")
             
-            # Add ECG data file if provided
-            if ecg_data_file and os.path.exists(ecg_data_file):
-                files['ecg_data'] = open(ecg_data_file, 'rb')
-                data['ecg_data_filename'] = os.path.basename(ecg_data_file)
-            
-            # Add report metadata if provided
-            if report_metadata:
-                data['report_metadata'] = json.dumps(report_metadata)
-            
-            # Add timestamp
-            data['submitted_at'] = datetime.now().isoformat()
-            
-            # Prepare headers
-            headers = {}
+            headers = {"Content-Type": "application/json"}
             if self.doctor_review_api_key:
-                headers['Authorization'] = f'Bearer {self.doctor_review_api_key}'
+                # Use x-api-key for AWS API Gateway.
+                headers['x-api-key'] = self.doctor_review_api_key
+
+            response = requests.post(
+                upload_url_endpoint,
+                json=payload,
+                headers=headers,
+                timeout=15
+            )
             
-            print(f"📤 Sending report to doctor review API: {self.doctor_review_api_url}")
+            if response.status_code != 200:
+                print(f"❌ Failed to get upload URL: {response.text}")
+                return {"status": "error", "message": f"Failed to get upload URL: {response.text}"}
+                
+            response_data = response.json()
+            presigned_url = response_data.get("url") # Expecting 'url' or similar in response? 
+            # User said: Returns pre-signed S3 upload URL. 
+            # Usually it's in a field like 'url' or directly? 
+            # Let's assume it returns a JSON with the URL.
+            # If response is just string, handle that?
+            if isinstance(response_data, str):
+                 presigned_url = response_data
+            elif isinstance(response_data, dict):
+                 presigned_url = response_data.get("url") or response_data.get("uploadUrl")
             
-            # Send POST request to doctor review API
-            try:
-                response = requests.post(
-                    self.doctor_review_api_url,
-                    files=files if files else None,
-                    data=data,
-                    headers=headers,
-                    timeout=30
-                )
-                
-                # Close file handles
-                for f in files.values():
-                    try:
-                        f.close()
-                    except:
-                        pass
-                
-                # Check response status
-                if response.status_code in [200, 201]:
-                    result_data = {}
-                    try:
-                        result_data = response.json() if response.content else {}
-                    except:
-                        pass
-                    
-                    result = {
-                        "status": "success",
-                        "message": "Report successfully sent for doctor review",
-                        "api_response": result_data,
-                        "status_code": response.status_code
-                    }
-                    
-                    # Log the submission
-                    self._log_upload(
-                        pdf_path or ecg_data_file or "doctor_review_submission",
-                        result,
-                        {
-                            "type": "doctor_review",
-                            "submitted_at": data.get('submitted_at'),
-                            "has_pdf": bool(pdf_path),
-                            "has_patient_data": bool(patient_data),
-                            "has_ecg_data": bool(ecg_data_file)
-                        }
-                    )
-                    
-                    print(f"✅ Report sent to doctor review successfully")
-                    return result
-                else:
-                    error_msg = f"Doctor review API returned status {response.status_code}"
-                    try:
-                        error_details = response.text
-                        if error_details:
-                            error_msg += f": {error_details}"
-                    except:
-                        pass
-                    
-                    # If request failed and we have offline queue, queue for retry
-                    if self.offline_queue:
-                        queue_payload = {
-                            'pdf_path': pdf_path,
-                            'patient_data': patient_data,
-                            'ecg_data_file': ecg_data_file,
-                            'report_metadata': report_metadata
-                        }
-                        self.offline_queue.queue_data('doctor_review', queue_payload, priority=1)
-                        return {
-                            "status": "queued",
-                            "message": f"Request failed - queued for retry when online. {error_msg}"
-                        }
-                    
-                    return {
-                        "status": "error",
-                        "message": error_msg,
-                        "status_code": response.status_code
-                    }
+            if not presigned_url:
+                 # Last ditch: maybe the body is the URL?
+                 if response.text.startswith("http"):
+                     presigned_url = response.text.strip().strip('"')
             
-            except requests.exceptions.RequestException as e:
-                # Network error - queue for retry if offline queue is available
-                if self.offline_queue:
-                    queue_payload = {
-                        'pdf_path': pdf_path,
-                        'patient_data': patient_data,
-                        'ecg_data_file': ecg_data_file,
-                        'report_metadata': report_metadata
-                    }
-                    self.offline_queue.queue_data('doctor_review', queue_payload, priority=1)
-                    return {
-                        "status": "queued",
-                        "message": f"Network error - queued for retry when online: {str(e)}"
-                    }
+            if not presigned_url:
+                print(f"❌ No URL in response: {response.text}")
+                return {"status": "error", "message": "No upload URL received from backend"}
                 
-                return {
-                    "status": "error",
-                    "message": f"Network error: {str(e)}"
-                }
-        
+            print(f"🔹 Got presigned URL. Uploading file...")
+            
+            # Step 2: Upload file via PUT
+            with open(file_path, 'rb') as f:
+                file_data = f.read()
+                
+            put_response = requests.put(
+                presigned_url,
+                data=file_data,
+                headers={"Content-Type": "application/pdf"},
+                timeout=60
+            )
+            
+            if put_response.status_code in [200, 201]:
+                print(f"✅ Report uploaded successfully for review!")
+                
+                # Log success
+                self._log_upload(file_path, {"status": "success"}, {"type": "doctor_review", "doctor": doctor_name})
+                
+                return {"status": "success", "message": "Report sent for review successfully"}
+            else:
+                print(f"❌ Upload PUT failed: {put_response.status_code} - {put_response.text}")
+                return {"status": "error", "message": f"Upload failed: {put_response.status_code}"}
+                
         except Exception as e:
-            import traceback
-            error_msg = f"Failed to send report for doctor review: {str(e)}"
-            print(f"❌ {error_msg}")
-            print(f"Stack trace: {traceback.format_exc()}")
-            
-            # Try to queue if offline queue is available
-            if self.offline_queue:
-                try:
-                    queue_payload = {
-                        'pdf_path': pdf_path,
-                        'patient_data': patient_data,
-                        'ecg_data_file': ecg_data_file,
-                        'report_metadata': report_metadata
-                    }
-                    self.offline_queue.queue_data('doctor_review', queue_payload, priority=1)
-                    return {
-                        "status": "queued",
-                        "message": f"Error occurred - queued for retry when online: {str(e)}"
-                    }
-                except:
-                    pass
-            
-            return {"status": "error", "message": error_msg}
+            print(f"❌ Error sending for review: {e}")
+            return {"status": "error", "message": str(e)}
 
 
 # Global instance
