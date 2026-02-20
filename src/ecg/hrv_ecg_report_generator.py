@@ -3354,6 +3354,21 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
         print(f"   📏 Notch: Width={notch_width_mm}mm, Height={notch_height_mm}mm (1mV @ {wave_gain_mm_mv}mm/mV)")
         print(f"   🔗 Connection line: {connection_distance_mm:.2f}mm from notch end to ECG start")
         print(f"   📍 Positions: Notch@{notch_x:.2f}pt → ECG@{x_pos:.2f}pt")
+
+        from reportlab.graphics.shapes import String as TextString
+        minute_labels = ["(First minute)", "(Second minute)", "(Third minute)", "(Fourth minute)", "(Fifth minute)"]
+        if 0 <= segment_idx < len(minute_labels):
+            label_text = f"Lead {selected_lead}{minute_labels[segment_idx]}"
+            label_y = notch_y_base + notch_height + 20
+            label = TextString(
+                notch_x,
+                label_y,
+                label_text,
+                fontSize=9,
+                fontName="Helvetica-Bold",
+                fillColor=colors.black,
+            )
+            master_drawing.add(label)
         
         if len(segment_data) == 0:
             print(f"⚠️ No data for Strip {segment_idx + 1} - Calibration notch added anyway")
@@ -3440,6 +3455,7 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
     
     # ==================== ADD PATIENT INFO TO PAGE 2 (LANDSCAPE MODE - POSITIONED PROPERLY) ====================
     
+    lead_label_value = selected_lead if selected_lead else "--"
     # LEFT SIDE: Patient Info (SHIFTED LEFT + UP)
     patient_name_label = String(-15, 545, f"Name: {full_name}",  # Shifted UP: 535 → 545
                                 fontSize=10, fontName="Helvetica", fillColor=colors.black)
@@ -3452,6 +3468,9 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
     patient_gender_label = String(-15, 505, f"Gender: {gender}",  # Shifted UP: 495 → 505
                                   fontSize=10, fontName="Helvetica", fillColor=colors.black)
     master_drawing.add(patient_gender_label)
+    patient_lead_label_landscape = String(-15, 485, f"Lead: {lead_label_value}",
+                                          fontSize=10, fontName="Helvetica-Bold", fillColor=colors.black)
+    master_drawing.add(patient_lead_label_landscape)
     
     # RIGHT SIDE: Date/Time (shifted UP by 20 points - aligned with patient info)
     if date_time_str:
@@ -3470,11 +3489,10 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
     master_drawing.add(time_label)
     
     # ==================== VITAL PARAMETERS (LANDSCAPE MODE - 2 COLUMNS SIDE BY SIDE) ====================
-    # Page 1 vitals: Use arithmetic averages from per-minute values (chart-aligned)
-    # RR_top = average of minute RR values
-    # HR_top = average of minute HR values derived from RR (60000/RR_i)
-    # If no valid HRV data (no RR intervals), force all vitals to zero
-    if 'rr_all_for_hrv' in locals() and isinstance(rr_all_for_hrv, list) and len(rr_all_for_hrv) <= 2:
+    has_rr_array = 'rr_all_for_hrv' in locals() and isinstance(rr_all_for_hrv, list) and len(rr_all_for_hrv) > 2
+    has_avg_rr = 'avg_rr_per_minute' in locals() and isinstance(avg_rr_per_minute, list) and len(avg_rr_per_minute) > 0
+
+    if not has_rr_array and not has_avg_rr:
         HR = 0
         RR = 0
         PR = 0
@@ -3482,35 +3500,15 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
         QT = 0
         QTc = 0
         ST = 0
-        print("⚠️ Page 1 (ECG waves): No valid HRV data detected, all vitals set to 0")
-    elif 'original_metrics_from_json' in locals() and original_metrics_from_json:
-        PR = original_metrics_from_json.get('PR', 0)
-        QRS = original_metrics_from_json.get('QRS', 0)
-        QT = original_metrics_from_json.get('QT', 0)
-        QTc = original_metrics_from_json.get('QTc', 0)
-        ST = original_metrics_from_json.get('ST', 0)
-        
-        if 'avg_rr_per_minute' in locals() and isinstance(avg_rr_per_minute, list) and len(avg_rr_per_minute) > 0:
-            rr_count = len(avg_rr_per_minute)
-            rr_avg_float = (sum(avg_rr_per_minute) / rr_count)
-            rr_decimal = rr_avg_float - int(rr_avg_float)
-            RR = int(rr_avg_float) + 1 if rr_decimal >= 0.50 else int(rr_avg_float)
-            hr_values = [60000 / r for r in avg_rr_per_minute if r and r > 0]
-            HR = int(round(sum(hr_values) / len(hr_values))) if len(hr_values) > 0 else original_metrics_from_json.get('HR', 0)
-        else:
-            HR = original_metrics_from_json.get('HR', 0)
-            RR = original_metrics_from_json.get('RR_ms', int(60000 / HR) if HR else 0)
-        
-        print(f"📊 Page 1 (ECG waves): HR={HR} bpm (arithmetic avg of per-minute HR)")
-        print(f"   RR={RR} ms (arithmetic avg of per-minute RR)")
-        print(f"   Other metrics from metrics.json: PR={PR}, QRS={QRS}, QT={QT}, QTc={QTc}, ST={ST}")
+        rr_avg_for_report = 0
+        print("⚠️ Page 1 (ECG waves): No valid HRV data detected, all vitals forced to 0")
     else:
         PR = data.get('PR', 0)
         QRS = data.get('QRS', 0)
         QT = data.get('QT', 0)
         QTc = data.get('QTc', 0)
         ST = data.get('ST', 0)
-        if 'avg_rr_per_minute' in locals() and isinstance(avg_rr_per_minute, list) and len(avg_rr_per_minute) > 0:
+        if has_avg_rr:
             rr_count = len(avg_rr_per_minute)
             rr_avg_float = (sum(avg_rr_per_minute) / rr_count)
             rr_decimal = rr_avg_float - int(rr_avg_float)
@@ -3520,7 +3518,8 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
         else:
             HR = data.get('HR_avg', 0)
             RR = int(60000 / HR) if HR and HR > 0 else 0
-        print(f"⚠️ Page 1 (ECG waves): Using arithmetic averages - HR={HR} bpm, RR={RR} ms")
+        rr_avg_for_report = RR
+        print(f"⚠️ Page 1 (ECG waves): Using HRV averages - HR={HR} bpm, RR={RR} ms")
     
     # LEFT COLUMN (130, y) - HR, PR, QRS, RR (SHIFTED UP BY 20 POINTS)
     _add_label_column(
@@ -4365,19 +4364,22 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
         if 'sdann' not in locals():
             sdann = None
         
-        # Save metrics.json with HRV-specific HR_bpm (5 minutes average)
-        # HR_bpm will be the HRV-specific average, which will be picked up for future reports
+        # Save HRV-specific metrics in a separate hrv_metric.json file
+        # HR_bpm will be the HRV-specific average (5 minutes)
         hrv_hr_bpm = hrv_specific_bpm if 'hrv_specific_bpm' in locals() else 0
-        hrv_rr_ms = int(60000 / hrv_hr_bpm) if hrv_hr_bpm > 0 else 0
+        if 'rr_avg_for_report' in locals():
+            hrv_rr_ms = rr_avg_for_report
+        else:
+            hrv_rr_ms = int(60000 / hrv_hr_bpm) if hrv_hr_bpm > 0 else 0
         
         metrics_entry = {
             "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             "file": os.path.abspath(filename),
             "HR_bpm": hrv_hr_bpm,  # HRV-specific 5 minutes average (main value)
-            "PR_ms": original_metrics_from_json.get("PR", 0),
-            "QRS_ms": original_metrics_from_json.get("QRS", 0),
-            "QT_ms": original_metrics_from_json.get("QT", 0),
-            "QTc_ms": original_metrics_from_json.get("QTc", 0),
+            "PR_ms": data.get("PR", 0),
+            "QRS_ms": data.get("QRS", 0),
+            "QT_ms": data.get("QT", 0),
+            "QTc_ms": data.get("QTc", 0),
             "ST_ms": original_metrics_from_json.get("ST", 0),
             "RR_ms": hrv_rr_ms,  # Calculated from HRV-specific HR
             # Additional HRV-specific metrics
@@ -4390,10 +4392,11 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
             "Original_HR_bpm": original_metrics_from_json.get("HR", 0),  # 12-lead ECG HR (for reference)
         }
         
+        hrv_metrics_path = os.path.join(reports_dir, 'hrv_metric.json')
         metrics_list = []
-        if os.path.exists(metrics_path):
+        if os.path.exists(hrv_metrics_path):
             try:
-                with open(metrics_path, 'r') as f:
+                with open(hrv_metrics_path, 'r') as f:
                     mj = json.load(f)
                     if isinstance(mj, list):
                         metrics_list = mj
@@ -4402,9 +4405,9 @@ def generate_hrv_ecg_report(filename="hrv_ecg_report.pdf", captured_data=None, d
         
         metrics_list.append(metrics_entry)
         
-        with open(metrics_path, 'w') as f:
+        with open(hrv_metrics_path, 'w') as f:
             json.dump(metrics_list, f, indent=2)
-        print(f"✅ Saved metrics to {metrics_path}")
+        print(f"✅ Saved HRV metrics to {hrv_metrics_path}")
         print(f"   HR_bpm: {metrics_entry['HR_bpm']} bpm (HRV-specific, 5 minutes average) ← Main value")
         print(f"   RR_ms: {metrics_entry['RR_ms']} ms (calculated from HRV HR)")
         print(f"   Original_HR_bpm: {metrics_entry.get('Original_HR_bpm', 0)} bpm (12-lead ECG, for reference)")

@@ -22,6 +22,7 @@ ECG_LARGE_BOX_MM = 210.0 / 40.0
 ECG_SMALL_BOX_MM = ECG_LARGE_BOX_MM / 5.0
 # Scale wave speed so 1 second equals 5 large boxes at 25 mm/s on 40-box grid
 ECG_SPEED_SCALE = ECG_LARGE_BOX_MM / ECG_BASE_BOX_MM
+FIXED_SAMPLES_PER_LEAD = 3500
 
 # ------------------------ Resource path helper for PyInstaller compatibility ------------------------
 
@@ -564,31 +565,23 @@ def capture_real_ecg_graphs_from_dashboard(dashboard_instance=None, ecg_test_pag
                 except Exception as e:
                     print(f" Could not get demo time window: {e}")
                     time_window_seconds = None
-    # Try to get REAL ECG data from the test page
     real_ecg_data = {}
-    if ecg_test_page and hasattr(ecg_test_page, 'data'):
-        
-        # Calculate number of samples to capture based on demo mode
+    if ecg_test_page and hasattr(ecg_test_page, "data"):
         if is_demo_mode and time_window_seconds is not None:
-            # In demo mode: only capture data visible in one window frame
             num_samples_to_capture = int(time_window_seconds * samples_per_second)
             print(f" DEMO MODE: Capturing only {num_samples_to_capture} samples ({time_window_seconds}s window)")
         else:
-            # Normal mode: capture maximum data (10 seconds or 10000 points, whichever is smaller)
             num_samples_to_capture = 10000
             print(f" NORMAL MODE: Capturing up to {num_samples_to_capture} samples")
         
         for lead in ordered_leads:
             if lead == "-aVR":
-                # For -aVR, we need to invert aVR data
-                if hasattr(ecg_test_page, 'data') and len(ecg_test_page.data) > 3:
-                    avr_data = np.array(ecg_test_page.data[3])  # aVR is at index 3
+                if hasattr(ecg_test_page, "data") and len(ecg_test_page.data) > 3:
+                    avr_data = np.array(ecg_test_page.data[3])
                     if is_demo_mode and time_window_seconds is not None:
-                        # Demo mode: only capture window frame data
                         real_ecg_data[lead] = -avr_data[-num_samples_to_capture:]
                         print(f" Captured DEMO -aVR data: {len(real_ecg_data[lead])} points ({time_window_seconds}s window)")
                     else:
-                        # Normal mode: capture maximum data
                         real_ecg_data[lead] = -avr_data[-num_samples_to_capture:]
                         print(f" Captured REAL -aVR data: {len(real_ecg_data[lead])} points")
             else:
@@ -597,11 +590,9 @@ def capture_real_ecg_graphs_from_dashboard(dashboard_instance=None, ecg_test_pag
                     lead_data = np.array(ecg_test_page.data[lead_index])
                     if len(lead_data) > 0:
                         if is_demo_mode and time_window_seconds is not None:
-                            # Demo mode: only capture window frame data
                             real_ecg_data[lead] = lead_data[-num_samples_to_capture:]
                             print(f" Captured DEMO {lead} data: {len(real_ecg_data[lead])} points ({time_window_seconds}s window)")
                         else:
-                            # Normal mode: capture maximum data
                             real_ecg_data[lead] = lead_data[-num_samples_to_capture:]
                             print(f" Captured REAL {lead} data: {len(real_ecg_data[lead])} points")
                     else:
@@ -1309,13 +1300,13 @@ def generate_ecg_report(
     date_time_str = patient.get("date_time", "")
 
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
     QTcF = data.get('QTc_Fridericia') or data.get('QTcF') or 0
-    ST = data.get('ST', 114)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
 
@@ -1425,35 +1416,21 @@ def generate_ecg_report(
         else:
             print(f" Report Generator: Demo mode is OFF")
     
-    # Calculate number of samples to capture based on demo mode OR BPM + wave_speed
-    calculated_time_window = None  # Initialize for use in data loading section
-    if is_demo_mode and time_window_seconds is not None:
-        # In demo mode: only capture data visible in one window frame
-        calculated_time_window = time_window_seconds
-        num_samples_to_capture = int(time_window_seconds * samples_per_second)
-        print(f" DEMO MODE: Master drawing will capture only {num_samples_to_capture} samples ({time_window_seconds}s window)")
-    else:
-        # Normal mode: Calculate time window based on wave_speed ONLY (NEW LOGIC)
-        # This ensures proper number of beats are displayed based on graph width
-        # Formula: 
-        #   - Time window = 165mm / wave_speed ONLY (33 boxes × 5mm = 165mm)
-        #   - BPM window is NOT used - only wave speed determines time window
-        #   - Beats = (BPM / 60) × time_window
-        #   - Maximum clamp: 20 seconds (NO minimum clamp)
-        calculated_time_window, _ = calculate_time_window_from_bpm_and_wave_speed(
-            hr_bpm_value,  # From metrics.json (priority) - for calculation-based beats
-            wave_speed_mm_s,  # From ecg_settings.json - for calculation-based beats
-            desired_beats=6  # Default: 6 beats desired
+    # Calculate number of samples to capture
+    calculated_time_window = None
+    if is_demo_mode:
+        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
+        computed_sampling_rate = 500
+        calculated_time_window = num_samples_to_capture / float(computed_sampling_rate)
+        print(
+            f" DEMO MODE: Using fixed {num_samples_to_capture} samples at "
+            f"{computed_sampling_rate}Hz (~{calculated_time_window:.2f}s, ~7 beats at 60 BPM)"
         )
-        
-        # Recalculate with actual sampling rate
-        num_samples_to_capture = int(calculated_time_window * computed_sampling_rate)
-        print(f" NORMAL MODE: Calculated time window: {calculated_time_window:.2f}s")
-        print(f"   Based on BPM={hr_bpm_value} and wave_speed={wave_speed_mm_s}mm/s")
-        print(f"   Will capture {num_samples_to_capture} samples (at {computed_sampling_rate}Hz)")
-        if hr_bpm_value > 0:
-            expected_beats = int((calculated_time_window * hr_bpm_value) / 60)
-            print(f"   Expected beats shown: ~{expected_beats} beats")
+    else:
+        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
+        calculated_time_window = num_samples_to_capture / max(1e-6, computed_sampling_rate)
+        print(f" NORMAL MODE: Using fixed samples per lead: {num_samples_to_capture}")
+        print(f"   Effective time window: {calculated_time_window:.2f}s at sampling rate {computed_sampling_rate}Hz")
     
     for pos_info in lead_positions:
         lead = pos_info['lead']
@@ -1526,12 +1503,12 @@ def generate_ecg_report(
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT', )
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    
@@ -1625,35 +1602,21 @@ def generate_ecg_report(
         else:
             print(f" Report Generator: Demo mode is OFF")
     
-    # Calculate number of samples to capture based on demo mode OR BPM + wave_speed
-    calculated_time_window = None  # Initialize for use in data loading section
-    if is_demo_mode and time_window_seconds is not None:
-        # In demo mode: only capture data visible in one window frame
-        calculated_time_window = time_window_seconds
-        num_samples_to_capture = int(time_window_seconds * samples_per_second)
-        print(f" DEMO MODE: Master drawing will capture only {num_samples_to_capture} samples ({time_window_seconds}s window)")
-    else:
-        # Normal mode: Calculate time window based on wave_speed ONLY (NEW LOGIC)
-        # This ensures proper number of beats are displayed based on graph width
-        # Formula: 
-        #   - Time window = 165mm / wave_speed ONLY (33 boxes × 5mm = 165mm)
-        #   - BPM window is NOT used - only wave speed determines time window
-        #   - Beats = (BPM / 60) × time_window
-        #   - Maximum clamp: 20 seconds (NO minimum clamp)
-        calculated_time_window, _ = calculate_time_window_from_bpm_and_wave_speed(
-            hr_bpm_value,  # From metrics.json (priority) - for calculation-based beats
-            wave_speed_mm_s,  # From ecg_settings.json - for calculation-based beats
-            desired_beats=6  # Default: 6 beats desired
+    # Calculate number of samples to capture
+    calculated_time_window = None
+    if is_demo_mode:
+        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
+        computed_sampling_rate = 500
+        calculated_time_window = num_samples_to_capture / float(computed_sampling_rate)
+        print(
+            f" DEMO MODE: Using fixed {num_samples_to_capture} samples at "
+            f"{computed_sampling_rate}Hz (~{calculated_time_window:.2f}s, ~7 beats at 60 BPM)"
         )
-        
-        # Recalculate with actual sampling rate
-        num_samples_to_capture = int(calculated_time_window * computed_sampling_rate)
-        print(f" NORMAL MODE: Calculated time window: {calculated_time_window:.2f}s")
-        print(f"   Based on BPM={hr_bpm_value} and wave_speed={wave_speed_mm_s}mm/s")
-        print(f"   Will capture {num_samples_to_capture} samples (at {computed_sampling_rate}Hz)")
-        if hr_bpm_value > 0:
-            expected_beats = int((calculated_time_window * hr_bpm_value) / 60)
-            print(f"   Expected beats shown: ~{expected_beats} beats")
+    else:
+        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
+        calculated_time_window = num_samples_to_capture / max(1e-6, computed_sampling_rate)
+        print(f" NORMAL MODE: Using fixed samples per lead: {num_samples_to_capture}")
+        print(f"   Effective time window: {calculated_time_window:.2f}s at sampling rate {computed_sampling_rate}Hz")
     
     for pos_info in lead_positions:
         lead = pos_info["lead"]
@@ -1896,12 +1859,10 @@ def generate_ecg_report(
                 
                 
                 
-                # Step 1: Convert ADC data to numpy array
                 adc_data = np.array(real_ecg_data, dtype=float)
 
-                # Step 1.1: Apply report filters (DFT -> EMG -> AC) on raw ADC data
                 try:
-                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
+                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter, apply_baseline_wander_median_mean
                     dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
                     emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
                     ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
@@ -1911,6 +1872,7 @@ def generate_ecg_report(
                         adc_data = apply_emg_filter(adc_data, float(computed_sampling_rate), emg_setting)
                     if ac_setting in ("50", "60"):
                         adc_data = apply_ac_filter(adc_data, float(computed_sampling_rate), ac_setting)
+                    adc_data = apply_baseline_wander_median_mean(adc_data, float(computed_sampling_rate))
                 except Exception as filter_err:
                     print(f" Report filter apply failed for {lead}: {filter_err}")
                 
@@ -2123,12 +2085,12 @@ def generate_ecg_report(
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    
@@ -2695,12 +2657,12 @@ def generate_ecg_report(
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    

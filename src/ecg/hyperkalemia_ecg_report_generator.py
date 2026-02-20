@@ -829,10 +829,7 @@ def get_dashboard_conclusions_from_image(dashboard_instance):
 
 
 def load_latest_metrics_entry(reports_dir):
-    """
-    Return the most recent metrics entry from reports/metrics.json, if available.
-    """
-    metrics_path = os.path.join(reports_dir, 'metrics.json')
+    metrics_path = os.path.join(reports_dir, 'hyper_metric.json')
     if not os.path.exists(metrics_path):
         return None
     try:
@@ -843,19 +840,20 @@ def load_latest_metrics_entry(reports_dir):
             return data[-1]
 
         if isinstance(data, dict):
-            # support older shape where 'entries' may list the items
             entries = data.get('entries')
             if isinstance(entries, list) and entries:
                 return entries[-1]
 
-            # if dict already looks like one entry, return it
             if data.get('timestamp'):
                 return data
     except Exception as e:
-        print(f" Could not read metrics file for HR: {e}")
+        print(f" Could not read hyper metrics file for HR: {e}")
 
     return None
 
+
+def load_latest_hyper_metrics_entry(reports_dir):
+    return load_latest_metrics_entry(reports_dir)
 def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, dashboard_instance=None, ecg_test_page=None, patient=None, ecg_data_file=None):
     """
     Generate ECG report PDF
@@ -914,37 +912,22 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
         except Exception:
             return default
 
-    # ==================== STEP 1: Get HR_bpm from metrics.json (PRIORITY) ====================
-    # Priority: metrics.json  latest HR_bpm  (calculation-based beats  )
+    # ==================== STEP 1: Get HR_bpm from Hyperkalemia metrics (PRIORITY) ====================
     latest_metrics = load_latest_metrics_entry(reports_dir)
     hr_bpm_value = 0
-    
-    # Priority 1: metrics.json  latest HR_bpm (CALCULATION-BASED BEATS   REQUIRED)
     if latest_metrics:
         hr_bpm_value = _safe_int(latest_metrics.get("HR_bpm"))
         if hr_bpm_value > 0:
-            print(f" Using HR_bpm from metrics.json: {hr_bpm_value} bpm (for calculation-based beats)")
-    
-    # Priority 2: Fallback to data parameter
-    if hr_bpm_value == 0:
-        hr_candidate = data.get("HR_bpm") or data.get("Heart_Rate") or data.get("HR")
-        hr_bpm_value = _safe_int(hr_candidate)
-        if hr_bpm_value > 0:
-            print(f" Using HR_bpm from data parameter: {hr_bpm_value} bpm")
-    
-    # Priority 3: Fallback to HR_avg
-    if hr_bpm_value == 0 and data.get("HR_avg"):
-        hr_bpm_value = _safe_int(data.get("HR_avg"))
-        if hr_bpm_value > 0:
-            print(f" Using HR_bpm from HR_avg: {hr_bpm_value} bpm")
+            print(f" Using HR_bpm from hyper_metric.json: {hr_bpm_value} bpm (for calculation-based beats)")
 
     data["HR_bpm"] = hr_bpm_value
     data["Heart_Rate"] = hr_bpm_value
     data["HR"] = hr_bpm_value
+    data["HR_avg"] = hr_bpm_value
     if hr_bpm_value > 0:
         data["RR_ms"] = int(60000 / hr_bpm_value)
     else:
-        data["RR_ms"] = data.get("RR_ms", 0)
+        data["RR_ms"] = 0
 
     # ==================== STEP 2: Get wave_speed from ecg_settings.json (PRIORITY) ====================
     # Priority: ecg_settings.json  wave_speed  (calculation-based beats  )
@@ -1395,12 +1378,12 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
     )
 
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT', )
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    
@@ -1938,7 +1921,7 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
         #   - Beats = (BPM / 60) × time_window
         #   - Maximum clamp: 20 seconds (NO minimum clamp)
         calculated_time_window, _ = calculate_time_window_from_bpm_and_wave_speed(
-            hr_bpm_value,  # From metrics.json (priority) - for calculation-based beats
+            hr_bpm_value,  # From hyper_metric.json (priority) - for calculation-based beats
             wave_speed_mm_s,  # From ecg_settings.json - for calculation-based beats
             desired_beats=6  # Default: 6 beats desired
         )
@@ -2295,15 +2278,14 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
     master_drawing.add(patient_gender_label)
     
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
-    # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
-    # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
-    RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
+    # Values come strictly from hyper_metric.json entry (or zero if not available)
+    HR = data.get('HR', 0)
+    PR = data.get('PR', 0)
+    QRS = data.get('QRS', 0)
+    QT = data.get('QT', 0)
+    QTc = data.get('QTc', 0)
+    ST = data.get('ST', 0)
+    RR = data.get('RR_ms', 0)
    
     # Add vital parameters in TWO COLUMNS (ABOVE ECG GRAPH - shifted further up)
     # FIRST COLUMN (Left side - x=130)
@@ -2718,7 +2700,7 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
         reports_dir = os.path.join(base_dir, 'reports')
         os.makedirs(reports_dir, exist_ok=True)
         index_path = os.path.join(reports_dir, 'index.json')
-        metrics_path = os.path.join(reports_dir, 'metrics.json')
+        metrics_path = os.path.join(reports_dir, 'hyper_metric.json')
 
         params_entry = {
             "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -2977,13 +2959,13 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
         except Exception:
             return default
     
-    # ==================== STEP 1: Get HR_bpm from metrics.json (PRIORITY) - SAME AS MAIN REPORT ====================
-    latest_metrics = load_latest_metrics_entry(reports_dir)
+    # ==================== STEP 1: Get HR_bpm from Hyperkalemia metrics (PRIORITY) - SAME AS MAIN REPORT ====================
+    latest_metrics = load_latest_hyper_metrics_entry(reports_dir)
     
     # If last entry has zero values, find last valid (non-zero) entry
     if latest_metrics and latest_metrics.get("HR_bpm", 0) == 0:
         try:
-            metrics_path = os.path.join(reports_dir, 'metrics.json')
+            metrics_path = os.path.join(reports_dir, 'hyper_metric.json')
             if os.path.exists(metrics_path):
                 with open(metrics_path, 'r') as f:
                     all_metrics = json.load(f)
@@ -2998,46 +2980,28 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
             print(f" Could not find last valid metric: {e}")
     
     hr_bpm_value = 0
-    
-    # Priority 1: metrics.json  latest HR_bpm
     if latest_metrics:
         hr_bpm_value = _safe_int(latest_metrics.get("HR_bpm"))
         if hr_bpm_value > 0:
-            print(f" Hyperkalemia Report: Using HR_bpm from metrics.json: {hr_bpm_value} bpm (timestamp: {latest_metrics.get('timestamp', 'N/A')})")
-    
-    # Priority 2: Fallback to data parameter
-    if hr_bpm_value == 0:
-        hr_candidate = data.get("HR_bpm") or data.get("Heart_Rate") or data.get("HR")
-        hr_bpm_value = _safe_int(hr_candidate)
-        if hr_bpm_value > 0:
-            print(f" Hyperkalemia Report: Using HR_bpm from data parameter: {hr_bpm_value} bpm")
-    
-    # Priority 3: Fallback to HR_avg
-    if hr_bpm_value == 0 and data.get("HR_avg"):
-        hr_bpm_value = _safe_int(data.get("HR_avg"))
-        if hr_bpm_value > 0:
-            print(f" Hyperkalemia Report: Using HR_bpm from HR_avg: {hr_bpm_value} bpm")
-    
-    # Save original HR_bpm from metrics.json (for reference - will NOT be changed)
-    original_hr_bpm_from_metrics = hr_bpm_value  # This is from metrics.json (12-lead ECG)
-    
-    # Update data dictionary (SAME AS MAIN REPORT)
+            print(f" Hyperkalemia Report: Using HR_bpm from hyper_metric.json: {hr_bpm_value} bpm (timestamp: {latest_metrics.get('timestamp', 'N/A')})")
+
+    original_hr_bpm_from_metrics = hr_bpm_value
+
     data["HR_bpm"] = hr_bpm_value
     data["Heart_Rate"] = hr_bpm_value
     data["HR"] = hr_bpm_value
+    data["HR_avg"] = hr_bpm_value
     if hr_bpm_value > 0:
         data["RR_ms"] = int(60000 / hr_bpm_value)
     else:
-        data["RR_ms"] = data.get("RR_ms", 0)
+        data["RR_ms"] = 0
     
-    # ==================== STEP 2: Get ALL metrics from metrics.json (PRIORITY) - SAME AS MAIN REPORT ====================
-    # Save original metrics.json values BEFORE they might get overwritten by Hyperkalemia-calculated values
-    # These will be used on Page 2 (ECG waves) to show metrics.json values
+    # ==================== STEP 2: Get ALL metrics from hyper_metric.json (PRIORITY) ====================
     original_metrics_from_json = {
         "HR": 0, "PR": 0, "QRS": 0, "QT": 0, "QTc": 0, "ST": 0, "RR_ms": 0
     }
     if latest_metrics:
-        # ALWAYS save metrics.json values (for Page 2 - ECG waves)
+        # ALWAYS save hyper_metric.json values (for Page 2 - ECG waves)
         original_metrics_from_json["HR"] = _safe_int(latest_metrics.get("HR_bpm", 0))
         original_metrics_from_json["PR"] = _safe_int(latest_metrics.get("PR_ms", 0))
         original_metrics_from_json["QRS"] = _safe_int(latest_metrics.get("QRS_ms", 0))
@@ -3048,23 +3012,17 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
         if original_metrics_from_json["HR"] > 0 and original_metrics_from_json["RR_ms"] == 0:
             original_metrics_from_json["RR_ms"] = int(60000 / original_metrics_from_json["HR"])
         
-        print(f" Hyperkalemia Report: Saved metrics.json values for Page 2 (ECG waves):")
+        print(f" Hyperkalemia Report: Saved hyper_metric.json values for Page 2 (ECG waves):")
         print(f"   HR={original_metrics_from_json['HR']}, PR={original_metrics_from_json['PR']}, QRS={original_metrics_from_json['QRS']}")
         print(f"   QT={original_metrics_from_json['QT']}, QTc={original_metrics_from_json['QTc']}, ST={original_metrics_from_json['ST']}, RR={original_metrics_from_json['RR_ms']}")
         
-        # Get all available metrics from metrics.json (SAME AS MAIN REPORT)
-        if data.get("PR", 0) == 0:
-            data["PR"] = original_metrics_from_json["PR"]
-        if data.get("QRS", 0) == 0:
-            data["QRS"] = original_metrics_from_json["QRS"]
-        if data.get("QT", 0) == 0:
-            data["QT"] = original_metrics_from_json["QT"]
-        if data.get("QTc", 0) == 0:
-            data["QTc"] = original_metrics_from_json["QTc"]
-        if data.get("ST", 0) == 0:
-            data["ST"] = original_metrics_from_json["ST"]
+        data["PR"] = original_metrics_from_json["PR"]
+        data["QRS"] = original_metrics_from_json["QRS"]
+        data["QT"] = original_metrics_from_json["QT"]
+        data["QTc"] = original_metrics_from_json["QTc"]
+        data["ST"] = original_metrics_from_json["ST"]
         
-        print(f" Hyperkalemia Report: Loaded metrics from metrics.json: HR={data['HR']}, PR={data['PR']}, QRS={data['QRS']}, QT={data['QT']}, QTc={data['QTc']}, ST={data['ST']}")
+        print(f" Hyperkalemia Report: Loaded metrics from hyper_metric.json: HR={data['HR']}, PR={data['PR']}, QRS={data['QRS']}, QT={data['QT']}, QTc={data['QTc']}, ST={data['ST']}")
     
     # Update beat value for observation table (SAME AS MAIN REPORT)
     if data.get("beat", 0) == 0:
@@ -3156,36 +3114,27 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
                     # Collect average RR for this minute (not all individual intervals)
                     avg_rr_per_minute.append(avg_rr)
                 else:
-                    hr_per_minute_for_report.append(data.get('HR_avg', 80))
-                    # Use fallback RR value
-                    fallback_rr = 60000 / data.get('HR_avg', 80) if data.get('HR_avg', 80) > 0 else 750
-                    avg_rr_per_minute.append(fallback_rr)
+                    hr_per_minute_for_report.append(0)
+                    avg_rr_per_minute.append(0)
             else:
-                hr_per_minute_for_report.append(data.get('HR_avg', 80))
-                # Use fallback RR value
-                fallback_rr = 60000 / data.get('HR_avg', 80) if data.get('HR_avg', 80) > 0 else 750
-                avg_rr_per_minute.append(fallback_rr)
+                hr_per_minute_for_report.append(0)
+                avg_rr_per_minute.append(0)
     else:
-        # Use default if no data
-        hr_per_minute_for_report = [data.get('HR_avg', 80)] * 5
-        fallback_rr = 60000 / data.get('HR_avg', 80) if data.get('HR_avg', 80) > 0 else 750
-        avg_rr_per_minute = [fallback_rr] * 5
+        hr_per_minute_for_report = [0] * 5
+        avg_rr_per_minute = [0] * 5
     
-    # Ensure we have 5 values
     while len(hr_per_minute_for_report) < 5:
-        hr_per_minute_for_report.append(data.get('HR_avg', 80))
-        fallback_rr = 60000 / data.get('HR_avg', 80) if data.get('HR_avg', 80) > 0 else 750
-        avg_rr_per_minute.append(fallback_rr)
+        hr_per_minute_for_report.append(0)
+        avg_rr_per_minute.append(0)
     
     # NEW CALCULATION: HR = 300000 / sum_of_avg_rr_per_minute
     # Sum of 5 average RR values (one per minute)
     if len(avg_rr_per_minute) >= 5:
-        sum_of_avg_rr = sum(avg_rr_per_minute[:5])  # Sum of 5 average RR values
-        # 5 minutes = 300 seconds = 300000 milliseconds
-        avg_hr_from_5_minutes = 300000 / sum_of_avg_rr if sum_of_avg_rr > 0 else data.get('HR_avg')
+        sum_of_avg_rr = sum(avg_rr_per_minute[:5])
+        avg_hr_from_5_minutes = 300000 / sum_of_avg_rr if sum_of_avg_rr > 0 else 0
         
         print(f" Hyperkalemia-Specific Heart Rate Calculation (NEW METHOD - 300000 / sum of avg RR per minute):")
-        print(f"   Original HR_bpm from metrics.json (12-lead ECG): {original_hr_bpm_from_metrics} bpm (NOT CHANGED)")
+        print(f"   Original HR_bpm from hyper_metric.json: {original_hr_bpm_from_metrics} bpm (NOT CHANGED)")
         print(f"   ─────────────────────────────────────────────────────────────")
         print(f"   Average RR per minute: {[round(r, 1) for r in avg_rr_per_minute[:5]]} ms")
         print(f"   Sum of 5 average RR values: {sum_of_avg_rr:.2f} ms")
@@ -3197,17 +3146,17 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
         for i, hr_val in enumerate(hr_per_minute_for_report):
             print(f"   Min {i+1}: {hr_val:.2f} bpm")
         print(f"   ─────────────────────────────────────────────────────────────")
-        print(f"    Hyperkalemia-Specific BPM: {round(avg_hr_from_5_minutes)} bpm (WILL BE SAVED to metrics.json as HR_bpm)")
-        print(f"    Original 12-lead ECG HR_bpm: {original_hr_bpm_from_metrics} bpm (saved as Original_HR_bpm for reference)\n")
+        print(f"    Hyperkalemia-Specific BPM: {round(avg_hr_from_5_minutes)} bpm")
+        print(f"    Original HR_bpm from hyper_metric.json: {original_hr_bpm_from_metrics} bpm (saved as Original_HR_bpm for reference)\n")
     else:
         # Fallback to old method if no average RR values found
         if len(avg_rr_per_minute) >= 5:
             sum_of_avg_rr = sum(avg_rr_per_minute[:5])
-            avg_hr_from_5_minutes = 300000 / sum_of_avg_rr if sum_of_avg_rr > 0 else data.get('HR_avg', 80)
+            avg_hr_from_5_minutes = 300000 / sum_of_avg_rr if sum_of_avg_rr > 0 else 0
         else:
-            avg_hr_from_5_minutes = np.mean(hr_per_minute_for_report) if len(hr_per_minute_for_report) > 0 else data.get('HR_avg', 80)
+            avg_hr_from_5_minutes = np.mean(hr_per_minute_for_report) if len(hr_per_minute_for_report) > 0 else 0
         print(f" Using fallback method: {avg_hr_from_5_minutes:.2f} bpm")
-        print(f"   Original HR_bpm from metrics.json (12-lead ECG): {original_hr_bpm_from_metrics} bpm (NOT CHANGED)")
+        print(f"   Original HR_bpm from hyper_metric.json: {original_hr_bpm_from_metrics} bpm (NOT CHANGED)")
         print(f"   ─────────────────────────────────────────────────────────────")
         for i, hr_val in enumerate(hr_per_minute_for_report):
             print(f"   Min {i+1}: {hr_val:.2f} bpm")
@@ -3215,18 +3164,18 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
         print(f"   Hyperkalemia Average HR (fallback): {avg_hr_from_5_minutes:.2f} bpm")
         print(f"   Calculation: ({hr_per_minute_for_report[0]:.1f} + {hr_per_minute_for_report[1]:.1f} + {hr_per_minute_for_report[2]:.1f} + {hr_per_minute_for_report[3]:.1f} + {hr_per_minute_for_report[4]:.1f}) / 5 = {avg_hr_from_5_minutes:.2f} bpm")
         print(f"   ─────────────────────────────────────────────────────────────")
-        print(f"    Hyperkalemia-Specific BPM: {round(avg_hr_from_5_minutes)} bpm (WILL BE SAVED to metrics.json as HR_bpm)")
-        print(f"    Original 12-lead ECG HR_bpm: {original_hr_bpm_from_metrics} bpm (saved as Original_HR_bpm for reference)\n")
+        print(f"    Hyperkalemia-Specific BPM: {round(avg_hr_from_5_minutes)} bpm")
+        print(f"    Original HR_bpm from hyper_metric.json: {original_hr_bpm_from_metrics} bpm (saved as Original_HR_bpm for reference)\n")
     
     # Save Hyperkalemia-specific BPM separately (for Page 3 only)
     hyperkalemia_specific_bpm = round(avg_hr_from_5_minutes)
     
-    # Use original HR_bpm from metrics.json (saved earlier, NOT to change it)
-    # original_hr_bpm_from_metrics was already saved above from metrics.json
+    # Use original HR_bpm from hyper_metric.json (saved earlier, NOT to change it)
+    # original_hr_bpm_from_metrics was already saved above from hyper_metric.json
     
-    # Keep data dictionary with metrics.json values for Page 1 and Page 2
+    # Keep data dictionary with hyper_metric.json values for Page 1 and Page 2
     # Only Page 3 will use Hyperkalemia-specific values
-    # DO NOT overwrite data["HR_avg"], data["beat"] here - keep original metrics.json values
+    # DO NOT overwrite data["HR_avg"], data["beat"] here - keep original hyper_metric.json values
     
     # ==================== PAGE SETUP (MIXED: Page 1 Portrait, Page 2 Landscape) ====================
     
@@ -3242,49 +3191,52 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
         if canvas.getPageNumber() == 1:
             page_width, page_height = canvas._pagesize
             
-            # Derive spacing to make exactly 56 boxes across full page width
-            full_boxes = 56
-            box_width_pts = ECG_LARGE_BOX_MM_WIDTH * mm
+            num_boxes_width = 57
+            page_width_mm = 297.0
+            box_width_mm = page_width_mm / num_boxes_width
+            box_width_pts = box_width_mm * mm
             
-            # Pink background - FULL PAGE (297mm width, no white space)
             canvas.setFillColor(colors.HexColor("#ffe6e6"))
             canvas.rect(0, 0, page_width, page_height, fill=1, stroke=0)
             
-            # Grid colors
             light_grid_color = colors.HexColor("#ffd1d1")
             major_grid_color = colors.HexColor("#ffb3b3")
             
-            # Minor grid lines - 5 minor boxes per major box (square boxes)
-            minor_spacing_pts = box_width_pts / 5.0
+            minor_spacing_mm = box_width_mm / 5.0
+            minor_spacing_pts = minor_spacing_mm * mm
             
             canvas.setStrokeColor(light_grid_color)
-            canvas.setLineWidth(0.6)  # Minor grid lines (1mm spacing) - keep original thickness
+            canvas.setLineWidth(0.6)
             
-            # Vertical minor lines - full page width
-            for i in range(full_boxes * 5 + 1):
-                x = i * minor_spacing_pts
+            x = 0
+            while x <= page_width:
                 canvas.line(x, 0, x, page_height)
+                x += minor_spacing_pts
+                if x > page_width:
+                    break
             
-            # Horizontal minor lines - same spacing for square boxes
-            y = 0.0
+            num_boxes_height = 40
+            page_height_mm = 210.0
+            box_height_mm = page_height_mm / num_boxes_height
+            minor_spacing_y = (box_height_mm / 5.0) * mm
+            y = 0
             while y <= page_height:
                 canvas.line(0, y, page_width, y)
-                y += minor_spacing_pts
+                y += minor_spacing_y
             
-            # Major grid lines - spaced every 5.25mm across full 297mm width
             canvas.setStrokeColor(major_grid_color)
-            canvas.setLineWidth(0.6)  # Thinner major grid lines (5mm spacing) - was 1.2
+            canvas.setLineWidth(0.6)
             
-            # Vertical major lines - exactly 56 boxes across width
-            for i in range(full_boxes + 1):
-                x = i * box_width_pts
+            x = 0
+            for i in range(num_boxes_width + 1):
                 canvas.line(x, 0, x, page_height)
+                x += box_width_pts
             
-            # Horizontal major lines - same spacing for square boxes
-            y = 0.0
-            while y <= page_height:
+            box_height_pts = box_height_mm * mm
+            y = 0
+            for i in range(num_boxes_height + 1):
                 canvas.line(0, y, page_width, y)
-                y += box_width_pts
+                y += box_height_pts
         
         # STEP 1.5: Draw Org. and Phone No. on Page 1 (REPOSITIONED - slightly higher, more left)
         if canvas.getPageNumber() == 1:
@@ -3868,42 +3820,33 @@ def generate_hyperkalemia_ecg_report(filename="hyperkalemia_ecg_report.pdf", lea
     master_drawing.add(phone_label)
     
     # ==================== VITAL PARAMETERS (LANDSCAPE MODE - 2 COLUMNS SIDE BY SIDE) ====================
-    # Page 2: Use Hyperkalemia-specific average HR (5 minutes), but keep other metrics from metrics.json
-    # HR should match Page 1 (Hyperkalemia-specific average from 5 minutes)
+    # Page 2: Use metrics from hyper_metric.json
     if 'original_metrics_from_json' in locals() and original_metrics_from_json:
-        # Use Hyperkalemia-specific average HR for Page 2 (same as Page 1)
-        if 'hyperkalemia_specific_bpm' in locals() and hyperkalemia_specific_bpm > 0:
-            HR = hyperkalemia_specific_bpm  # Hyperkalemia-specific average (5 minutes)
-        else:
-            HR = original_metrics_from_json.get('HR', 0)
-        
+        HR = original_metrics_from_json.get('HR', 0)
         PR = original_metrics_from_json.get('PR', 0)
         QRS = original_metrics_from_json.get('QRS', 0)
         QT = original_metrics_from_json.get('QT', 0)
         QTc = original_metrics_from_json.get('QTc', 0)
         ST = original_metrics_from_json.get('ST', 0)
         
-        # Calculate RR from Hyperkalemia-specific HR
+        # Calculate RR from HR
         if HR > 0:
             RR = int(60000 / HR)
         else:
             RR = original_metrics_from_json.get('RR_ms', 0)
         
-        print(f" Page 2 (ECG waves): HR={HR} bpm (Hyperkalemia-specific average, 5 minutes) - Same as Page 1")
-        print(f"   Other metrics from metrics.json: PR={PR}, QRS={QRS}, QT={QT}, QTc={QTc}, ST={ST}, RR={RR}")
+        print(f" Page 2 (ECG waves): HR={HR} bpm")
+        print(f"   Other metrics from hyper_metric.json: PR={PR}, QRS={QRS}, QT={QT}, QTc={QTc}, ST={ST}, RR={RR}")
     else:
-        # Fallback to data values if original_metrics_from_json not available
-        if 'hyperkalemia_specific_bpm' in locals() and hyperkalemia_specific_bpm > 0:
-            HR = hyperkalemia_specific_bpm
-        else:
-            HR = data.get('HR_avg', 0)
-        PR = data.get('PR', 0)
-        QRS = data.get('QRS', 0)
-        QT = data.get('QT', 0)
-        QTc = data.get('QTc', 0)
-        ST = data.get('ST', 0)
-        RR = int(60000 / HR) if HR and HR > 0 else 0
-        print(f" Page 2 (ECG waves): Using fallback values - HR={HR} bpm")
+        # Fallback: if hyper_metric.json not available, use zeros
+        HR = 0
+        PR = 0
+        QRS = 0
+        QT = 0
+        QTc = 0
+        ST = 0
+        RR = 0
+        print(" Page 2 (ECG waves): No metrics available in hyper_metric.json, using zeros")
     
     # LEFT COLUMN (130, y) - HR, PR, QRS, RR (SHIFTED UP BY 20 POINTS)
     hr_label = String(210, 548, f"HR    : {HR} bpm", fontSize=10, fontName="Helvetica", fillColor=colors.black)

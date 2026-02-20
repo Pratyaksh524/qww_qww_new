@@ -1187,6 +1187,8 @@ class ECGTestPage(QWidget):
                 color: white;
             }
         """
+        # Store common green button style for reuse (demo / real)
+        self.green_button_style = green_color
         
         # Apply medical green style to all buttons
         self.start_btn.setStyleSheet(green_color)
@@ -1316,7 +1318,46 @@ class ECGTestPage(QWidget):
     def on_demo_toggle_changed(self, checked):
         self.update_demo_toggle_label()
         self.demo_manager.toggle_demo_mode(checked)
-        # Update recording button state when demo mode changes
+        if hasattr(self, 'generate_report_btn'):
+            if checked:
+                try:
+                    countdown_start = 12
+                    self.generate_report_btn.setEnabled(False)
+                    self.generate_report_btn.setText(f"Generate Report ({countdown_start})")
+
+                    for remaining in range(countdown_start - 1, 0, -1):
+                        delay_ms = (countdown_start - remaining) * 1000
+                        QTimer.singleShot(
+                            delay_ms,
+                            lambda r=remaining: (
+                                self.generate_report_btn.setText(f"Generate Report ({r})")
+                                if hasattr(self, 'demo_toggle') and self.demo_toggle.isChecked()
+                                else None
+                            ),
+                        )
+
+                    def enable_generate_report_button_demo():
+                        if hasattr(self, 'demo_toggle') and self.demo_toggle.isChecked():
+                            self.generate_report_btn.setEnabled(True)
+                            try:
+                                if hasattr(self, 'green_button_style'):
+                                    self.generate_report_btn.setStyleSheet(self.green_button_style)
+                            except Exception:
+                                pass
+                            self.generate_report_btn.setText("Generate Report")
+
+                    QTimer.singleShot(12000, enable_generate_report_button_demo)
+                except Exception:
+                    self.generate_report_btn.setEnabled(True)
+                    try:
+                        if hasattr(self, 'green_button_style'):
+                            self.generate_report_btn.setStyleSheet(self.green_button_style)
+                    except Exception:
+                        pass
+            else:
+                timer = getattr(self, 'timer', None)
+                if timer is None or not timer.isActive():
+                    self.generate_report_btn.setEnabled(False)
         self.update_recording_button_state()
 
     def apply_language(self, language=None):
@@ -5634,8 +5675,23 @@ class ECGTestPage(QWidget):
             """
             self.stop_btn.setEnabled(True)
             self.stop_btn.setStyleSheet(green_style)
-            self.generate_report_btn.setEnabled(True)
-            self.generate_report_btn.setStyleSheet(green_style)
+
+            def enable_generate_report_button():
+                self.generate_report_btn.setEnabled(True)
+                self.generate_report_btn.setStyleSheet(green_style)
+                self.generate_report_btn.setText("Generate Report")
+                print(" Generate Report button enabled after 15 seconds from Start")
+
+            countdown_start = 12
+            self.generate_report_btn.setText(f"Generate Report ({countdown_start})")
+            for remaining in range(countdown_start - 1, 0, -1):
+                delay_ms = (countdown_start - remaining) * 1000
+                QTimer.singleShot(
+                    delay_ms,
+                    lambda r=remaining: self.generate_report_btn.setText(f"Generate Report ({r})")
+                )
+
+            QTimer.singleShot(12000, enable_generate_report_button)
             
         except Exception as e:
             error_msg = f"Failed to connect to any serial port: {str(e)}"
@@ -6106,6 +6162,14 @@ class ECGTestPage(QWidget):
         if not filename:
             return
 
+        # Check demo mode status
+        is_demo_mode = False
+        if hasattr(self, "demo_toggle"):
+            try:
+                is_demo_mode = self.demo_toggle.isChecked()
+            except Exception:
+                is_demo_mode = False
+
         try:
             import re
             ecg_data = {"HR": 0, "beat": 0, "PR": 0, "QRS": 0, "QT": 0, "QTc": 0, "ST": 0, "HR_max": 0, "HR_min": 0, "HR_avg": 0}
@@ -6193,6 +6257,30 @@ class ECGTestPage(QWidget):
             if not patient:
                 patient = {}
             patient["date_time"] = now_str
+
+            # DEMO MODE: For all formats, use dedicated demo report generator (dummycsv.csv)
+            if is_demo_mode:
+                try:
+                    from ecg.demo_ecg_report_generator import generate_demo_ecg_report
+                    fmt_label_map = {"12_1": "12:1", "4_3": "4:3", "6_2": "6:2"}
+                    fmt_label = fmt_label_map.get(fmt, fmt)
+                    print(f" DEMO MODE: Using generate_demo_ecg_report from ECGTestPage ({fmt})")
+                    generate_demo_ecg_report(
+                        filename,
+                        lead_img_paths,
+                        None,
+                        self,
+                        fmt,
+                    )
+                    QMessageBox.information(
+                        self,
+                        "Success",
+                        f" Demo ECG Report generated successfully ({fmt_label})!\n Saved as: {filename}\n Demo graphs: {len(lead_img_paths)}/12",
+                    )
+                    return
+                except Exception as e:
+                    print(f" Failed to generate demo PDF from ECGTestPage for fmt={fmt}: {e}")
+                    # Fall through to normal generators if demo-specific fails
 
             # Load appropriate report generator based on format
             if fmt == "4_3":

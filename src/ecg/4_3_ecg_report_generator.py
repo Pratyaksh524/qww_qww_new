@@ -22,6 +22,8 @@ ECG_LARGE_BOX_MM = 210.0 / 40.0
 ECG_SMALL_BOX_MM = ECG_LARGE_BOX_MM / 5.0
 # Scale wave speed so 1 second equals 5 large boxes at 25 mm/s on 40-box grid
 ECG_SPEED_SCALE = ECG_LARGE_BOX_MM / ECG_BASE_BOX_MM
+FOUR_THREE_SAMPLES_COLUMN = 2000
+FOUR_THREE_SAMPLES_EXTRA_II = 3500
 
 # Set matplotlib to use non-interactive backend
 matplotlib.use('Agg')
@@ -1572,24 +1574,18 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                               fontSize=10, fontName="Helvetica-Bold", fillColor=colors.black)
             master_drawing.add(lead_label)
 
-            # Determine strip width for this lead (used for per-lead time window)
+            # Determine per-lead sample window
             if lead == "II" and y_pos == 90:
-                ecg_width = 600
-            elif x_pos == 0:
-                ecg_width = 274
-            elif x_pos == 274:
-                ecg_width = 274
+                target_samples = FOUR_THREE_SAMPLES_EXTRA_II
             else:
-                ecg_width = 460
+                target_samples = FOUR_THREE_SAMPLES_COLUMN
 
             if is_demo_mode and time_window_seconds is not None:
                 lead_time_window_seconds = time_window_seconds
                 lead_samples_to_capture = int(time_window_seconds * samples_per_second)
             else:
-                lead_time_window_seconds = calculate_time_window_from_width_points(
-                    wave_speed_mm_s, ecg_width
-                )
-                lead_samples_to_capture = int(lead_time_window_seconds * computed_sampling_rate)
+                lead_samples_to_capture = target_samples
+                lead_time_window_seconds = lead_samples_to_capture / max(1e-6, computed_sampling_rate)
             
             # STEP 3B: Get REAL ECG data for this lead (ONLY from saved file - calculation-based)
             # IMPORTANT:  saved file  data use , live dashboard   (calculation-based beats  )
@@ -1818,12 +1814,10 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                 
                 
                 
-                # Step 1: Convert ADC data to numpy array
                 adc_data = np.array(real_ecg_data, dtype=float)
 
-                # Step 1.1: Apply report filters (DFT -> EMG -> AC) on raw ADC data
                 try:
-                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
+                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter, apply_baseline_wander_median_mean
                     dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
                     emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
                     ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
@@ -1833,6 +1827,7 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                         adc_data = apply_emg_filter(adc_data, float(computed_sampling_rate), emg_setting)
                     if ac_setting in ("50", "60"):
                         adc_data = apply_ac_filter(adc_data, float(computed_sampling_rate), ac_setting)
+                    adc_data = apply_baseline_wander_median_mean(adc_data, float(computed_sampling_rate))
                 except Exception as filter_err:
                     print(f" Report filter apply failed for {lead}: {filter_err}")
                 
@@ -1873,12 +1868,7 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                 min_centered_adc = np.min(centered_adc)
                 max_centered_adc_abs = np.max(np.abs(centered_adc))
                 expected_boxes = max_centered_adc_abs / adc_per_box
-                
-                # Step 4: Convert ADC offset to boxes (vertical units)
-                # Direct calculation: boxes_offset = centered_adc / adc_per_box
-                # Example: 2000 ADC offset / 750 ADC per box = 2.6666 boxes
-                # BUT: If actual ADC values are smaller (e.g., 375 ADC), then:
-                # 375 ADC / 750 ADC per box = 0.5 boxes (which matches what user sees!)
+            
                 boxes_offset = centered_adc / adc_per_box
                 
                 # Log boxes offset for verification
@@ -2035,11 +2025,11 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
     QTcF = data.get('QTc_Fridericia') or data.get('QTcF') or 0
     ST = data.get('ST', 114)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
@@ -2274,24 +2264,18 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                               fontSize=10, fontName="Helvetica-Bold", fillColor=colors.black)
             master_drawing.add(lead_label)
 
-            # Determine strip width for this lead (used for per-lead time window)
+            # Determine per-lead sample window
             if lead == "II" and y_pos == 90:
-                ecg_width = 600
-            elif x_pos == 0:
-                ecg_width = 274
-            elif x_pos == 274:
-                ecg_width = 274
+                target_samples = FOUR_THREE_SAMPLES_EXTRA_II
             else:
-                ecg_width = 460
+                target_samples = FOUR_THREE_SAMPLES_COLUMN
 
             if is_demo_mode and time_window_seconds is not None:
                 lead_time_window_seconds = time_window_seconds
                 lead_samples_to_capture = int(time_window_seconds * samples_per_second)
             else:
-                lead_time_window_seconds = calculate_time_window_from_width_points(
-                    wave_speed_mm_s, ecg_width
-                )
-                lead_samples_to_capture = int(lead_time_window_seconds * computed_sampling_rate)
+                lead_samples_to_capture = target_samples
+                lead_time_window_seconds = lead_samples_to_capture / max(1e-6, computed_sampling_rate)
             
             # STEP 3B: Get REAL ECG data for this lead (ONLY from saved file - calculation-based)
             # IMPORTANT:  saved file  data use , live dashboard   (calculation-based beats  )
@@ -2723,12 +2707,12 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    

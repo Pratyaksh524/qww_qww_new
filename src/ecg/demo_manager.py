@@ -529,8 +529,9 @@ class DemoManager:
             return
         
         try:
-            # Read the CSV file
-            df = pd.read_csv(csv_path, sep='\t')  # Use tab separator
+            df = pd.read_csv(csv_path)
+            if len(df.columns) == 1:
+                df = pd.read_csv(csv_path, sep='\t')
             print(f" Successfully loaded {len(df)} rows from dummycsv.csv")
             
             # Get all lead columns (excluding 'Sample' column)
@@ -1216,18 +1217,18 @@ class DemoManager:
                         except Exception:
                             st_out = None
 
-                        # Initialize fixed demo metrics once, then keep constant
+                        # Initialize fixed demo metrics once, then keep constant (hardcoded)
                         if self._demo_fixed_metrics is None:
                             try:
-                                fixed_hr = 60  # BPM (fixed)
-                                fixed_rr = 1000  # ms (fixed) - RR interval
-                                fixed_p = 92  # ms (fixed) - P duration
-                                fixed_pr = 167  # ms (fixed)
-                                fixed_qrs = 86  # ms (fixed)
-                                fixed_qt = 357  # ms (fixed)
-                                fixed_qtc = 357  # ms (fixed)
+                                fixed_hr = 60
+                                fixed_rr = 1000
+                                fixed_p = 92
+                                fixed_pr = 167
+                                fixed_qrs = 86
+                                fixed_qt = 357
+                                fixed_qtc = 357
                                 fixed_axis = "0°"
-                                fixed_st = 92  # ms (fixed) - P duration (st_interval displays as "P")
+                                fixed_st = 92
                             except Exception:
                                 fixed_hr, fixed_rr, fixed_p, fixed_pr, fixed_qrs, fixed_qt, fixed_qtc, fixed_axis, fixed_st = 60, 1000, 92, 167, 86, 357, 357, "0°", 92
                             self._demo_fixed_metrics = {
@@ -1238,8 +1239,8 @@ class DemoManager:
                                 'QRS': fixed_qrs,
                                 'QT': fixed_qt,
                                 'QTc': fixed_qtc,
-                                'QTc_interval': f"{fixed_qt}/{fixed_qtc}",  # Display as QT/QTc format
-                                'ST': fixed_st  # P duration (st_interval label shows "P")
+                                'QTc_interval': f"{fixed_qt}/{fixed_qtc}",
+                                'ST': fixed_st
                             }
 
                         # Always send fixed metrics in demo mode

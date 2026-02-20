@@ -2961,6 +2961,11 @@ class Dashboard(QWidget):
         import os
         # Import the simple function from ecg_report_generator
         from ecg.ecg_report_generator import generate_ecg_report
+        # Demo-specific report generator (uses dummycsv.csv and fixed demo metrics)
+        try:
+            from ecg.demo_ecg_report_generator import generate_demo_ecg_report
+        except Exception:
+            generate_demo_ecg_report = None
         # History helper
         try:
             from dashboard.history_window import append_history_entry
@@ -2968,6 +2973,10 @@ class Dashboard(QWidget):
             append_history_entry = None
 
         print(" Starting PDF report generation...")
+
+        is_demo_mode = False
+        if hasattr(self, 'ecg_test_page') and self.ecg_test_page and hasattr(self.ecg_test_page, 'demo_toggle'):
+            is_demo_mode = self.ecg_test_page.demo_toggle.isChecked()
 
         def _extract_metric(label_key, default="0", strip_units=True):
             if not hasattr(self, 'metric_labels') or label_key not in self.metric_labels:
@@ -3241,6 +3250,21 @@ class Dashboard(QWidget):
         
         if filename:
             try:
+                if is_demo_mode:
+                    try:
+                        from ecg.demo_ecg_report_generator import generate_demo_ecg_report
+                        generate_demo_ecg_report(filename, lead_img_paths, self, self.ecg_test_page)
+                        QMessageBox.information(
+                            self,
+                            "Success",
+                            f" Demo ECG Report generated successfully!\n Saved as: {filename}\n Demo graphs: {len(lead_img_paths)}/12"
+                        )
+                    except Exception as e:
+                        error_msg = f"Failed to generate demo PDF: {str(e)}"
+                        print(f" {error_msg}")
+                        QMessageBox.critical(self, "Error", error_msg)
+                    return
+
                 # Load patient details from centralized all_patients.json database
                 patient = None
                 try:
@@ -3342,15 +3366,24 @@ class Dashboard(QWidget):
                 ecg_data['machine_serial'] = self.user_details.get('serial_id', '') or os.getenv('MACHINE_SERIAL_ID', '')
 
                 # Generate the PDF with patient details
-                generate_ecg_report(
-                    filename,
-                    ecg_data,
-                    lead_img_paths,
-                    self,
-                    self.ecg_test_page,
-                    patient,
-                    log_history=False,
-                )
+                if is_demo_mode and generate_demo_ecg_report is not None:
+                    print(" DEMO MODE: Using generate_demo_ecg_report with dummycsv.csv data")
+                    generate_demo_ecg_report(
+                        filename,
+                        lead_img_paths,
+                        self,
+                        self.ecg_test_page,
+                    )
+                else:
+                    generate_ecg_report(
+                        filename,
+                        ecg_data,
+                        lead_img_paths,
+                        self,
+                        self.ecg_test_page,
+                        patient,
+                        log_history=False,
+                    )
 
                 # After successful report generation, append to history (explicit)
                 try:

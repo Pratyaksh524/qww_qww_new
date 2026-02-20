@@ -2750,5 +2750,2041 @@
       3.32,
       -4.9
     ]
+  },
+  {
+    "timestamp": "2026-02-19 13:44:18",
+    "file": "/Users/indresh/Downloads/HRV_Report_20260219_134414.pdf",
+    "HR_bpm": 110,
+    "PR_ms": 200,
+    "QRS_ms": 105,
+    "QT_ms": 302,
+    "QTc_ms": 552,
+    "ST_ms": 0,
+    "RR_ms": 545,
+    "HRV_SDNN_ms": 6.419927471228091,
+    "HRV_RMSSD_ms": 4.105310345602132,
+    "HRV_NN50": 2,
+    "HRV_pNN50": 0.4484304932735426,
+    "HRV_SDANN_ms": 48.49484451675203,
+    "Original_HR_bpm": 200
+  },
+  {
+    "timestamp": "2026-02-19 15:17:06",
+    "file": "/Users/indresh/Downloads/HRV_Report_20260219_151656.pdf",
+    "HR_bpm": 54,
+    "PR_ms": 200,
+    "QRS_ms": 105,
+    "QT_ms": 302,
+    "QTc_ms": 552,
+    "ST_ms": 0,
+    "RR_ms": 1111,
+    "HRV_SDNN_ms": 158.18650430718654,
+    "HRV_RMSSD_ms": 62.21566977231213,
+    "HRV_NN50": 5,
+    "HRV_pNN50": 20.833333333333336,
+    "HRV_SDANN_ms": 153.35474451958328,
+    "Original_HR_bpm": 110
+  },
+  {
+    "timestamp": "2026-02-19 16:18:32",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_161828.pdf",
+    "HR_bpm": 0,
+    "PR_ms": 0,
+    "QRS_ms": 0,
+    "QT_ms": 0,
+    "QTc_ms": 0,
+    "ST_ms": 0,
+    "RR_ms": 0,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 16:38:37",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_163833.pdf",
+    "HR_bpm": 0,
+    "PR_ms": 0,
+    "QRS_ms": 0,
+    "QT_ms": 0.0,
+    "QTc_ms": 0.0,
+    "ST_ms": 0.0,
+    "RR_ms": 0,
+    "RV5_plus_SV1_mV": 11.664,
+    "P_QRS_T_mm": [
+      23,
+      -163,
+      -172
+    ],
+    "QTCF": 299.7,
+    "RV5_SV1_mV": [
+      3.296,
+      -8.368
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 16:46:14",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_164611.pdf",
+    "HR_bpm": 238,
+    "PR_ms": 72,
+    "QRS_ms": 92,
+    "QT_ms": 188,
+    "QTc_ms": 373,
+    "ST_ms": 0.0,
+    "RR_ms": 252,
+    "RV5_plus_SV1_mV": 11.881,
+    "P_QRS_T_mm": [
+      -72,
+      3,
+      -158
+    ],
+    "QTCF": 297.6,
+    "RV5_SV1_mV": [
+      3.14,
+      -8.741
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 16:50:15",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_165012.pdf",
+    "HR_bpm": 182,
+    "PR_ms": 84,
+    "QRS_ms": 91,
+    "QT_ms": 242,
+    "QTc_ms": 412,
+    "ST_ms": 0.0,
+    "RR_ms": 329,
+    "RV5_plus_SV1_mV": 0.555,
+    "P_QRS_T_mm": [
+      22,
+      26,
+      33
+    ],
+    "QTCF": 383.1,
+    "RV5_SV1_mV": [
+      0.44,
+      -0.115
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 16:54:55",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_165452.pdf",
+    "HR_bpm": 70,
+    "PR_ms": 148,
+    "QRS_ms": 97,
+    "QT_ms": 309,
+    "QTc_ms": 336,
+    "ST_ms": 0.0,
+    "RR_ms": 857,
+    "RV5_plus_SV1_mV": 1.591,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 325.0,
+    "RV5_SV1_mV": [
+      1.039,
+      -0.552
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 16:55:30",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_165527.pdf",
+    "HR_bpm": 70,
+    "PR_ms": 145,
+    "QRS_ms": 78,
+    "QT_ms": 310,
+    "QTc_ms": 336,
+    "ST_ms": 0.0,
+    "RR_ms": 857,
+    "RV5_plus_SV1_mV": 1.377,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 326.0,
+    "RV5_SV1_mV": [
+      1.038,
+      -0.339
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:13:50",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_171347.pdf",
+    "HR_bpm": 54,
+    "PR_ms": 187,
+    "QRS_ms": 107,
+    "QT_ms": 386,
+    "QTc_ms": 360,
+    "ST_ms": 0.0,
+    "RR_ms": 1111,
+    "RV5_plus_SV1_mV": 0.932,
+    "P_QRS_T_mm": [
+      37,
+      40,
+      -132
+    ],
+    "QTCF": 406.4,
+    "RV5_SV1_mV": [
+      0.431,
+      -0.5
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:14:51",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_171447.pdf",
+    "HR_bpm": 56,
+    "PR_ms": 178,
+    "QRS_ms": 102,
+    "QT_ms": 378,
+    "QTc_ms": 354,
+    "ST_ms": 0.0,
+    "RR_ms": 1071,
+    "RV5_plus_SV1_mV": 0.614,
+    "P_QRS_T_mm": [
+      29,
+      40,
+      -134
+    ],
+    "QTCF": 365.0,
+    "RV5_SV1_mV": [
+      0.455,
+      -0.159
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:22:09",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172206.pdf",
+    "HR_bpm": 61,
+    "PR_ms": 166,
+    "QRS_ms": 77,
+    "QT_ms": 346,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 983,
+    "RV5_plus_SV1_mV": 0.647,
+    "P_QRS_T_mm": [
+      -36,
+      39,
+      -140
+    ],
+    "QTCF": 338.2,
+    "RV5_SV1_mV": [
+      0.468,
+      -0.179
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:23:22",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172318.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 161,
+    "QRS_ms": 93,
+    "QT_ms": 288,
+    "QTc_ms": 406,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 0.657,
+    "P_QRS_T_mm": [
+      -36,
+      51,
+      36
+    ],
+    "QTCF": 289.7,
+    "RV5_SV1_mV": [
+      0.606,
+      -0.051
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:23:38",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172335.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 161,
+    "QRS_ms": 94,
+    "QT_ms": 288,
+    "QTc_ms": 406,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 0.713,
+    "P_QRS_T_mm": [
+      -26,
+      90,
+      40
+    ],
+    "QTCF": 362.9,
+    "RV5_SV1_mV": [
+      0.62,
+      -0.093
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:25:51",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_172548.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 169,
+    "QRS_ms": 94,
+    "QT_ms": 352,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.596,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 353.0,
+    "RV5_SV1_mV": [
+      1.036,
+      -0.56
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:32:42",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_173239.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 78,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.578,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 349.0,
+    "RV5_SV1_mV": [
+      1.024,
+      -0.554
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:33:29",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_173326.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 161,
+    "QRS_ms": 93,
+    "QT_ms": 288,
+    "QTc_ms": 408,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 1.105,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 363.0,
+    "RV5_SV1_mV": [
+      0.998,
+      -0.106
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:34:34",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_173432.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 98,
+    "QT_ms": 345,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.583,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 345.0,
+    "RV5_SV1_mV": [
+      1.026,
+      -0.557
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:41:53",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_174149.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 98,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.59,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 346.0,
+    "RV5_SV1_mV": [
+      1.028,
+      -0.562
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:49:16",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_174913.pdf",
+    "HR_bpm": 58,
+    "PR_ms": 166,
+    "QRS_ms": 77,
+    "QT_ms": 354,
+    "QTc_ms": 353,
+    "ST_ms": 0.0,
+    "RR_ms": 1034,
+    "RV5_plus_SV1_mV": 1.3,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 354.0,
+    "RV5_SV1_mV": [
+      1.029,
+      -0.271
+    ]
+  },
+  {
+    "timestamp": "2026-02-19 17:54:02",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_175359.pdf",
+    "HR_bpm": 54,
+    "PR_ms": 185,
+    "QRS_ms": 108,
+    "QT_ms": 389,
+    "QTc_ms": 364,
+    "ST_ms": 0.0,
+    "RR_ms": 1111,
+    "RV5_plus_SV1_mV": 1.585,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 376.0,
+    "RV5_SV1_mV": [
+      1.03,
+      -0.555
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 09:52:10",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_095208.pdf",
+    "HR_bpm": 53,
+    "PR_ms": 188,
+    "QRS_ms": 104,
+    "QT_ms": 392,
+    "QTc_ms": 362,
+    "ST_ms": 0.0,
+    "RR_ms": 1132,
+    "RV5_plus_SV1_mV": 0.894,
+    "P_QRS_T_mm": [
+      30,
+      37,
+      -127
+    ],
+    "QTCF": 378.5,
+    "RV5_SV1_mV": [
+      0.526,
+      -0.369
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 09:52:47",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_095244.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 164,
+    "QRS_ms": 94,
+    "QT_ms": 345,
+    "QTc_ms": 344,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.689,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 345.0,
+    "RV5_SV1_mV": [
+      1.105,
+      -0.584
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 09:53:08",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_095305.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 164,
+    "QRS_ms": 95,
+    "QT_ms": 345,
+    "QTc_ms": 344,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.675,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 345.0,
+    "RV5_SV1_mV": [
+      1.091,
+      -0.584
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:00:49",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_100046.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 96,
+    "QT_ms": 345,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.653,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 344.0,
+    "RV5_SV1_mV": [
+      1.081,
+      -0.572
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:01:52",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_100150.pdf",
+    "HR_bpm": 212,
+    "PR_ms": 76,
+    "QRS_ms": 99,
+    "QT_ms": 205,
+    "QTc_ms": 390,
+    "ST_ms": 0.0,
+    "RR_ms": 283,
+    "RV5_plus_SV1_mV": 1.706,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 312.0,
+    "RV5_SV1_mV": [
+      1.115,
+      -0.591
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:02:26",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_100223.pdf",
+    "HR_bpm": 234,
+    "PR_ms": 76,
+    "QRS_ms": 98,
+    "QT_ms": 210,
+    "QTc_ms": 388,
+    "ST_ms": 0.0,
+    "RR_ms": 256,
+    "RV5_plus_SV1_mV": 1.715,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 320.0,
+    "RV5_SV1_mV": [
+      1.12,
+      -0.596
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:02:50",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_100247.pdf",
+    "HR_bpm": 231,
+    "PR_ms": 71,
+    "QRS_ms": 91,
+    "QT_ms": 197,
+    "QTc_ms": 382,
+    "ST_ms": 0.0,
+    "RR_ms": 259,
+    "RV5_plus_SV1_mV": 12.463,
+    "P_QRS_T_mm": [
+      28,
+      20,
+      24
+    ],
+    "QTCF": 310.3,
+    "RV5_SV1_mV": [
+      3.705,
+      -8.758
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:03:21",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_100318.pdf",
+    "HR_bpm": 45,
+    "PR_ms": 257,
+    "QRS_ms": 96,
+    "QT_ms": 370,
+    "QTc_ms": 321,
+    "ST_ms": 0.0,
+    "RR_ms": 1333,
+    "RV5_plus_SV1_mV": 1.194,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 580.5,
+    "RV5_SV1_mV": [
+      0.676,
+      -0.518
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:13:10",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101306.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 163,
+    "QRS_ms": 95,
+    "QT_ms": 290,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 1.666,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 364.0,
+    "RV5_SV1_mV": [
+      1.059,
+      -0.606
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:13:24",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101322.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 163,
+    "QRS_ms": 94,
+    "QT_ms": 284,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 1.41,
+    "P_QRS_T_mm": [
+      4,
+      -141,
+      -31
+    ],
+    "QTCF": 357.8,
+    "RV5_SV1_mV": [
+      0.866,
+      -0.544
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:13:48",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101344.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 163,
+    "QRS_ms": 93,
+    "QT_ms": 284,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 1.664,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      1.057,
+      -0.607
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:14:16",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101413.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 163,
+    "QRS_ms": 92,
+    "QT_ms": 284,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 0.763,
+    "P_QRS_T_mm": [
+      -51,
+      135,
+      32
+    ],
+    "QTCF": 357.8,
+    "RV5_SV1_mV": [
+      0.632,
+      -0.131
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:14:38",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101435.pdf",
+    "HR_bpm": 128,
+    "PR_ms": 158,
+    "QRS_ms": 93,
+    "QT_ms": 270,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 468,
+    "RV5_plus_SV1_mV": 1.668,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 345.0,
+    "RV5_SV1_mV": [
+      1.057,
+      -0.611
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:15:04",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101501.pdf",
+    "HR_bpm": 117,
+    "PR_ms": 164,
+    "QRS_ms": 101,
+    "QT_ms": 292,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 512,
+    "RV5_plus_SV1_mV": 1.671,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 365.0,
+    "RV5_SV1_mV": [
+      1.061,
+      -0.609
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:15:16",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_101509.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 152,
+    "QRS_ms": 93,
+    "QT_ms": 272,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 1.661,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 349.0,
+    "RV5_SV1_mV": [
+      1.055,
+      -0.606
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:16:40",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101638.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 152,
+    "QRS_ms": 92,
+    "QT_ms": 270,
+    "QTc_ms": 396,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 0.739,
+    "P_QRS_T_mm": [
+      44,
+      26,
+      27
+    ],
+    "QTCF": 346.8,
+    "RV5_SV1_mV": [
+      0.658,
+      -0.08
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:20:38",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102035.pdf",
+    "HR_bpm": 114,
+    "PR_ms": 167,
+    "QRS_ms": 103,
+    "QT_ms": 298,
+    "QTc_ms": 414,
+    "ST_ms": 0.0,
+    "RR_ms": 526,
+    "RV5_plus_SV1_mV": 0.627,
+    "P_QRS_T_mm": [
+      31,
+      -134,
+      -113
+    ],
+    "QTCF": 382.7,
+    "RV5_SV1_mV": [
+      0.627,
+      -0.001
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:20:52",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102044.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 152,
+    "QRS_ms": 93,
+    "QT_ms": 270,
+    "QTc_ms": 395,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 1.169,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 346.0,
+    "RV5_SV1_mV": [
+      1.053,
+      -0.117
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:22:21",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102218.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 154,
+    "QRS_ms": 93,
+    "QT_ms": 274,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 0.7,
+    "P_QRS_T_mm": [
+      -69,
+      81,
+      34
+    ],
+    "QTCF": 351.9,
+    "RV5_SV1_mV": [
+      0.646,
+      -0.053
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:22:30",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102226.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 154,
+    "QRS_ms": 93,
+    "QT_ms": 274,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 1.367,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 351.0,
+    "RV5_SV1_mV": [
+      1.056,
+      -0.311
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:23:38",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_102335.pdf",
+    "HR_bpm": 113,
+    "PR_ms": 171,
+    "QRS_ms": 105,
+    "QT_ms": 304,
+    "QTc_ms": 416,
+    "ST_ms": 0.0,
+    "RR_ms": 530,
+    "RV5_plus_SV1_mV": 1.414,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 375.0,
+    "RV5_SV1_mV": [
+      1.07,
+      -0.344
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:24:43",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102440.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 154,
+    "QRS_ms": 94,
+    "QT_ms": 274,
+    "QTc_ms": 397,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 1.66,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 352.0,
+    "RV5_SV1_mV": [
+      1.05,
+      -0.61
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:25:51",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102549.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 154,
+    "QRS_ms": 93,
+    "QT_ms": 274,
+    "QTc_ms": 397,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 0.822,
+    "P_QRS_T_mm": [
+      21,
+      -57,
+      18
+    ],
+    "QTCF": 351.9,
+    "RV5_SV1_mV": [
+      0.75,
+      -0.073
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:30:36",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103033.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 154,
+    "QRS_ms": 93,
+    "QT_ms": 273,
+    "QTc_ms": 394,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 0.68,
+    "P_QRS_T_mm": [
+      45,
+      31,
+      31
+    ],
+    "QTCF": 350.6,
+    "RV5_SV1_mV": [
+      0.639,
+      -0.042
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:37:34",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103731.pdf",
+    "HR_bpm": 127,
+    "PR_ms": 152,
+    "QRS_ms": 95,
+    "QT_ms": 271,
+    "QTc_ms": 397,
+    "ST_ms": 0.0,
+    "RR_ms": 472,
+    "RV5_plus_SV1_mV": 1.315,
+    "P_QRS_T_mm": [
+      -52,
+      -143,
+      28
+    ],
+    "QTCF": 348.1,
+    "RV5_SV1_mV": [
+      0.771,
+      -0.544
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:37:55",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_103752.pdf",
+    "HR_bpm": 125,
+    "PR_ms": 154,
+    "QRS_ms": 94,
+    "QT_ms": 271,
+    "QTc_ms": 394,
+    "ST_ms": 0.0,
+    "RR_ms": 480,
+    "RV5_plus_SV1_mV": 1.658,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 348.0,
+    "RV5_SV1_mV": [
+      1.05,
+      -0.608
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:39:06",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103901.pdf",
+    "HR_bpm": 125,
+    "PR_ms": 152,
+    "QRS_ms": 94,
+    "QT_ms": 272,
+    "QTc_ms": 396,
+    "ST_ms": 0.0,
+    "RR_ms": 480,
+    "RV5_plus_SV1_mV": 1.209,
+    "P_QRS_T_mm": [
+      28,
+      74,
+      36
+    ],
+    "QTCF": 347.4,
+    "RV5_SV1_mV": [
+      0.658,
+      -0.551
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:39:58",
+    "file": "/Users/indresh/Desktop/27_jan_ecg/11_feb/ECG_Report_12_1_20260220_103956.pdf",
+    "HR_bpm": 23,
+    "PR_ms": 198,
+    "QRS_ms": 112,
+    "QT_ms": 564,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 2608,
+    "RV5_plus_SV1_mV": 0.951,
+    "P_QRS_T_mm": [
+      20,
+      45,
+      -127
+    ],
+    "QTCF": 720.3,
+    "RV5_SV1_mV": [
+      0.434,
+      -0.517
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:40:45",
+    "file": "/Users/indresh/Desktop/27_jan_ecg/11_feb/ECG_Report_4_3_20260220_104043.pdf",
+    "HR_bpm": 27,
+    "PR_ms": 273,
+    "QRS_ms": 95,
+    "QT_ms": 430,
+    "QTc_ms": 303,
+    "ST_ms": 0.0,
+    "RR_ms": 2222,
+    "RV5_plus_SV1_mV": 1.648,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 342.0,
+    "RV5_SV1_mV": [
+      1.075,
+      -0.573
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 10:42:41",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_104238.pdf",
+    "HR_bpm": 27,
+    "PR_ms": 280,
+    "QRS_ms": 96,
+    "QT_ms": 430,
+    "QTc_ms": 303,
+    "ST_ms": 0.0,
+    "RR_ms": 2222,
+    "RV5_plus_SV1_mV": 1.022,
+    "P_QRS_T_mm": [
+      -134,
+      44,
+      -112
+    ],
+    "QTCF": 329.5,
+    "RV5_SV1_mV": [
+      0.062,
+      -0.96
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:05:47",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_110544.pdf",
+    "HR_bpm": 40,
+    "PR_ms": 263,
+    "QRS_ms": 139,
+    "QT_ms": 516,
+    "QTc_ms": 423,
+    "ST_ms": 0.0,
+    "RR_ms": 1500,
+    "RV5_plus_SV1_mV": 1.418,
+    "P_QRS_T_mm": [
+      -135,
+      0,
+      -147
+    ],
+    "QTCF": 395.4,
+    "RV5_SV1_mV": [
+      0.424,
+      -0.994
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:06:44",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_110642.pdf",
+    "HR_bpm": 40,
+    "PR_ms": 263,
+    "QRS_ms": 139,
+    "QT_ms": 516,
+    "QTc_ms": 423,
+    "ST_ms": 0.0,
+    "RR_ms": 1500,
+    "RV5_plus_SV1_mV": 1.049,
+    "P_QRS_T_mm": [
+      -135,
+      0,
+      -158
+    ],
+    "QTCF": 450.8,
+    "RV5_SV1_mV": [
+      0.114,
+      -0.935
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:17:27",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_111724.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.271,
+    "P_QRS_T_mm": [
+      -135,
+      0,
+      -169
+    ],
+    "QTCF": 294.4,
+    "RV5_SV1_mV": [
+      0.042,
+      -1.229
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:20:39",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112037.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 170,
+    "QRS_ms": 94,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.81,
+    "P_QRS_T_mm": [
+      -36,
+      44,
+      -137
+    ],
+    "QTCF": 346.0,
+    "RV5_SV1_mV": [
+      0.481,
+      -0.329
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:22:23",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112221.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 96,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.091,
+    "P_QRS_T_mm": [
+      -135,
+      43,
+      -134
+    ],
+    "QTCF": 350.0,
+    "RV5_SV1_mV": [
+      0.106,
+      -0.986
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:28:52",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112850.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.03,
+    "P_QRS_T_mm": [
+      -134,
+      0,
+      -138
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.113,
+      -0.917
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:34:34",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_113431.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.837,
+    "P_QRS_T_mm": [
+      -134,
+      0,
+      58
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.814,
+      -1.023
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:35:39",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_113536.pdf",
+    "HR_bpm": 35,
+    "PR_ms": 167,
+    "QRS_ms": 107,
+    "QT_ms": 343,
+    "QTc_ms": 363,
+    "ST_ms": 0,
+    "RR_ms": 1714,
+    "RV5_plus_SV1_mV": 2.264,
+    "P_QRS_T_mm": [
+      -136,
+      0,
+      46
+    ],
+    "QTCF": 343.0,
+    "RV5_SV1_mV": [
+      0.813,
+      -1.45
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:42:10",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_114207.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.909,
+    "P_QRS_T_mm": [
+      -134,
+      0,
+      141
+    ],
+    "QTCF": 281.6,
+    "RV5_SV1_mV": [
+      0.063,
+      -0.847
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:54:55",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_115452.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.771,
+    "P_QRS_T_mm": [
+      -135,
+      0,
+      -119
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.523,
+      -1.249
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 11:55:29",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_115527.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 172,
+    "QRS_ms": 97,
+    "QT_ms": 352,
+    "QTc_ms": 348,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.826,
+    "P_QRS_T_mm": [
+      -56,
+      44,
+      -140
+    ],
+    "QTCF": 352.0,
+    "RV5_SV1_mV": [
+      0.515,
+      -0.312
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 12:33:06",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123303.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 96,
+    "QT_ms": 349,
+    "QTc_ms": 348,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.633,
+    "P_QRS_T_mm": [
+      -51,
+      37,
+      -133
+    ],
+    "QTCF": 349.0,
+    "RV5_SV1_mV": [
+      0.454,
+      -0.178
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 12:38:12",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123808.pdf",
+    "HR_bpm": 53,
+    "PR_ms": 190,
+    "QRS_ms": 107,
+    "QT_ms": 416,
+    "QTc_ms": 388,
+    "ST_ms": 0.0,
+    "RR_ms": 1132,
+    "RV5_plus_SV1_mV": 1.028,
+    "P_QRS_T_mm": [
+      -11,
+      43,
+      -136
+    ],
+    "QTCF": 416.0,
+    "RV5_SV1_mV": [
+      0.52,
+      -0.508
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 12:38:28",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123826.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 173,
+    "QRS_ms": 95,
+    "QT_ms": 359,
+    "QTc_ms": 359,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.835,
+    "P_QRS_T_mm": [
+      -75,
+      42,
+      -137
+    ],
+    "QTCF": 344.5,
+    "RV5_SV1_mV": [
+      0.512,
+      -0.322
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 13:46:07",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_134604.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 13:54:24",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_135421.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:11:40",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141137.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:18:35",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141831.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:19:12",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141907.pdf",
+    "HR_bpm": 110,
+    "PR_ms": 149,
+    "QRS_ms": 97,
+    "QT_ms": 290,
+    "QTc_ms": 385,
+    "ST_ms": 0.0,
+    "RR_ms": 545,
+    "RV5_plus_SV1_mV": 1.079,
+    "P_QRS_T_mm": [
+      -29,
+      -134,
+      -122
+    ],
+    "QTCF": 290.0,
+    "RV5_SV1_mV": [
+      0.567,
+      -0.512
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:24:21",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_142418.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.194,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 412.6,
+    "RV5_SV1_mV": [
+      0.691,
+      -0.502
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:39:55",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_143952.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:50:49",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_145046.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 14:55:30",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_145527.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:00:25",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150022.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 337,
+    "QTc_ms": 357,
+    "ST_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 337.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:00:58",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150056.pdf",
+    "HR_bpm": 82,
+    "PR_ms": 128,
+    "QRS_ms": 94,
+    "QT_ms": 338,
+    "QTc_ms": 390,
+    "ST_ms": 0.0,
+    "RR_ms": 731,
+    "RV5_plus_SV1_mV": 1.125,
+    "P_QRS_T_mm": [
+      41,
+      -167,
+      -152
+    ],
+    "QTCF": 338.0,
+    "RV5_SV1_mV": [
+      0.624,
+      -0.501
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:07:26",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150724.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.292,
+    "P_QRS_T_mm": [
+      -136,
+      -143,
+      37
+    ],
+    "QTCF": 396.3,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.596
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:08:06",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150803.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.312,
+    "P_QRS_T_mm": [
+      -134,
+      -8,
+      33
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.617
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:08:13",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150810.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.311,
+    "P_QRS_T_mm": [
+      -138,
+      -15,
+      33
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.616
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:09:14",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150911.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.283,
+    "P_QRS_T_mm": [
+      -134,
+      -102,
+      27
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.588
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:10:14",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151012.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.135,
+    "P_QRS_T_mm": [
+      -120,
+      -131,
+      23
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.44
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:11:26",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151123.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 96,
+    "QT_ms": 349,
+    "QTc_ms": 351,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.791,
+    "P_QRS_T_mm": [
+      27,
+      43,
+      -145
+    ],
+    "QTCF": 349.0,
+    "RV5_SV1_mV": [
+      0.406,
+      -0.385
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:15:22",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151519.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.261,
+    "P_QRS_T_mm": [
+      -125,
+      -119,
+      65
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.565
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:15:42",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151540.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.252,
+    "P_QRS_T_mm": [
+      -134,
+      -129,
+      27
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.557
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:16:43",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_151641.pdf",
+    "HR_bpm": 58,
+    "PR_ms": 166,
+    "QRS_ms": 94,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1034,
+    "RV5_plus_SV1_mV": 1.669,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 351.0,
+    "RV5_SV1_mV": [
+      1.091,
+      -0.578
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:24:47",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_152444.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.249,
+    "P_QRS_T_mm": [
+      -131,
+      -124,
+      20
+    ],
+    "QTCF": 353.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.553
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:29:01",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_152857.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.187,
+    "P_QRS_T_mm": [
+      -119,
+      -123,
+      24
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.491
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:30:14",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_153010.pdf",
+    "HR_bpm": 58,
+    "PR_ms": 168,
+    "QRS_ms": 94,
+    "QT_ms": 348,
+    "QTc_ms": 348,
+    "ST_ms": 0.0,
+    "RR_ms": 1034,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 348.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:31:46",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_153144.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.254,
+    "P_QRS_T_mm": [
+      -130,
+      -129,
+      28
+    ],
+    "QTCF": 353.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.559
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:38:45",
+    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_153842.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.688,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      1.113,
+      -0.575
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:38:54",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_153852.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.688,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      1.113,
+      -0.575
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:39:01",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_153858.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.248,
+    "P_QRS_T_mm": [
+      -134,
+      -76,
+      28
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.695,
+      -0.553
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:39:44",
+    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_153941.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.688,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      1.113,
+      -0.575
+    ]
+  },
+  {
+    "timestamp": "2026-02-20 15:51:48",
+    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_155145.pdf",
+    "HR_bpm": 40,
+    "PR_ms": 171,
+    "QRS_ms": 94,
+    "QT_ms": 364,
+    "QTc_ms": 298,
+    "ST_ms": 0.0,
+    "RR_ms": 1500,
+    "RV5_plus_SV1_mV": 0.692,
+    "P_QRS_T_mm": [
+      -61,
+      45,
+      -142
+    ],
+    "QTCF": 364.0,
+    "RV5_SV1_mV": [
+      0.504,
+      -0.188
+    ]
   }
 ]

@@ -25,11 +25,13 @@ ECG_BASE_BOX_MM = 5.0
 ECG_LARGE_BOX_MM = 210.0 / 40.0  # = 5.25mm
 ECG_SMALL_BOX_MM = ECG_LARGE_BOX_MM / 5.0  # = 1.05mm
 ECG_SPEED_SCALE = ECG_LARGE_BOX_MM / ECG_BASE_BOX_MM  # = 1.05
+SIX_TWO_SAMPLES_COLUMN = 2500
+SIX_TWO_SAMPLES_EXTRA_II = 3500
 
 # UNIFIED BOX CONFIGURATION
 COLUMN1_BOXES = 26.3
 COLUMN2_BOXES = 26.3  
-EXTRA_LEAD2_BOXES = 52.6  
+EXTRA_LEAD2_BOXES = 35.0  
 
 
 # ------------------------ Resource path helper for PyInstaller compatibility ------------------------
@@ -1405,13 +1407,13 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     )
 
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
     QTcF = data.get('QTc_Fridericia') or data.get('QTcF') or 0
-    ST = data.get('ST', 114)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    
@@ -1608,19 +1610,15 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                 
                 print(f" DEBUG: Added {dots_count} dotted segments to vertical line (reduced by 2 boxes from bottom)")
             
-            # STEP 3B: Get REAL ECG data for this lead (ONLY from saved file - calculation-based)
-            # IMPORTANT:  saved file  data use , live dashboard   (calculation-based beats  )
             real_data_available = False
             real_ecg_data = None
             
             if lead == "II":
-                lead_width_points = EXTRA_LEAD2_BOXES * ECG_LARGE_BOX_MM * mm
-            elif lead in column1_leads:
-                lead_width_points = COLUMN1_BOXES * ECG_LARGE_BOX_MM * mm
+                target_samples = SIX_TWO_SAMPLES_EXTRA_II
             else:
-                lead_width_points = COLUMN2_BOXES * ECG_LARGE_BOX_MM * mm
-            lead_time_window_seconds = calculate_time_window_from_width_points(wave_speed_mm_s, lead_width_points)
-            lead_samples_to_capture = int(lead_time_window_seconds * computed_sampling_rate)
+                target_samples = SIX_TWO_SAMPLES_COLUMN
+            lead_samples_to_capture = target_samples
+            lead_time_window_seconds = lead_samples_to_capture / max(1e-6, computed_sampling_rate)
             
             # Helper function to calculate derived leads from I and II
             def calculate_derived_lead(lead_name, lead_i_data, lead_ii_data):
@@ -1845,12 +1843,10 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                 
                 
                 
-                # Step 1: Convert ADC data to numpy array
                 adc_data = np.array(real_ecg_data, dtype=float)
 
-                # Step 1.1: Apply report filters (DFT -> EMG -> AC) on raw ADC data
                 try:
-                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
+                    from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter, apply_baseline_wander_median_mean
                     dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
                     emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
                     ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
@@ -1860,6 +1856,7 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                         adc_data = apply_emg_filter(adc_data, float(computed_sampling_rate), emg_setting)
                     if ac_setting in ("50", "60"):
                         adc_data = apply_ac_filter(adc_data, float(computed_sampling_rate), ac_setting)
+                    adc_data = apply_baseline_wander_median_mean(adc_data, float(computed_sampling_rate))
                 except Exception as filter_err:
                     print(f" Report filter apply failed for {lead}: {filter_err}")
                 
@@ -1940,13 +1937,13 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
     QTcF = data.get('QTc_Fridericia') or data.get('QTcF') or 0
-    ST = data.get('ST', 114)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    
@@ -2572,7 +2569,7 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     # Calculate aVF position to place Lead II label 45 points below it
     avf_lead_index = 5  # aVF is 6th lead (index 5) in column1_leads
     avf_y_pos = start_y - (avf_lead_index * 60)  # 412 - (5 * 60) = 112
-    extra_lead_ii_y_pos = avf_y_pos - 45 - 15  # 112 - 45 - 15 = 52 (shifted 15 points DOWN)
+    extra_lead_ii_y_pos = avf_y_pos - 45 - 15  # Original vertical position for label/notch
     
     # Use same X position as other column1 leads (shifted 45 points right, then 10 points left)
     extra_lead_ii_x_pos = (20 - 45) + 45.0 - 10.0  # Same as other column1 leads
@@ -2593,18 +2590,12 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     
     # Try to get Lead II data from saved_ecg_data - EXACTLY LIKE ORIGINAL LEAD II
     if saved_ecg_data and 'leads' in saved_ecg_data and "II" in saved_ecg_data['leads']:
-        extra_lead_ii_raw_data = saved_ecg_data['leads']["II"]  # Same as original: raw_data = saved_ecg_data['leads'][lead_name_for_saved]
+        extra_lead_ii_raw_data = saved_ecg_data['leads']["II"]
         print(f" Found Lead II raw data from saved_ecg_data: {len(extra_lead_ii_raw_data)} points")
         
-        # Apply same time window filtering as original leads
         if len(extra_lead_ii_raw_data) > 0:
-            # Calculate time window for filtering (same as original)
-            extra_width_points = extra_lead_ii_width
-            extra_time_window_seconds = calculate_time_window_from_width_points(wave_speed_mm_s, extra_width_points)
-            num_samples_to_capture = int(extra_time_window_seconds * computed_sampling_rate)
-            
-            # Apply same filtering logic as original Lead II
             saved_data_samples = len(extra_lead_ii_raw_data)
+            num_samples_to_capture = SIX_TWO_SAMPLES_EXTRA_II
             if saved_data_samples < num_samples_to_capture:
                 print(f" Extra Lead II has only {saved_data_samples} samples, using all available data")
                 extra_lead_ii_data_to_use = extra_lead_ii_raw_data
@@ -2615,9 +2606,12 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     
     # Try to get Lead II data from live dashboard - EXACTLY LIKE ORIGINAL LEAD II
     elif ecg_test_page and hasattr(ecg_test_page, 'data') and len(ecg_test_page.data) > 1:
-        extra_lead_ii_raw_data = ecg_test_page.data[1]  # Lead II is at index 1
+        extra_lead_ii_raw_data = ecg_test_page.data[1]
         print(f" Found Lead II raw data from live dashboard: {len(extra_lead_ii_raw_data)} points")
-        extra_lead_ii_data = extra_lead_ii_raw_data
+        if len(extra_lead_ii_raw_data) > SIX_TWO_SAMPLES_EXTRA_II:
+            extra_lead_ii_data = extra_lead_ii_raw_data[-SIX_TWO_SAMPLES_EXTRA_II:]
+        else:
+            extra_lead_ii_data = extra_lead_ii_raw_data
     
     # Draw extra Lead II ECG strip if data is available
     if extra_lead_ii_data is not None and len(extra_lead_ii_data) > 0:
@@ -2666,10 +2660,11 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
         boxes_offset = centered_adc / adc_per_box
         
         # Convert to Y position
-        center_y = extra_lead_ii_y + (extra_lead_ii_height / 2.0)
         from reportlab.lib.units import mm
         box_height_points = 5.0 * mm  # Standard ECG: 5mm = 14.17 points per box (same as original)
-        ecg_normalized = center_y + (boxes_offset * box_height_points)
+        center_y_wave = extra_lead_ii_y + (extra_lead_ii_height / 2.0) + (3 * 5.0 * mm)
+        center_y_notch = extra_lead_ii_y + (extra_lead_ii_height / 2.0)
+        ecg_normalized = center_y_wave + (boxes_offset * box_height_points)
         
         # Create time array (full page width)
         t = np.linspace(extra_lead_ii_adjusted_x_pos, extra_lead_ii_adjusted_x_pos + extra_lead_ii_width, len(extra_lead_ii_data))
@@ -2705,7 +2700,7 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
         # Place notch 10 points after where ECG strip starts, then shift 30 points left
         # For 6:2 format, ECG data starts at adjusted_x_pos, so notch should be relative to that
         notch_x = extra_lead_ii_adjusted_x_pos + 10.0 - 30.0  # Same relative position as other leads
-        notch_y_base = center_y  # Use same center_y as ECG calculation
+        notch_y_base = center_y_notch  # Keep notch at original center position
         print(f" DEBUG: Extra Lead II Notch position - X: {notch_x}, Y: {notch_y_base}, Width: {notch_width}, Height: {notch_height}")
         
         # Create calibration notch (same styling as other leads)
@@ -2750,12 +2745,12 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
 
     # RIGHT SIDE: Vital Parameters at SAME LEVEL as patient info (ABOVE ECG GRAPH)
     # Get real ECG data from dashboard
-    HR = data.get('HR_avg', 70)
-    PR = data.get('PR', 192) 
-    QRS = data.get('QRS', 93)
-    QT = data.get('QT', 354)
-    QTc = data.get('QTc', 260)
-    ST = data.get('ST', 114)
+    HR = data.get('HR_avg',)
+    PR = data.get('PR',) 
+    QRS = data.get('QRS',)
+    QT = data.get('QT',)
+    QTc = data.get('QTc',)
+    ST = data.get('ST',)
     # DYNAMIC RR interval calculation from heart rate (instead of hard-coded 857)
     RR = int(60000 / HR) if HR and HR > 0 else 0  # RR interval in ms from heart rate
    

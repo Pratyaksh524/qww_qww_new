@@ -1213,6 +1213,54 @@ class HyperkalemiaTestWindow(QWidget):
             print(f"   PDF filepath: {filepath}")
             print(f"   ECG data file: {ecg_data_file}")
             
+            try:
+                base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+                reports_dir = os.path.join(base_dir, 'reports')
+                os.makedirs(reports_dir, exist_ok=True)
+                hyper_metrics_path = os.path.join(reports_dir, 'hyper_metric.json')
+
+                metrics_source = self.analysis_results if isinstance(self.analysis_results, dict) else {}
+
+                def _safe_int(val):
+                    try:
+                        return int(round(float(val)))
+                    except Exception:
+                        return 0
+
+                hr = _safe_int(metrics_source.get("heart_rate", 0))
+                pr = _safe_int(metrics_source.get("pr_interval_ms", 0))
+                qrs = _safe_int(metrics_source.get("qrs_duration_ms", 0))
+                qt = _safe_int(metrics_source.get("qt_interval_ms", 0))
+                qtc = _safe_int(metrics_source.get("qtc_ms", 0))
+
+                hyper_entry = {
+                    "timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "file": os.path.abspath(filepath),
+                    "HR_bpm": hr,
+                    "PR_ms": pr,
+                    "QRS_ms": qrs,
+                    "QT_ms": qt,
+                    "QTc_ms": qtc,
+                }
+
+                hyper_list = []
+                if os.path.exists(hyper_metrics_path):
+                    try:
+                        with open(hyper_metrics_path, 'r') as f:
+                            existing = json.load(f)
+                            if isinstance(existing, list):
+                                hyper_list = existing
+                    except Exception:
+                        hyper_list = []
+
+                hyper_list.append(hyper_entry)
+
+                with open(hyper_metrics_path, 'w') as f:
+                    json.dump(hyper_list, f, indent=2)
+                print(f" Saved Hyperkalemia metrics to {hyper_metrics_path}")
+            except Exception as e:
+                print(f" Could not save Hyperkalemia metrics: {e}")
+            
             generate_hyperkalemia_report(filepath, self.analysis_results, self.lead_ii_data, 
                                         ecg_data_file=ecg_data_file)
             
@@ -1251,4 +1299,3 @@ class HyperkalemiaTestWindow(QWidget):
                 event.ignore()
         else:
             event.accept()
-
