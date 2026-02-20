@@ -34,6 +34,7 @@ import json
 import datetime
 import shutil
 import requests
+import webbrowser
 
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -45,6 +46,7 @@ REPORTS_DIR = os.path.join(BASE_DIR, "reports")
 # Backend API configuration
 BACKEND_API_URL = "https://your-backend-api.com/api/reports"  # Replace with actual backend URL
 API_TIMEOUT = 30  # seconds
+PUBLIC_REVIEWED_REPORTS_URL = "https://6jhix49qt6.execute-api.us-east-1.amazonaws.com/api/public/reviewed-reports"
 
 
 class UploadWorker(QThread):
@@ -79,6 +81,7 @@ class HistoryWindow(QDialog):
         self.setWindowTitle("ECG Report History")
         self.username = username
         self.all_history_entries = []  # Store all entries for filtering
+        self._cloud_preview_map = {}   # Cache reviewed report preview URLs by (patient,date)
         
         # Make window responsive to screen size
         screen = QApplication.desktop().screenGeometry()
@@ -392,6 +395,16 @@ class HistoryWindow(QDialog):
         self.send_review_btn.setMinimumHeight(40)
         self.send_review_btn.clicked.connect(self.send_report_for_review)
         btn_row.addWidget(self.send_review_btn)
+
+        self.refresh_reviewed_btn = QPushButton(" Refresh Reviewed")
+        self.refresh_reviewed_btn.setMinimumHeight(40)
+        self.refresh_reviewed_btn.clicked.connect(self.refresh_reviewed_reports)
+        btn_row.addWidget(self.refresh_reviewed_btn)
+
+        self.open_cloud_preview_btn = QPushButton(" Open Cloud Preview")
+        self.open_cloud_preview_btn.setMinimumHeight(40)
+        self.open_cloud_preview_btn.clicked.connect(self.open_cloud_preview_selected)
+        btn_row.addWidget(self.open_cloud_preview_btn)
 
         btn_row.addStretch(1)
 
@@ -1117,11 +1130,14 @@ class HistoryWindow(QDialog):
         if report_file and os.path.exists(report_file):
             self._open_pdf_file(report_file)
         else:
+            # Attempt cloud preview via public reviewed reports API
+            if self._open_reviewed_report_via_api(patient_name, date_str):
+                return
             QMessageBox.information(
                 self,
                 "Report Not Found",
-                f"Could not find a PDF report for patient '{patient_name}'.\n\n"
-                f"You can find all reports in the 'reports' folder."
+                f"Could not find a local PDF for '{patient_name}'.\n"
+                f"Tried cloud preview from reviewed reports API as well."
             )
 
     def _find_report_file(self, patient_name, date_str=""):
@@ -1174,6 +1190,120 @@ class HistoryWindow(QDialog):
                 os.system(f'xdg-open "{report_file}"')
         except Exception as e:
             QMessageBox.critical(self, "Open Report", f"Failed to open report: {e}")
+    
+    def _open_reviewed_report_via_api(self, patient_name, date_str=""):
+        """Try opening a reviewed report preview via the public API."""
+        try:
+            # Build request; if backend supports query, pass patient/date
+            params = {}
+            if patient_name:
+                params["patient"] = patient_name
+            if date_str:
+                params["date"] = date_str
+            
+            resp = requests.get(PUBLIC_REVIEWED_REPORTS_URL, params=params, timeout=10)
+            if resp.status_code != 200:
+                return False
+            
+            data = resp.json() if "application/json" in resp.headers.get("Content-Type", "") else None
+            # If JSON list, try to find matching record and open its preview/file URL
+            candidate_url = None
+            if isinstance(data, list) and len(data) > 0:
+                # Prefer records matching patient/date
+                def matches(entry):
+                    pn = str(entry.get("patient", entry.get("name", ""))).strip().lower()
+                    dt = str(entry.get("date", "")).strip()
+                    ok_p = not patient_name or patient_name.lower() in pn
+                    ok_d = not date_str or date_str == dt
+                    return ok_p and ok_d
+                for entry in data:
+                    if matches(entry):
+                        candidate_url = entry.get("preview_url") or entry.get("file_url") or entry.get("url")
+                        key = (patient_name or "").strip(), (date_str or "").strip()
+                        if key[0] or key[1]:
+                            if candidate_url:
+                                self._cloud_preview_map[key] = candidate_url
+                        if candidate_url:
+                            break
+                # Fallback to first record with any URL
+                if not candidate_url:
+                    for entry in data:
+                        candidate_url = entry.get("preview_url") or entry.get("file_url") or entry.get("url")
+                        if candidate_url:
+                            break
+            # If not JSON, try to extract a URL from text
+            if not candidate_url and isinstance(resp.text, str):
+                txt = resp.text
+                # Naive URL find
+                for token in txt.split():
+                    if token.startswith("http://") or token.startswith("https://"):
+                        candidate_url = token
+                        break
+            
+            if candidate_url:
+                webbrowser.open(candidate_url)
+                return True
+            return False
+        except Exception:
+            return False
+
+    def refresh_reviewed_reports(self):
+        """Fetch reviewed reports from public API and mark matching rows as Reviewed."""
+        try:
+            resp = requests.get(PUBLIC_REVIEWED_REPORTS_URL, timeout=10)
+            if resp.status_code != 200:
+                QMessageBox.information(self, "Reviewed Reports", "Could not fetch reviewed reports from cloud.")
+                return
+            data = resp.json() if "application/json" in resp.headers.get("Content-Type", "") else []
+            if not isinstance(data, list):
+                data = []
+            # Build quick lookup by normalized patient/date
+            def norm(s): return str(s or "").strip().lower()
+            lookup = {}
+            for entry in data:
+                pn = norm(entry.get("patient", entry.get("name", "")))
+                dt = str(entry.get("date", "")).strip()
+                url = entry.get("preview_url") or entry.get("file_url") or entry.get("url")
+                if pn or dt:
+                    lookup[(pn, dt)] = url
+            # Iterate rows and update status
+            updated = 0
+            for row in range(self.table.rowCount()):
+                patient_item = self.table.item(row, 4)
+                date_item = self.table.item(row, 0)
+                if not patient_item or not date_item:
+                    continue
+                key = (norm(patient_item.text()), date_item.text().strip())
+                url = lookup.get(key)
+                if url:
+                    self.update_review_status(row, "Reviewed")
+                    self._cloud_preview_map[(patient_item.text().strip(), date_item.text().strip())] = url
+                    updated += 1
+            QMessageBox.information(self, "Reviewed Reports", f"Updated {updated} row(s) to Reviewed from cloud.")
+        except Exception as e:
+            QMessageBox.warning(self, "Reviewed Reports", f"Failed to refresh reviewed reports: {e}")
+
+    def open_cloud_preview_selected(self):
+        """Open cloud preview for the selected row, using cache or API lookup."""
+        row = self.table.currentRow()
+        if row < 0:
+            QMessageBox.information(self, "Cloud Preview", "Please select a report row first.")
+            return
+        patient_item = self.table.item(row, 4)
+        date_item = self.table.item(row, 0)
+        patient = patient_item.text().strip() if patient_item else ""
+        date_str = date_item.text().strip() if date_item else ""
+        key = (patient, date_str)
+        url = self._cloud_preview_map.get(key)
+        if url:
+            try:
+                webbrowser.open(url)
+                return
+            except Exception:
+                pass
+        # Fallback: query API now
+        if not self._open_reviewed_report_via_api(patient, date_str):
+            QMessageBox.information(self, "Cloud Preview", "No reviewed report found for this row.")
 
     def export_all_reports(self):
         """Export all saved reports from history to a user-selected directory."""

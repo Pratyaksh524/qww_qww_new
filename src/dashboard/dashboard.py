@@ -2455,6 +2455,17 @@ class Dashboard(QWidget):
             self._last_metrics_update_ts = _time.time()
             # Do not update metrics for first-time users until acquisition/demo starts
             if not self.is_ecg_active():
+                if 'heart_rate' in self.metric_labels:
+                    self.metric_labels['heart_rate'].setText("0 BPM")
+                if 'pr_interval' in self.metric_labels:
+                    self.metric_labels['pr_interval'].setText("0 ms")
+                if 'qrs_duration' in self.metric_labels:
+                    self.metric_labels['qrs_duration'].setText("0 ms")
+                if 'qtc_interval' in self.metric_labels:
+                    self.metric_labels['qtc_interval'].setText("0")
+                key = 'st_interval' if 'st_interval' in self.metric_labels else 'st_segment'
+                if key in self.metric_labels:
+                    self.metric_labels[key].setText("0 ms")
                 return
             
             # Allow updates in demo mode - display the values set by demo_manager
@@ -2507,8 +2518,8 @@ class Dashboard(QWidget):
                     self.metric_labels['st_interval'].setText(f"{p_val} ms")
 
                 # Update QT/QTc interval text
-                if qtc_raw is not None and 'qtc_interval' in self.metric_labels:
-                    qtc_text = str(qtc_raw)
+                if 'qtc_interval' in self.metric_labels:
+                    qtc_text = str(qtc_raw) if qtc_raw is not None else "0"
                     if qtc_text.endswith(" ms"):
                         qtc_text = qtc_text[:-3]
                     self.metric_labels['qtc_interval'].setText(qtc_text)
@@ -2565,49 +2576,24 @@ class Dashboard(QWidget):
                         return self._fallback_wave_update(frame)
 
                     # Get actual sampling rate from ECG test page
-                    actual_sampling_rate = 80  # Default to 80Hz
+                    actual_sampling_rate = 250  # Default to 250Hz to match 12-lead
                     try:
                         if (hasattr(self.ecg_test_page, 'sampler') and 
                             hasattr(self.ecg_test_page.sampler, 'sampling_rate') and 
                             self.ecg_test_page.sampler.sampling_rate):
                             actual_sampling_rate = float(self.ecg_test_page.sampler.sampling_rate)
                             if actual_sampling_rate <= 0 or actual_sampling_rate > 1000:
-                                actual_sampling_rate = 80
+                                actual_sampling_rate = 250
                     except Exception as e:
                         print(f" Error getting sampling rate: {e}")
-                        actual_sampling_rate = 80
+                        actual_sampling_rate = 250
                     
-                    # Apply filters matching 12-lead page (smoothness)
+                    # Use LIVE Lead II samples directly — no extra filtering
                     try:
-                        from ecg.ecg_filters import apply_ecg_filters
-                        
-                        # Get settings manually to handle low sampling rate case
-                        ac_setting = self.settings_manager.get_setting("filter_ac", "50")
-                        
-                        # Disable AC filter if sampling rate is too low (Nyquist limit)
-                        # Need at least 2x frequency. 50Hz needs >100Hz.
-                        if actual_sampling_rate < 101:
-                             ac_setting = "off"
-                        
-                        emg_setting = self.settings_manager.get_setting("filter_emg", "150")
-                        dft_setting = self.settings_manager.get_setting("filter_dft", "0.5")
-
-                        original_data = apply_ecg_filters(
-                            signal=original_data,
-                            sampling_rate=actual_sampling_rate,
-                            ac_filter=ac_setting,
-                            emg_filter=emg_setting,
-                            dft_filter=dft_setting
-                        )
-                        
-                        # Apply Gaussian smoothing (same as 12-lead page)
-                        # SMOOTH_SIGMA = 0.8 from twelve_lead_test.py
-                        original_data = gaussian_filter1d(original_data, sigma=0.8)
-                        
-                        # print(" Applied filters (Settings + Gaussian) to Lead II data")
+                        original_data = np.asarray(lead_ii_data, dtype=float)
                     except Exception as e:
-                        print(f" Warning: Could not apply filters: {e}")
-                        # Continue without filtering if there's an error
+                        print(f" Error converting Lead II data to array: {e}")
+                        return self._fallback_wave_update(frame)
                     
                     # Check for invalid values
                     if np.any(np.isnan(original_data)) or np.any(np.isinf(original_data)):
@@ -2624,8 +2610,9 @@ class Dashboard(QWidget):
                         wave_speed = 25.0
                     
                     # Baseline window at 25 mm/s (diagnostic standard)
-                    # 25 mm/s → 3 seconds visible (≈15 large boxes at 5 mm each)
-                    baseline_seconds = 3.0
+                    # Smaller window to reduce visible baseline drift
+                    # 25 mm/s → 1.5 seconds visible
+                    baseline_seconds = 1.5
                     # Scale time window with wave speed:
                     #   12.5 mm/s → 6 s, 25 mm/s → 3 s, 50 mm/s → 1.5 s
                     seconds_to_show = baseline_seconds * (25.0 / max(1e-6, wave_speed))
@@ -2634,55 +2621,27 @@ class Dashboard(QWidget):
                     # Slice last window and resample horizontally to fixed display length
                     try:
                         src = original_data[-window_samples:]
-                        
-                        # STEADY-STATE BASELINE CORRECTION (Same as 12-Lead Page)
-                        try:
-                            # Use simple centering if import fails or just as fallback
-                            # Ideally we would replicate the exact filter, but centering is usually sufficient for Lead II view
-                            # unless we can import the helper.
-                            from ecg.signal.signal_processing import extract_low_frequency_baseline
-                            
-                            # Initialize anchor if needed (persistent for smooth transitions)
-                            if not hasattr(self, '_lead2_baseline_anchor'):
-                                self._lead2_baseline_anchor = 0.0
-                                self._lead2_baseline_alpha = 0.0005  # Monitor-grade (slow)
-                            
-                            if len(src) > 0:
-                                # Extract baseline estimate using the same logic as 12-lead page
-                                # Note: We need sampling rate, using actual_sampling_rate from above
-                                baseline_estimate = extract_low_frequency_baseline(src, actual_sampling_rate)
-                                
-                                # Initialize anchor immediately if zero (snap to center)
-                                if self._lead2_baseline_anchor == 0.0:
-                                    self._lead2_baseline_anchor = baseline_estimate
-                                
-                                # Update anchor with slow alpha
-                                self._lead2_baseline_anchor = (1 - self._lead2_baseline_alpha) * self._lead2_baseline_anchor + self._lead2_baseline_alpha * baseline_estimate
-                                
-                                # Subtract anchor
-                                src = src - self._lead2_baseline_anchor
-                                
-                                # Final zero-centering to ensure it sits on the line
-                                current_dc = np.nanmean(src) if len(src) > 0 else 0.0
-                                # Shift to 2048 (middle of 0-4096 range) instead of 0
-                                src = src - current_dc + 2048.0
-                                
-                        except Exception as e:
-                            # Fallback: simple mean subtraction and shift to 2048
-                            if len(src) > 0:
-                                src = src - np.nanmean(src) + 2048.0
+                        if len(src) > 0:
+                            # Hard-center baseline each frame to prevent upward drift
+                            current_dc = float(np.nanmean(src))
+                            src = src - current_dc + 2048.0
 
                         display_len = len(self.ecg_x)
                         if src.size <= 1:
-                            # Default to middle of range if no data
                             display_y = np.full(display_len, 2048.0)
+                            self._lead2_last_value = 2048.0
                         else:
-                            # Interpolate to display length (same as 12-lead page)
                             x_src = np.linspace(0.0, 1.0, src.size)
                             x_dst = np.linspace(0.0, 1.0, display_len)
                             display_y = np.interp(x_dst, x_src, src.astype(float))
-                            
-                            # Ensure values stay within 0-4096 range (hardware limit)
+                            if not hasattr(self, '_lead2_last_value'):
+                                self._lead2_last_value = float(display_y[0])
+                            edge_len = max(5, int(0.06 * display_len))
+                            delta = float(self._lead2_last_value) - float(display_y[0])
+                            if np.isfinite(delta) and abs(delta) > 0.5:
+                                blend = np.linspace(delta, 0.0, edge_len, dtype=float)
+                                display_y[:edge_len] = display_y[:edge_len] + blend
+                            self._lead2_last_value = float(display_y[-1])
                             display_y = np.clip(display_y, 0, 4096)
                         
                         # Validate display data
@@ -2692,6 +2651,7 @@ class Dashboard(QWidget):
                         
                         self.ecg_line.set_ydata(display_y)
                         # Ensure y-axis is locked to 0-4096 range (same as 12-lead page)
+                        self.ecg_canvas.axes.set_autoscale_on(False)
                         self.ecg_canvas.axes.set_ylim(0, 4096)
                         
                     except Exception as e:
@@ -2957,7 +2917,8 @@ class Dashboard(QWidget):
                 hr_text = ecg_metrics.get('heart_rate', '0')
                 pr_text = ecg_metrics.get('pr_interval', '0')
                 qrs_text = ecg_metrics.get('qrs_duration', '0')
-                p_text = ecg_metrics.get('st_interval', '0')  # st_interval stores P duration (label shows "P")
+                p_text = ecg_metrics.get('st_interval', '0')
+                qt_text = ecg_metrics.get('qt_interval', '')
                 qtc_text = ecg_metrics.get('qtc_interval', '0')
                 if 'heart_rate' in self.metric_labels:
                     self.metric_labels['heart_rate'].setText(f"{hr_text} BPM")
@@ -2971,7 +2932,12 @@ class Dashboard(QWidget):
                     p_val = str(p_text).replace(' ms', '').replace('mV', '').strip()
                     self.metric_labels[key].setText(f"{p_val} ms")
                 if 'qtc_interval' in self.metric_labels:
-                    self.metric_labels['qtc_interval'].setText(str(qtc_text))
+                    qt_clean  = str(qt_text).replace(' ms', '').strip()
+                    qtc_clean = str(qtc_text).replace(' ms', '').strip()
+                    if qt_clean and qt_clean != '0' and qtc_clean and qtc_clean != '0':
+                        self.metric_labels['qtc_interval'].setText(f"{qt_clean}/{qtc_clean}")
+                    else:
+                        self.metric_labels['qtc_interval'].setText(qtc_clean if qtc_clean else "0")
                 self._last_metrics_update_ts = _time.time()
                 # This Prevents Jittering of BPM values in inner dashboard
                 # try:
