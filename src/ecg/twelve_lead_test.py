@@ -6991,7 +6991,8 @@ class ECGTestPage(QWidget):
                     # Gaussian smoothing
                     try:
                         if len(filtered_segment) > 5:
-                            filtered_segment = gaussian_filter1d(filtered_segment, sigma=self.SMOOTH_SIGMA)
+                            sigma = max(self.SMOOTH_SIGMA * 1.5, 1.3)
+                            filtered_segment = gaussian_filter1d(filtered_segment, sigma=sigma)
                     except Exception:
                         pass
                     
@@ -7775,7 +7776,8 @@ class ECGTestPage(QWidget):
                     # Gaussian smoothing
                     try:
                         if len(filtered_segment) > 5:
-                            filtered_segment = gaussian_filter1d(filtered_segment, sigma=self.SMOOTH_SIGMA)
+                            sigma = max(self.SMOOTH_SIGMA * 1.5, 1.3)
+                            filtered_segment = gaussian_filter1d(filtered_segment, sigma=sigma)
                     except Exception:
                         pass
                     
@@ -7965,7 +7967,7 @@ class ECGTestPage(QWidget):
                                     fs = 500
                             # Trim small margins from both ends to reduce filter edge artefacts
                             try:
-                                edge_trim = int(0.2 * fs)  # ~200ms on each side at 500 Hz
+                                edge_trim = int(0.5 * fs)  # ~200ms on each side at 500 Hz
                                 if len(raw) > 2 * edge_trim:
                                     raw = raw[edge_trim:-edge_trim]
                             except Exception:
@@ -8438,7 +8440,7 @@ class ECGTestPage(QWidget):
 
                             # Trim small margins from both ends to reduce filter edge artefacts
                             try:
-                                edge_trim = int(0.2 * self.SAMPLE_RATE)  # ~200ms on each side at 500 Hz
+                                edge_trim = int(0.5 * self.SAMPLE_RATE)  # ~200ms on each side at 500 Hz
                                 if len(scaled_data) > 2 * edge_trim:
                                     scaled_data = scaled_data[edge_trim:-edge_trim]
                             except Exception:

@@ -1769,6 +1769,16 @@ class ExpandedLeadView(QDialog):
                 # In case of any indexing issues, fall back to the original (unpadded) slice
                 display_signal = self.ecg_data[start_idx:end_idx]
 
+            try:
+                from scipy.ndimage import gaussian_filter1d
+                if len(display_signal) > 5:
+                    display_signal = gaussian_filter1d(display_signal, sigma=1.5)
+            except Exception:
+                if len(display_signal) > 5:
+                    kernel_size = 7
+                    kernel = np.ones(kernel_size) / kernel_size
+                    display_signal = np.convolve(display_signal, kernel, mode="same")
+
             # ---------------- DISPLAY SCALING (apply gain ONCE, last) ----------------
             wave_gain_mm = 10.0
             try:

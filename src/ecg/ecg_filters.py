@@ -177,7 +177,7 @@ def apply_ac_filter(signal: np.ndarray, sampling_rate: float, ac_filter: str) ->
         
         # Design notch filter (bandstop filter)
         nyquist = sampling_rate / 2.0
-        quality_factor = 35.0  # INFO FIX #12: Increased from 25 to 35 for sharper rejection
+        quality_factor = 10.0  # INFO FIX #12: Increased from 25 to 35 for sharper rejection
         # Quality factor for notch filter (reduced from 30 to avoid ringing)
         
         # Normalize frequency
@@ -191,8 +191,14 @@ def apply_ac_filter(signal: np.ndarray, sampling_rate: float, ac_filter: str) ->
         # Design IIR notch filter
         b, a = iirnotch(w0, quality_factor)
         
-        # Apply filter (zero-phase filtering)
-        filtered_signal = filtfilt(b, a, signal)
+        # Apply filter (zero-phase filtering) with edge padding to reduce start/end transients
+        pad_len = min(len(signal) // 2, int(sampling_rate)) if len(signal) > 0 else 0
+        if pad_len > 0:
+            padded = np.pad(signal, (pad_len, pad_len), mode="edge")
+            filtered_padded = filtfilt(b, a, padded)
+            filtered_signal = filtered_padded[pad_len:-pad_len]
+        else:
+            filtered_signal = filtfilt(b, a, signal)
         
         return filtered_signal
     
