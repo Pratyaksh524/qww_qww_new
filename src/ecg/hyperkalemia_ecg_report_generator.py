@@ -1740,9 +1740,9 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
                 # Step 1.1: Apply report filters (DFT -> EMG -> AC) on raw ADC data
                 try:
                     from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
-                    dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-                    emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-                    ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+                    dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+                    emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+                    ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
                     if dft_setting not in ("off", ""):
                         adc_data = apply_dft_filter(adc_data, float(computed_sampling_rate), dft_setting)
                     if emg_setting not in ("off", ""):
@@ -2162,9 +2162,9 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
                 # Step 1.1: Apply report filters (DFT -> EMG -> AC) on raw ADC data
                 try:
                     from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
-                    dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-                    emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-                    ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+                    dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+                    emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+                    ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
                     if dft_setting not in ("off", ""):
                         adc_data = apply_dft_filter(adc_data, float(computed_sampling_rate), dft_setting)
                     if emg_setting not in ("off", ""):

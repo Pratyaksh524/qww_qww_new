@@ -381,26 +381,39 @@ def apply_report_ecg_filters(signal, sampling_rate, settings_manager):
     arr = np.asarray(signal, dtype=float)
     if arr.size < 10:
         return arr
-    dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-    emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-    ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+    try:
+        fs = float(sampling_rate)
+    except Exception:
+        fs = 500.0
+    pad_seconds = 2.0
+    pad_samples = int(pad_seconds * fs)
+    pad = min(pad_samples, max(0, arr.size - 1))
+    if pad > 0:
+        work = np.pad(arr, pad_width=pad, mode="edge")
+    else:
+        work = arr
+    dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+    emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+    ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
     dft_param = dft_setting if dft_setting not in ("off", "") else None
     emg_param = emg_setting if emg_setting not in ("off", "") else None
     ac_param = ac_setting if ac_setting not in ("off", "") else None
     filtered = apply_ecg_filters(
-        arr,
-        sampling_rate=float(sampling_rate),
+        work,
+        sampling_rate=fs,
         ac_filter=ac_param,
         emg_filter=emg_param,
         dft_filter=dft_param,
     )
-    filtered = apply_baseline_wander_median_mean(filtered, float(sampling_rate))
+    filtered = apply_baseline_wander_median_mean(filtered, fs)
     try:
         if filtered.size > 5:
             from scipy.ndimage import gaussian_filter1d
             filtered = gaussian_filter1d(filtered, sigma=0.8)
     except Exception:
         pass
+    if pad > 0 and filtered.size > 2 * pad:
+        filtered = filtered[pad:-pad]
     return filtered
 
 def create_ecg_grid_with_waveform(ecg_data, lead_name, width=6, height=2):
@@ -644,9 +657,9 @@ def capture_real_ecg_graphs_from_dashboard(dashboard_instance=None, ecg_test_pag
     filtered_ecg_data = real_ecg_data
     try:
         from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
-        dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-        emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-        ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+        dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+        emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+        ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
         filtered_ecg_data = {}
         for lead, signal in real_ecg_data.items():
             if signal is None or len(signal) == 0:
