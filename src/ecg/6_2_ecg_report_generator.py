@@ -262,26 +262,39 @@ def apply_report_ecg_filters(signal, sampling_rate, settings_manager):
     arr = np.asarray(signal, dtype=float)
     if arr.size < 10:
         return arr
-    dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-    emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-    ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+    try:
+        fs = float(sampling_rate)
+    except Exception:
+        fs = 500.0
+    pad_seconds = 2.0
+    pad_samples = int(pad_seconds * fs)
+    pad = min(pad_samples, max(0, arr.size - 1))
+    if pad > 0:
+        work = np.pad(arr, pad_width=pad, mode="edge")
+    else:
+        work = arr
+    dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+    emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+    ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
     dft_param = dft_setting if dft_setting not in ("off", "") else None
     emg_param = emg_setting if emg_setting not in ("off", "") else None
     ac_param = ac_setting if ac_setting not in ("off", "") else None
     filtered = apply_ecg_filters(
-        arr,
-        sampling_rate=float(sampling_rate),
+        work,
+        sampling_rate=fs,
         ac_filter=ac_param,
         emg_filter=emg_param,
         dft_filter=dft_param,
     )
-    filtered = apply_baseline_wander_median_mean(filtered, float(sampling_rate))
+    filtered = apply_baseline_wander_median_mean(filtered, fs)
     try:
         if filtered.size > 5:
             from scipy.ndimage import gaussian_filter1d
             filtered = gaussian_filter1d(filtered, sigma=0.8)
     except Exception:
         pass
+    if pad > 0 and filtered.size > 2 * pad:
+        filtered = filtered[pad:-pad]
     return filtered
 
 def create_ecg_grid_with_waveform(ecg_data, lead_name, width=6, height=2):
@@ -533,9 +546,9 @@ def capture_real_ecg_graphs_from_dashboard(dashboard_instance=None, ecg_test_pag
     filtered_ecg_data = real_ecg_data
     try:
         from ecg.ecg_filters import apply_dft_filter, apply_emg_filter, apply_ac_filter
-        dft_setting = str(settings_manager.get_setting("filter_dft", "off")).strip()
-        emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
-        ac_setting = str(settings_manager.get_setting("filter_ac", "off")).strip()
+        dft_setting = str(settings_manager.get_setting("filter_dft", "0.5")).strip()
+        emg_setting = str(settings_manager.get_setting("filter_emg", "150")).strip()
+        ac_setting = str(settings_manager.get_setting("filter_ac", "50")).strip()
         filtered_ecg_data = {}
         for lead, signal in real_ecg_data.items():
             if signal is None or len(signal) == 0:
@@ -2672,15 +2685,23 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
         except Exception as filter_err:
             print(f" Report filter apply failed for extra Lead II: {filter_err}")
         baseline_adc = 2000.0
-        centered_adc = adc_data - baseline_adc
+        data_mean = float(np.mean(adc_data)) if adc_data.size > 0 else 0.0
+        is_calculated_lead = False
+        if abs(data_mean - baseline_adc) < 500.0:
+            baseline_corrected = adc_data - baseline_adc
+        elif is_calculated_lead:
+            baseline_corrected = adc_data
+        else:
+            baseline_corrected = adc_data
+        centered_adc = baseline_corrected - (float(np.mean(baseline_corrected)) if baseline_corrected.size > 0 else 0.0)
         adc_per_box = adc_per_box_multiplier / max(1e-6, wave_gain_mm_mv)
         boxes_offset = centered_adc / adc_per_box
         
         # Convert to Y position
         from reportlab.lib.units import mm
         box_height_points = 5.0 * mm  # Standard ECG: 5mm = 14.17 points per box (same as original)
-        center_y_wave = extra_lead_ii_y + (extra_lead_ii_height / 2.0) + (3 * 5.0 * mm)
         center_y_notch = extra_lead_ii_y + (extra_lead_ii_height / 2.0)
+        center_y_wave = center_y_notch
         ecg_normalized = center_y_wave + (boxes_offset * box_height_points)
         
         # Create time array (full page width)
