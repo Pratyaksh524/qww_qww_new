@@ -472,6 +472,13 @@ class HRVTestWindow(QWidget):
                         if self._bpm_ctrl.display_bar not in existing:
                             main_layout.insertWidget(0, self._bpm_ctrl.display_bar)
                         self._bpm_ctrl.display_bar.show()
+                        
+                        # Start 3-second BPM UI refresh timer
+                        if not hasattr(self, '_bpm_refresh_timer'):
+                            self._bpm_refresh_timer = QTimer()
+                            self._bpm_refresh_timer.timeout.connect(self._refresh_holter_bpm_label)
+                        if not self._bpm_refresh_timer.isActive():
+                            self._bpm_refresh_timer.start(3000)
             except Exception as _bpm_err:
                 print(f"[HRVTestWindow] BPM controller start error: {_bpm_err}")
 
@@ -521,6 +528,8 @@ class HRVTestWindow(QWidget):
         
         # ── Stop HolterBPMController ────────────────────────────────────────
         try:
+            if hasattr(self, '_bpm_refresh_timer') and self._bpm_refresh_timer.isActive():
+                self._bpm_refresh_timer.stop()
             if self._bpm_ctrl is not None and self._bpm_ctrl.is_running:
                 self._bpm_ctrl.stop()
                 if self._bpm_ctrl.display_bar is not None:
@@ -595,6 +604,17 @@ class HRVTestWindow(QWidget):
             QMessageBox.information(self, "Capture Complete", 
                                   "5-minute capture completed successfully!")
     
+    def _refresh_holter_bpm_label(self):
+        """Called every 3 s by _bpm_refresh_timer. Reads stable BPM and updates HR label."""
+        try:
+            if self._bpm_ctrl is None or not self._bpm_ctrl.is_running:
+                return
+            bpm = self._bpm_ctrl.current_bpm()
+            if bpm > 0 and hasattr(self, 'metric_labels') and 'heart_rate' in self.metric_labels:
+                self.metric_labels['heart_rate'].setText(f"{int(round(bpm))} BPM")
+        except Exception as _e:
+            print(f"[HRVTestWindow] _refresh_holter_bpm_label error: {_e}")
+
     def update_plot(self):
         """Update the plot with new data"""
         if not self.is_capturing or not self.serial_reader:
@@ -1147,8 +1167,11 @@ class HRVTestWindow(QWidget):
                 qt_val = metrics.get('qt_interval', '0')
                 qtc_val = metrics.get('qtc_interval', '0')
 
+                # Check if HolterBPM is overriding HR
+                _bpm_active = (self._bpm_ctrl is not None and self._bpm_ctrl.is_running)
+
                 # Update UI labels with identical formatting to 12-lead test
-                if 'heart_rate' in self.metric_labels:
+                if not _bpm_active and 'heart_rate' in self.metric_labels:
                     # Dashboard uses "bpm", we use "BPM" for consistency with the rest of this UI
                     self.metric_labels['heart_rate'].setText(f"{hr_val} BPM" if hr_val != '0' else "00 BPM")
                 if 'pr_interval' in self.metric_labels:
