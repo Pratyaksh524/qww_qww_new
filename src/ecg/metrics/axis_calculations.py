@@ -52,10 +52,13 @@ def calculate_qrs_axis_from_median(data: List[np.ndarray], leads: List[str],
         r_idx = len(median_beat_i) // 2
         
         # Get TP baseline for Lead I and aVF
+        # We set these to None to force calculate_axis_from_median_beat to compute
+        # a much more stable baseline from the median beat itself (which is already averaged),
+        # preventing wild axis jumps due to single-beat baseline drift.
         r_mid = r_peaks[len(r_peaks) // 2]
         prev_r_idx = r_peaks[len(r_peaks) // 2 - 1] if len(r_peaks) > 1 else None
-        tp_baseline_i = get_tp_baseline(lead_i_data, r_mid, fs, prev_r_peak_idx=prev_r_idx, use_measurement_channel=True)
-        tp_baseline_avf = get_tp_baseline(lead_avf_data, r_mid, fs, prev_r_peak_idx=prev_r_idx, use_measurement_channel=True)
+        tp_baseline_i = None
+        tp_baseline_avf = None
         
         # Calculate QRS axis using standardized function
         qrs_axis = calculate_axis_from_median_beat(
@@ -192,8 +195,9 @@ def calculate_t_axis_from_median(data: List[np.ndarray], leads: List[str],
         prev_r_idx = r_peaks[len(r_peaks) // 2 - 1] if len(r_peaks) > 1 else None
         
         # T-axis uses post-T TP baseline [700ms, 800ms] after R
-        tp_baseline_i = get_tp_baseline(lead_i_data, r_mid, fs, prev_r_peak_idx=prev_r_idx, use_measurement_channel=True)
-        tp_baseline_avf = get_tp_baseline(lead_avf_data, r_mid, fs, prev_r_peak_idx=prev_r_idx, use_measurement_channel=True)
+        # We pass None to let calculate_axis_from_median_beat compute this cleanly from the baseline of the median beat
+        tp_baseline_i = None
+        tp_baseline_avf = None
         
         # Calculate T axis
         t_axis = calculate_axis_from_median_beat(

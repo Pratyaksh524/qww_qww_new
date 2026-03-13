@@ -84,25 +84,31 @@ def detect_qrs_start_adaptive(data: np.ndarray, r_peak: int, windows: AdaptiveWi
 def detect_qrs_end_adaptive(data: np.ndarray, r_peak: int, windows: AdaptiveWindows) -> int:
     search_start = r_peak + (windows.qrsOffsetFromR // 2)
     search_end = min(len(data) - 1, r_peak + windows.qrsOffsetFromR)
-    
+
     if search_start >= search_end:
         return r_peak + (windows.qrsOffsetFromR // 2)
-        
+
     if search_end + 20 < len(data):
         st_baseline = float(np.mean(data[search_end:search_end + 20]))
     else:
         st_baseline = float(data[min(len(data) - 1, search_end + 5)])
-        
+
+    # Scale-adaptive threshold: 15% of R-peak amplitude
+    # (replaces hardcoded 0.15 which only works for mV-scale signals)
+    r_peak_amp = abs(float(data[r_peak]) - st_baseline) if r_peak < len(data) else 1.0
+    if r_peak_amp < 1e-9:
+        r_peak_amp = 1.0
+    amp_threshold = 0.15 * r_peak_amp
+
     j_point = search_start
     min_slope = float('inf')
-    
-    # Range is exclusive in Python (until -> range)
+
     for i in range(search_start, search_end - 2):
         slope = abs(data[i + 1] - data[i])
-        if slope < min_slope and abs(data[i] - st_baseline) < 0.15:
+        if slope < min_slope and abs(data[i] - st_baseline) < amp_threshold:
             min_slope = slope
             j_point = i
-            
+
     return j_point
 
 def detect_tend_by_tangent(data: np.ndarray, t_peak: int, baseline: float, search_end: int, 

@@ -111,17 +111,23 @@ def apply_interval_smoothing(value: int, buffer_key: str,
                   if len(state['buffer']) >= 5
                   else value)
 
-    current_display = int(round(state['ema']))
-
-    if abs(median_val - current_display) >= 10:
-        alpha = 0.5
+    # Strict Deadband Stabilizer:
+    # If the exact median moves by less than 6ms (approx 1-2 samples), we IGNORE it.
+    # This completely eliminates UI jitter and PDF number flickering for stationary signals.
+    diff = abs(median_val - state['last_stable'])
+    
+    if diff >= 12:
+        # Fast update for real clinical changes
+        state['last_stable'] = median_val
+    elif diff >= 6:
+        # Smooth blending for moderate changes
+        state['last_stable'] = int(round(0.8 * state['last_stable'] + 0.2 * median_val))
     else:
-        alpha = 0.5 if abs(median_val - current_display) >= 2 else 0.10
+        # Deadband: hold value if drift is purely < 6ms (likely filter edge artifacts)
+        pass
 
-    state['ema'] = (1 - alpha) * state['ema'] + alpha * median_val
-    smoothed = int(round(state['ema']))
-    state['last_stable'] = smoothed
-    return smoothed
+    state['ema'] = float(state['last_stable'])
+    return state['last_stable']
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -360,6 +366,14 @@ def detectQRSEndAdaptive(data: np.ndarray, r_peak: int,
     """
     Find QRS end (J-point) by locating the minimum-slope point
     near the ST baseline after the R-peak.
+
+    FIX: The old threshold `abs(data[i] - st_baseline) < 0.15` was an
+    absolute value only valid for mV-scale signals.  When the signal is
+    in raw ADC counts the condition is never satisfied, so j_point stays
+    at search_start → falsely short QRS (~51 ms).  The 50 Hz notch filter
+    shifts the baseline slightly and makes this worse.  The fix derives a
+    scale-adaptive threshold from the observed R-peak amplitude so the
+    criterion works correctly regardless of signal scaling or AC filter.
     """
     search_start = r_peak + (windows.qrsOffsetFromR // 2)
     search_end   = min(len(data) - 1, r_peak + windows.qrsOffsetFromR)
@@ -372,12 +386,19 @@ def detectQRSEndAdaptive(data: np.ndarray, r_peak: int,
     else:
         st_baseline = float(data[min(len(data) - 1, search_end + 5)])
 
+    # Adaptive amplitude threshold: 15% of R-peak amplitude
+    # (replaces hardcoded 0.15 which only worked for mV-scale signals)
+    r_peak_amp = abs(float(data[r_peak]) - st_baseline) if r_peak < len(data) else 1.0
+    if r_peak_amp < 1e-9:
+        r_peak_amp = 1.0
+    amp_threshold = 0.15 * r_peak_amp   # scale-independent
+
     j_point   = search_start
     min_slope = float('inf')
 
     for i in range(search_start, search_end - 2):
         slope = abs(data[i + 1] - data[i])
-        if slope < min_slope and abs(data[i] - st_baseline) < 0.15:
+        if slope < min_slope and abs(data[i] - st_baseline) < amp_threshold:
             min_slope = slope
             j_point   = i
 
@@ -632,11 +653,8 @@ def detectTWaveEndAdaptive(data: np.ndarray, r_peak: int, qrs_start: int,
 
     expected_qt = _calculate_expected_qt(rr_interval_sec, heart_rate, fs)
 
-    # FIX: Hard RR-based cap to prevent T-wave overshoot at extreme HR
-    # 200 BPM (300ms RR) -> max QT 180ms
-    # FIX: Use 'fs' instead of hardcoded 500
-    # Relaxed caps so T-wave end is not cut short:
-    #   HR >= 200 BPM (RR=300ms) → cap = 75% RR = 225ms
+    # Hard RR-based cap to prevent runaway T-wave search
+    #   HR >= 200 BPM (RR=300ms) → cap = 75% RR
     #   HR >= 160 BPM (RR=375ms) → cap = 72% RR = 270ms
     #   HR <  160 BPM            → cap = 80% RR
     if heart_rate >= 200:
@@ -1009,11 +1027,18 @@ def calculate_all_ecg_metrics(
             print(f" ⚠️ QT detection error: {e}")
 
         # ── Step 7: QTc (Bazett) ─────────────────────────────────────────────
+        # IMPORTANT: QTc is computed from the already-smoothed QT integer
+        # (i.e. the exact integer stored in results["qt_interval"] after the
+        # _qt_buffers EMA pass above).  This guarantees that at 60 BPM where
+        # RR = 1000 ms → √RR = 1.0 → QTc = QT / 1.0 = QT exactly.
+        # Using a separate _qtc_buffers EMA caused a ±1 ms desync because the
+        # two buffers accumulated slightly different histories.
         qt_ms_val = results["qt_interval"]
         if qt_ms_val is not None and qt_ms_val > 0:
-            qtc = calculate_qtc_bazett(qt_ms_val, rr_ms)
-            if instance_id and qtc > 0:
-                qtc = apply_interval_smoothing(qtc, instance_id, _qtc_buffers)
+            # Use the same smoothed integer QT value so Bazett is applied to
+            # an integer, producing a consistent integer QTc.
+            qt_for_qtc = int(round(qt_ms_val))   # already smoothed integer
+            qtc = calculate_qtc_bazett(float(qt_for_qtc), rr_ms)
             results["qtc_interval"] = qtc
 
         # ── Step 8: P-waves + PR interval ────────────────────────────────────

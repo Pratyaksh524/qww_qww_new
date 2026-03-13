@@ -131,20 +131,49 @@ def calculate_qtc_bazett(qt_ms: float, rr_ms: float) -> int:
 def calculate_qtc_auto(qt_ms: float, rr_ms: float, heart_rate: int,
                         instance_id: Optional[str] = None) -> int:
     """
-    Calculate QTc using Bazett formula at ALL heart rates.
+    Calculate QTc using the clinically appropriate formula for the heart rate.
 
-    Fridericia formula removed — Bazett is used universally.
+    Formula selection (GE/Philips convention):
+      HR > 100 bpm → Framingham:  QTc = QT + 0.154 × (1 − RR)    [tachycardia]
+      HR <  60 bpm → Fridericia:  QTc = QT / RR^(1/3)             [bradycardia]
+      60–100 bpm   → Bazett:      QTc = QT / √RR                  [normal HR]
+
+    Rationale:
+      Bazett over-corrects at low HR (≈+49 ms at 40–50 bpm) and
+      under-corrects at high HR; Fridericia and Framingham perform
+      better in those respective rate ranges.
 
     Args:
         qt_ms:       QT interval in ms.
         rr_ms:       RR interval in ms.
-        heart_rate:  Heart rate in BPM (unused, kept for API compatibility).
+        heart_rate:  Heart rate in BPM (used for formula selection).
         instance_id: Unused, kept for API compatibility.
 
     Returns:
-        QTc in ms (Bazett).
+        QTc in ms (integer).
     """
-    return calculate_qtc_bazett(qt_ms, rr_ms)
+    try:
+        if not qt_ms or qt_ms <= 0 or not rr_ms or rr_ms <= 0:
+            return 0
+
+        qt_sec = qt_ms / 1000.0
+        rr_sec = rr_ms / 1000.0
+
+        if heart_rate > 100:
+            # Framingham: QTc = QT + 0.154 × (1 − RR)
+            qtc_sec = qt_sec + 0.154 * (1.0 - rr_sec)
+        elif heart_rate < 60:
+            # Fridericia: QTc = QT / RR^(1/3)
+            qtc_sec = qt_sec / (rr_sec ** (1.0 / 3.0))
+        else:
+            # Bazett: QTc = QT / √RR
+            qtc_sec = qt_sec / (rr_sec ** 0.5)
+
+        return int(round(qtc_sec * 1000.0))
+
+    except Exception as e:
+        print(f" Error calculating QTc (auto): {e}")
+        return calculate_qtc_bazett(qt_ms, rr_ms)
 
 
 def calculate_rv5_sv1_from_median(data: list, r_peaks: np.ndarray,

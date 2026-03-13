@@ -2759,10 +2759,12 @@ def generate_ecg_report(
     qtc_label = String(45.9 * mm, 257.4 * mm, f"QTc  : {int(round(QTc))} ms",  
                       fontSize=10, fontName="Helvetica", fillColor=colors.black)
     master_drawing.add(qtc_label)
-    # SECOND COLUMN (Right side - x=240)
-    st_label = String(84.7 * mm, 262.5 * mm, f"ST            : {int(round(ST))} ms",  
-                     fontSize=10, fontName="Helvetica", fillColor=colors.black)
-    master_drawing.add(st_label)
+    # SECOND COLUMN (Right side) - QTcF replaces ST
+    _qtcf_val = data.get('QTc_Fridericia') or data.get('QTcF_ms') or data.get('QTcF') or data.get('QTcF_interval')
+    _qtcf_display = f"{int(round(float(_qtcf_val)))} ms" if _qtcf_val and float(_qtcf_val) > 0 else "-- ms"
+    qtcf_header_label = String(84.7 * mm, 262.5 * mm, f"QTcF : {_qtcf_display}",
+                               fontSize=10, fontName="Helvetica", fillColor=colors.black)
+    master_drawing.add(qtcf_header_label)
 
     # CALCULATED wave amplitudes and lead-specific measurements
     # Prefer values passed in data; if missing/zero, compute from live ecg_test_page data (last 10s)
@@ -3350,22 +3352,69 @@ def generate_ecg_report(
     # CRITICAL: Calculate from unrounded values to avoid rounding errors
     # SV1 is negative, so RV5+SV1 = RV5 + abs(SV1) for Sokolow-Lyon index
     rv5_sv1_sum = rv5_mv + abs(sv1_mv)  # RV5 + abs(SV1) as per GE/Philips standard
-    
+
     # SECOND COLUMN - RV5+SV1 (ABOVE ECG GRAPH - shifted further up)
     # Use 3 decimal places for precision
-    rv5_sv1_sum_label = String(84.7 * mm, 273.9 * mm, f"RV5+SV1 : {rv5_sv1_sum:.3f} mV",  # Moved up from 660 to 670
+    rv5_sv1_sum_label = String(84.7 * mm, 273.9 * mm, f"RV5+SV1 : {rv5_sv1_sum:.3f} mV",
                                fontSize=10, fontName="Helvetica", fillColor=colors.black)
     master_drawing.add(rv5_sv1_sum_label)
 
-    # SECOND COLUMN - QTCF (ABOVE ECG GRAPH - shifted further up)
-    qtcf_val = _safe_float(data.get("QTc_Fridericia") or data.get("QTcF_ms") or data.get("QTcF"), None)
-    if qtcf_val and qtcf_val > 0:
-        qtcf_text = f"QTCF       : {qtcf_val:.0f} ms"
-    else:
-        qtcf_text = "QTCF       : --"
-    qtcf_label = String(84.7 * mm, 268.3 * mm, qtcf_text,  # Moved up from 642 to 652
-                        fontSize=10, fontName="Helvetica", fillColor=colors.black)
-    master_drawing.add(qtcf_label)
+    # ── RV6 / SV2 calculation ────────────────────────────────────────────────
+    # RV6 = R-wave amplitude in V6 (index 11)
+    # SV2 = S-wave amplitude in V2 (index 7), negative value
+    rv6_mv = 0.0
+    sv2_mv = 0.0
+    try:
+        if ecg_test_page is not None and hasattr(ecg_test_page, 'data') and len(ecg_test_page.data) > 11:
+            from scipy.signal import butter, filtfilt, find_peaks as _fp
+            _fs = 500.0
+            if hasattr(ecg_test_page, 'sampler') and hasattr(ecg_test_page.sampler, 'sampling_rate') and ecg_test_page.sampler.sampling_rate > 10:
+                _fs = float(ecg_test_page.sampler.sampling_rate)
+
+            def _get_rv_sv(raw_arr, is_r_wave=True):
+                """Measure R (positive) or S (negative) amplitude from median beat."""
+                if raw_arr is None or len(raw_arr) < int(2 * _fs):
+                    return 0.0
+                arr_seg = np.asarray(raw_arr[-int(10 * _fs):], dtype=float)
+                ny = _fs / 2.0
+                b_, a_ = butter(2, [max(0.5/ny, 0.001), min(40.0/ny, 0.99)], btype='band')
+                flt = filtfilt(b_, a_, arr_seg)
+                env_ = np.convolve(np.square(np.gradient(flt)),
+                                   np.ones(max(1, int(0.08 * _fs))) / max(1, int(0.08 * _fs)),
+                                   mode='same')
+                r_, _ = _fp(env_, height=np.mean(env_) + 0.5 * np.std(env_), distance=int(0.6 * _fs))
+                vals_ = []
+                for rr_ in r_[1:-1]:
+                    qs_ = max(0, rr_ - int(0.08 * _fs))
+                    qe_ = min(len(arr_seg), rr_ + int(0.08 * _fs))
+                    tp_s = max(0, rr_ - int(0.35 * _fs))
+                    tp_e = max(0, rr_ - int(0.15 * _fs))
+                    if qe_ > qs_ and tp_e > tp_s:
+                        baseline_ = np.median(arr_seg[tp_s:tp_e])
+                        seg_ = arr_seg[qs_:qe_] - baseline_
+                        if is_r_wave:
+                            amp_ = np.max(seg_)
+                            if amp_ > 0:
+                                vals_.append(amp_ / 1441.0)  # ADC→mV (same factor as RV5/SV1)
+                        else:
+                            amp_ = np.min(seg_)
+                            if amp_ < 0:
+                                vals_.append(amp_ / 1441.0)
+                return float(np.median(vals_)) if vals_ else 0.0
+
+            rv6_mv = _get_rv_sv(ecg_test_page.data[11], is_r_wave=True)   # V6 R-wave
+            sv2_mv = _get_rv_sv(ecg_test_page.data[7],  is_r_wave=False)  # V2 S-wave (negative)
+    except Exception as _e:
+        print(f" RV6/SV2 calculation failed: {_e}")
+
+    # SECOND COLUMN - RV6/SV2
+    rv6_sv2_label = String(84.7 * mm, 268.8 * mm,
+                            f"RV6/SV2  : {abs(rv6_mv):.3f} mV/{abs(sv2_mv):.3f} mV",
+                            fontSize=10, fontName="Helvetica", fillColor=colors.black)
+    master_drawing.add(rv6_sv2_label)
+
+    # NOTE: QTcF is already displayed at 262.5mm (where ST was removed) via qtcf_header_label above.
+    # The old qtcf_label at 268.3mm has been removed to prevent overlap with RV6/SV2 at 268.8mm.
 
     # SECOND COLUMN - Speed/Gain (merged in one line) (ABOVE ECG GRAPH - shifted further up)
     emg_setting = str(settings_manager.get_setting("filter_emg", "off")).strip()
@@ -3500,6 +3549,8 @@ def generate_ecg_report(
         else:
             print(f"    SUCCESS: All 12 ECG graphs added successfully!")
         print(f"{'='*60}\n")
+
+    # REFERENCE METRICS TABLE — Removed
 
     # Measurement info (NO background)
     measurement_style = ParagraphStyle(

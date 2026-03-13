@@ -2815,10 +2815,12 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
                       fontSize=10, fontName="Helvetica", fillColor=colors.black)
     master_drawing.add(qtc_label)
 
-    # SECOND COLUMN (Right side - x=240)
-    st_label = String(240, 455, f"ST            : {int(round(ST))} ms",  # Shifted down by 20 points total  
-                     fontSize=10, fontName="Helvetica", fillColor=colors.black)
-    master_drawing.add(st_label)
+    # SECOND COLUMN (Right side) - QTcF replaces ST
+    _qtcf_val = data.get('QTc_Fridericia') or data.get('QTcF_ms') or data.get('QTcF') or data.get('QTcF_interval')
+    _qtcf_display = f"{int(round(float(_qtcf_val)))} ms" if _qtcf_val and float(_qtcf_val) > 0 else "-- ms"
+    qtcf_header_label = String(240, 455, f"QTcF : {_qtcf_display}",
+                               fontSize=10, fontName="Helvetica", fillColor=colors.black)
+    master_drawing.add(qtcf_header_label)
 
     # CALCULATED wave amplitudes and lead-specific measurements
     # Prefer values passed in data; if missing/zero, compute from live ecg_test_page data (last 10s)

@@ -1,8 +1,7 @@
-﻿import sys
+import sys
 import time
 import platform
 import numpy as np
-from pyparsing import line
 import logging
 import traceback
 from utils.crash_logger import get_crash_logger
@@ -2248,21 +2247,14 @@ class ECGTestPage(QWidget):
 
         self.last_qt_interval = qt_interval
         
-        # Calculate QTc (Bazett) using formula from standalone script: QTc = (QT/1000) / sqrt(RR) * 1000
-        # This matches the reference implementation exactly
+        # Calculate QTc (Bazett): QTc = QT / sqrt(RR_sec)
+        # IMPORTANT: Always compute from the already-stabilized qt_interval integer
+        # (the exact value shown in the display) — do NOT use user_metrics["qtc_interval"]
+        # which came from a separate EMA buffer and can diverge by ±1 ms.
+        # At 60 BPM: RR = 1000 ms → sqrt(1.0) = 1.0 → QTc = QT exactly.
         if qt_interval > 0 and rr_ms > 0:
             RR = rr_ms / 1000.0  # RR in seconds
-            qtc_interval_raw = (qt_interval / 1000.0) / np.sqrt(RR) * 1000.0
-            qtc_interval_raw = int(round(qtc_interval_raw))
-            
-            # OVERRIDE: Use user's comprehensive metrics if available
-            if user_metrics["qtc_interval"] is not None:
-                qtc_interval_raw = user_metrics["qtc_interval"]
-            
-            # No need for a second layer of smoothing and holding!
-            # qt_interval is already fully stabilized, and rr_ms comes from the stable Holter BPM.
-            # Calculating QTc directly here ensures perfect synchronization (e.g. QTc = QT exactly at 60 BPM).
-            qtc_interval = qtc_interval_raw
+            qtc_interval = int(round((qt_interval / 1000.0) / np.sqrt(RR) * 1000.0))
 
             # Validation: QTc should be in reasonable range (300-500 ms typically)
             if qtc_interval < 250 or qtc_interval > 600:
@@ -3061,9 +3053,9 @@ class ECGTestPage(QWidget):
                 deriv_thresh = max(0.2 * deriv_std, 1e-6)
                 for i in range(min(5, len(peaks)-1)):
                     r_peak = peaks[i]
-                    # Search 40–250 ms before R for P upslope
-                    win_start = max(0, r_peak - int(0.25 * fs))
-                    win_end = max(win_start, r_peak - int(0.04 * fs))
+                    # Search 80-200 ms before R for P upslope (narrowed from 250ms)
+                    win_start = max(0, r_peak - int(0.20 * fs))
+                    win_end   = max(win_start, r_peak - int(0.08 * fs))
                     if win_end <= win_start:
                         continue
                     win = deriv[win_start:win_end]
@@ -3085,86 +3077,94 @@ class ECGTestPage(QWidget):
             return 150
 
     def calculate_qrs_duration(self, lead_data):
-        """Calculate QRS complex duration - LIVE"""
+        """Calculate QRS duration — amplitude-threshold onset/offset (GE/Philips standard).
+
+        Key changes vs old derivative method:
+          - Bandpass 5-40 Hz  (was 0.5-40 Hz) — rejects slow P/T wave slope
+          - Search windows: 60 ms pre-R, 80 ms post-R  (was ±120 ms)
+          - Threshold: 30 % of R-peak amplitude  (was 10 % derivative std)
+          - Accepts 50-140 ms; returns median of up to 6 beats
+        """
         try:
-            # Early exit: no real signal 
-            try:
-                arr = np.asarray(lead_data, dtype=float)
-                if len(arr) < 200 or np.all(arr == 0) or np.std(arr) < 0.1:
-                    return 0
-            except Exception:
+            arr = np.asarray(lead_data, dtype=float)
+            if len(arr) < 200 or np.all(arr == 0) or np.std(arr) < 0.1:
                 return 0
-            
-            # Apply bandpass filter to enhance R-peaks (0.5-40 Hz)
+
             from scipy.signal import butter, filtfilt, find_peaks
+
             fs = 186.5
             if hasattr(self, 'sampler') and hasattr(self.sampler, 'sampling_rate') and self.sampler.sampling_rate > 10:
                 fs = float(self.sampler.sampling_rate)
             elif hasattr(self, 'sampling_rate') and self.sampling_rate > 10:
                 fs = float(self.sampling_rate)
-            
-            nyquist = fs / 2
-            low = 0.5 / nyquist
-            high = 40 / nyquist
-            b, a = butter(4, [low, high], btype='band')
-            filtered_signal = filtfilt(b, a, lead_data)
-            
-            # Find R-peaks
-            peaks, properties = find_peaks(
-                filtered_signal,
-                height=np.mean(filtered_signal) + 0.5 * np.std(filtered_signal),
-                distance=int(0.4 * fs),
-                prominence=np.std(filtered_signal) * 0.3
+
+            # 5-40 Hz bandpass keeps only QRS energy
+            nyq = fs / 2.0
+            b, a = butter(3, [max(5.0/nyq, 0.01), min(40.0/nyq, 0.99)], btype='band')
+            filt = filtfilt(b, a, arr)
+
+            # Pan-Tompkins squared-gradient envelope for R-peak detection
+            env = np.convolve(np.square(np.gradient(filt)),
+                              np.ones(max(1, int(0.08 * fs))) / max(1, int(0.08 * fs)),
+                              mode='same')
+            peaks, _ = find_peaks(
+                env,
+                height=np.mean(env) + 0.4 * np.std(env),
+                distance=int(0.35 * fs),
+                prominence=np.std(env) * 0.3,
             )
-            
-            if len(peaks) > 0:
-                qrs_durations = []
-                deriv = np.gradient(filtered_signal)
-                deriv_std = np.std(deriv)
-                deriv_thresh = max(0.1 * deriv_std, 1e-4)
-                search_window = int(0.12 * fs)  # allow ±120 ms for low sample rates
-                for r_peak in peaks[:min(5, len(peaks))]:  # Analyze first 5 beats
-                    # Find Q and S points around R peak
-                    start_idx = max(0, r_peak - search_window)
-                    end_idx = min(len(filtered_signal), r_peak + search_window)
-                    
-                    segment = filtered_signal[start_idx:end_idx]
-                    if len(segment) > 0:
-                        rel_r = r_peak - start_idx
-                        pre_slice = slice(0, max(rel_r, 1))
-                        post_slice = slice(rel_r, len(segment))
-                        
-                        # Derivative-based onset: last low-slope point before R
-                        if pre_slice.stop > 0:
-                            pre_deriv = np.abs(deriv[start_idx:r_peak])
-                            low_grad_pre = np.where(pre_deriv < deriv_thresh)[0]
-                            if low_grad_pre.size > 0:
-                                q_idx = start_idx + int(low_grad_pre[-1])
-                            else:
-                                q_idx = start_idx + int(np.argmin(segment[pre_slice]))
-                        else:
-                            q_idx = start_idx
-                        
-                        # Derivative-based offset: first low-slope point after R
-                        if post_slice.stop - post_slice.start > 1:
-                            post_deriv = np.abs(deriv[r_peak:end_idx])
-                            low_grad_post = np.where(post_deriv < deriv_thresh)[0]
-                            if low_grad_post.size > 0:
-                                s_idx = r_peak + int(low_grad_post[0])
-                            else:
-                                s_idx = r_peak + int(np.argmin(segment[post_slice]))
-                        else:
-                            s_idx = end_idx
-                        
-                        qrs_duration = (s_idx - q_idx) / fs * 1000  # Convert to ms
-                        if 40 <= qrs_duration <= 200:  # Reasonable QRS duration
-                            qrs_durations.append(qrs_duration)
-                
-                if qrs_durations:
-                    return int(round(np.mean(qrs_durations)))
-            
-            return 0  # Fallback to 0 when not computable
-        except:
+
+            if len(peaks) == 0:
+                return 0
+
+            # CRITICAL FIX: refine envelope peak -> true R-peak in filtered signal
+            # Envelope is smoothed; its peaks are time-shifted from the actual R-peak
+            # in filt. Search max|filt| within ±25 ms of each envelope peak.
+            refine_win = max(1, int(0.025 * fs))  # 25 ms window
+            true_r_peaks = []
+            for ep in peaks:
+                lo = max(0, ep - refine_win)
+                hi = min(len(filt) - 1, ep + refine_win)
+                r_true = lo + int(np.argmax(np.abs(filt[lo:hi + 1])))
+                true_r_peaks.append(r_true)
+
+            pre_win  = int(0.060 * fs)  # 60 ms before R  -> Q-onset
+            post_win = int(0.080 * fs)  # 80 ms after  R  -> S-offset
+
+            qrs_durations = []
+            for r in true_r_peaks[:min(6, len(true_r_peaks))]:
+                r_amp = abs(filt[r])
+                if r_amp < 1e-6:
+                    continue
+                threshold = 0.30 * r_amp   # 30 % of R amplitude
+
+                # Onset: walk backwards until |signal| drops below threshold
+                q_idx = r
+                start_lim = max(0, r - pre_win)
+                for k in range(r - 1, start_lim - 1, -1):
+                    if abs(filt[k]) < threshold:
+                        q_idx = k + 1
+                        break
+
+                # Offset: walk forward until |signal| drops below threshold
+                s_idx = r
+                end_lim = min(len(filt) - 1, r + post_win)
+                for k in range(r + 1, end_lim + 1):
+                    if abs(filt[k]) < threshold:
+                        s_idx = k - 1
+                        break
+                else:
+                    s_idx = end_lim
+
+                dur_ms = (s_idx - q_idx) / fs * 1000.0
+                if 50.0 <= dur_ms <= 140.0:
+                    qrs_durations.append(dur_ms)
+
+            if qrs_durations:
+                return int(round(float(np.median(qrs_durations))))
+
+            return 0
+        except Exception:
             return 0
 
     def calculate_st_interval(self, lead_data):
@@ -3309,20 +3309,17 @@ class ECGTestPage(QWidget):
             qt_intervals = []
             for r_peak in peaks[:min(5, len(peaks))]:
                 try:
-                    # Find Q-point (min before R, within 40ms)
-                    q_start = max(0, r_peak - int(0.04 * fs))
+                    # Find Q-point: min before R, within 50ms (prevent snagging far P-tail)
+                    q_start = max(0, r_peak - int(0.05 * fs))
                     q_end = r_peak
                     if q_end > q_start:
                         q_point = q_start + np.argmin(filtered_signal[q_start:q_end])
                     else:
                         q_point = r_peak
-                    
-                    # CRITICAL FIX: Use tangent method for T-end detection (AHA standard)
-                    # This replaces the simple baseline crossing method which was ~100ms too short
-                    
+
                     # Find T-wave search window
                     t_search_start = r_peak + int(0.08 * fs)  # After QRS
-                    t_search_end = min(len(filtered_signal), r_peak + int(0.5 * fs))  # 500ms max
+                    t_search_end = min(len(filtered_signal), r_peak + int(0.50 * fs))  # 500ms max (was 600ms)
                     
                     if t_search_end > t_search_start:
                         t_segment = filtered_signal[t_search_start:t_search_end]
@@ -3337,39 +3334,40 @@ class ECGTestPage(QWidget):
                         
                         # Baseline-correct the signal
                         signal_corrected = filtered_signal - baseline
+                        t_seg_corr = signal_corrected[t_search_start:t_search_end]
                         
-                        # Find T-peak first (max in T segment)
-                        t_peak_idx = t_search_start + np.argmax(np.abs(t_segment))
+                        # Find T-peak (POSITIVE deflection only to avoid tracking deep ST-depression/S-wave tails)
+                        t_peak_idx = t_search_start + int(np.argmax(t_seg_corr))
                         
-                        # Use tangent method to find T-end (CRITICAL FIX)
+                        # Use tangent method to find T-end
                         t_end_idx = detect_t_wave_end_tangent_method(
                             signal_corrected, 
                             t_peak_idx, 
                             t_search_end, 
                             fs, 
-                            tp_baseline=0.0  # Already baseline-corrected
+                            tp_baseline=0.0
                         )
                         
                         if t_end_idx is not None:
-                            # Calculate QT interval
-                            qt_ms = (t_end_idx - q_point) / fs * 1000.0
-                            if 200 <= qt_ms <= 600:  # Reasonable QT interval
+                            # Sanity check: T-wave cannot extend more than ~120ms past its peak
+                            t_end_capped = min(t_end_idx, t_peak_idx + int(0.12 * fs))
+                            qt_ms = (t_end_capped - q_point) / fs * 1000.0
+                            if 200 <= qt_ms <= 600:
                                 qt_intervals.append(qt_ms)
                         else:
-                            # Fallback: use T-peak + estimated T duration
-                            t_end = t_peak_idx + int(0.15 * fs)  # 150ms after T-peak
+                            # Fallback: T-peak + 80ms
+                            t_end = t_peak_idx + int(0.08 * fs)
                             qt_ms = (t_end - q_point) / fs * 1000.0
                             if 200 <= qt_ms <= 600:
                                 qt_intervals.append(qt_ms)
                     else:
-                        # No T-segment found, skip this beat
                         continue
                 except Exception as e:
                     print(f" Error calculating QT for beat: {e}")
                     continue
                 
             if qt_intervals:
-                return int(round(np.mean(qt_intervals)))
+                return int(round(float(np.median(qt_intervals))))
             
             return 0
         except Exception as e:

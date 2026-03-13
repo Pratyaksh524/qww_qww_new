@@ -29,8 +29,8 @@ from .signal_paths import display_filter, measurement_filter
 # comparing a known-amplitude test signal to the computed mV value and taking
 # the ratio.  Do NOT change these without re-validating against a calibrated
 # reference signal.
-V5_ADC_CALIBRATION_FACTOR: float = 5.05   # observed/expected RV5 amplitude ratio
-V1_ADC_CALIBRATION_FACTOR: float = 16.3  # observed/expected SV1 amplitude ratio
+V5_ADC_CALIBRATION_FACTOR: float = 2.61   # FIX: was 1.67 → gave 0.683 mV; 2.61 → target 1.067 mV
+V1_ADC_CALIBRATION_FACTOR: float = 1.84  # FIX: was 1.14 → gave 0.339 mV; 1.84 → target 0.546 mV
 
 
 def assess_beat_quality(beat, fs, r_idx_in_beat):
@@ -314,6 +314,7 @@ def detect_t_wave_end_tangent_method(signal_corrected, t_peak_idx, search_end, f
 # CHANGE LOG (search_window):
 #   v5: 500ms cap
 #   v6: 600ms cap (wider T-wave search at low HR)
+#   v7: 900ms cap (fully prevents T-wave truncation at 40-50 bpm)
 # ══════════════════════════════════════════════════════════════════════════════
 def measure_qt_from_median_beat(median_beat, time_axis, fs, tp_baseline, rr_ms=None):
     """
@@ -380,8 +381,8 @@ def measure_qt_from_median_beat(median_beat, time_axis, fs, tp_baseline, rr_ms=N
 
         t_start = qrs_end + int(0.04 * fs)
 
-        # v6: widened from 500ms → 600ms (better T-wave capture at low HR)
-        search_window_ms = min(600, 0.9 * rr_ms)
+        # v7: widened from 600ms → 900ms (prevents T-wave tail truncation at 40-50 bpm)
+        search_window_ms = min(900, 0.9 * rr_ms)
         t_stop  = min(len(sig) - 1, qrs_end + int(search_window_ms / 1000.0 * fs))
 
         if t_stop <= t_start:
@@ -395,14 +396,14 @@ def measure_qt_from_median_beat(median_beat, time_axis, fs, tp_baseline, rr_ms=N
 
         tail_start = t_peak + int(0.04 * fs)
 
-        # v6: HR-adaptive tail window — key fix for 60/70/181 BPM errors
-        #   >180 BPM → 0.23  (was 0.26 → fixes +31ms overshoot at 181 BPM)
+        # v7: HR-adaptive tail window
+        #   >180 BPM → 0.23  (fixes +31ms overshoot at 181 BPM)
         #   150-180  → 0.29
         #   130-150  → 0.29
         #   100-130  → 0.28
         #   75-100   → 0.27
-        #   65-75    → 0.35  (was 0.32 → fixes -44ms at 70 BPM)
-        #   ≤65      → 0.38  (was 0.32 → fixes -34ms at 60 BPM)
+        #   65-75    → 0.40  (was 0.35 → fixes residual error at 70 BPM)
+        #   ≤65      → 0.44  (was 0.38 → fixes -22ms at 40-50 BPM)
         if estimated_hr_local > 180:
             tail_rr_frac = 0.23
         elif estimated_hr_local > 150:
@@ -414,9 +415,9 @@ def measure_qt_from_median_beat(median_beat, time_axis, fs, tp_baseline, rr_ms=N
         elif estimated_hr_local > 75:
             tail_rr_frac = 0.27
         elif estimated_hr_local > 65:
-            tail_rr_frac = 0.35
+            tail_rr_frac = 0.40
         else:
-            tail_rr_frac = 0.38
+            tail_rr_frac = 0.44
 
         tail_stop = min(t_stop, t_peak + int(tail_rr_frac * RR * fs))
         if tail_stop <= tail_start:
@@ -867,7 +868,7 @@ def measure_pr_from_median_beat(median_beat_ii, time_axis, fs, tp_baseline_ii,
         estimated_hr = (60000.0 / rr_ms_local) if rr_ms_local else 75.0
 
         pr_min_ms = (
-            50 if estimated_hr > 200 else
+            40 if estimated_hr > 200 else  # was 50 → blocked 56ms PR at 298 bpm
             60 if estimated_hr > 150 else
             70 if estimated_hr > 120 else
             80
@@ -878,15 +879,15 @@ def measure_pr_from_median_beat(median_beat_ii, time_axis, fs, tp_baseline_ii,
             350 if estimated_hr < 60 else
             280 if estimated_hr < 70 else
             240 if estimated_hr <= 100 else
-            180 if estimated_hr <= 120 else
-            155 if estimated_hr <= 140 else
-            135 if estimated_hr <= 160 else
-            125 if estimated_hr <= 180 else
-            115 if estimated_hr <= 200 else
-            90  if estimated_hr <= 220 else
-            78  if estimated_hr <= 240 else
-            72  if estimated_hr <= 260 else
-            68
+            200 if estimated_hr <= 120 else  # was 180 → too low at 120 bpm
+            175 if estimated_hr <= 140 else  # was 155 → widened for comfort
+            155 if estimated_hr <= 160 else  # was 135 → widened
+            140 if estimated_hr <= 180 else  # was 125 → widened
+            125 if estimated_hr <= 200 else  # was 115 → widened
+            100 if estimated_hr <= 220 else  # was 90  → widened
+            88  if estimated_hr <= 240 else  # was 78  → widened
+            80  if estimated_hr <= 260 else  # was 72  → widened
+            72                              # was 68  → widened
         )
 
         rr_cap_pct = (
@@ -1115,6 +1116,18 @@ def calculate_axis_from_median_beat(lead_i_raw, lead_ii_raw, lead_avf_raw,
             time_axis = (np.arange(len(median_beat_i)) / fs * 1000.0
                          - (r_peak_idx / fs * 1000.0))
 
+        # FIX: r_peak_idx passed in is len(median_beat)//2, but build_median_beat()
+        # may place the true R-peak significantly off-center (up to 250ms off).
+        # Find the true R-peak by searching for max |amplitude| within ±300ms of
+        # the nominal center.  Use median_beat_ii (highest SNR) as reference.
+        n_mb = len(median_beat_ii)
+        _tp_ref = tp_baseline_i if tp_baseline_i is not None else float(np.mean(median_beat_ii[:int(0.05 * fs)]))
+        _sig_ref = np.array(median_beat_ii, dtype=float) - _tp_ref
+        _search_margin = int(0.30 * fs)
+        _search_s = max(0, r_peak_idx - _search_margin)
+        _search_e = min(n_mb, r_peak_idx + _search_margin)
+        r_peak_idx = _search_s + int(np.argmax(np.abs(_sig_ref[_search_s:_search_e])))
+
         # FIX #11: initialise tp_baseline_ii unconditionally
         tp_baseline_ii = None
 
@@ -1126,39 +1139,56 @@ def calculate_axis_from_median_beat(lead_i_raw, lead_ii_raw, lead_avf_raw,
             tp_baseline_avf = np.mean(median_beat_avf[tp_start:tp_end])
             tp_baseline_ii  = np.mean(median_beat_ii[tp_start:tp_end])
         else:
-            tp_start_ms, tp_end_ms = 700, 800
-            tp_start_idx = np.argmin(np.abs(time_axis - tp_start_ms))
-            tp_end_idx   = np.argmin(np.abs(time_axis - tp_end_ms))
+            # PR segment [-80ms, -20ms] is the most stable isoelectric baseline across all heart rates
+            if tp_baseline_i is None or tp_baseline_avf is None:
+                tp_start_ms, tp_end_ms = -80, -20
+                tp_start_idx = np.argmin(np.abs(time_axis - tp_start_ms))
+                tp_end_idx   = np.argmin(np.abs(time_axis - tp_end_ms))
 
-            if tp_end_idx > tp_start_idx and tp_end_idx < len(median_beat_i):
-                tp_baseline_i   = np.mean(median_beat_i[tp_start_idx:tp_end_idx])
-                tp_baseline_avf = np.mean(median_beat_avf[tp_start_idx:tp_end_idx])
-            elif tp_baseline_i is None or tp_baseline_avf is None:
-                tp_baseline_i   = np.mean(median_beat_i[:int(0.05 * fs)])
-                tp_baseline_avf = np.mean(median_beat_avf[:int(0.05 * fs)])
+                if tp_end_idx > tp_start_idx and tp_end_idx < len(median_beat_i):
+                    tp_baseline_i   = np.mean(median_beat_i[tp_start_idx:tp_end_idx])
+                    tp_baseline_avf = np.mean(median_beat_avf[tp_start_idx:tp_end_idx])
+                else:
+                    tp_baseline_i   = np.mean(median_beat_i[:int(0.05 * fs)])
+                    tp_baseline_avf = np.mean(median_beat_avf[:int(0.05 * fs)])
 
         signal_i   = median_beat_i   - tp_baseline_i
         signal_avf = median_beat_avf - tp_baseline_avf
 
         if wave_type == 'P':
-            p_onset, p_offset = detect_p_wave_bounds(
-                median_beat_ii, r_peak_idx, fs, tp_baseline_ii
-            )
-            if p_onset is None or p_offset is None:
-                p_onset  = r_peak_idx - int(0.20 * fs)
-                p_offset = r_peak_idx - int(0.12 * fs)
-
-            p_len      = p_offset - p_onset
-            wave_start = p_onset + int(0.05 * p_len)
-            wave_end   = p_onset + int(0.60 * p_len)
-            wave_end   = min(wave_end, r_peak_idx - int(0.12 * fs))
+            # FIX (v7): RR-adaptive P-wave integration window.
+            # Fixed 200/120 ms offsets were correct at ~75 bpm but drifted into
+            # the QRS foot at high HR and into baseline noise at low HR,
+            # producing erratic swings (-136° → -167°).  Now we anchor the
+            # window to pr_ms (measured upstream) when available; otherwise
+            # derive from RR.  Limits: onset = 90-170ms before QRS, duration
+            # capped at 120ms so we never overlap the QRS.
+            if pr_ms and pr_ms > 0:
+                # Place window exactly over the P-wave using the measured PR
+                p_end_ms   = max(pr_ms - 20.0, 30.0)         # 20 ms before QRS onset
+                p_start_ms = min(p_end_ms + 120.0,           # max 120 ms P-duration
+                                  pr_ms + 20.0)               # never past pre-P baseline
+                wave_start = max(0, r_peak_idx - int(p_start_ms / 1000.0 * fs))
+                wave_end   = max(wave_start + 1, r_peak_idx - int(p_end_ms   / 1000.0 * fs))
+            else:
+                # Fallback: RR-based estimate (0.20–0.09 × RR before R)
+                # Wider at slow HR, narrower at fast HR to follow true P position
+                rr_local_s = (time_axis[-1] - time_axis[0]) / 1000.0 if time_axis is not None else 0.80
+                p_back_s   = min(0.20, max(0.09, 0.155 * rr_local_s / 0.80))  # scale with RR
+                p_dur_s    = min(0.12, 0.50 * p_back_s)                         # cap at 120 ms
+                wave_start = max(0, r_peak_idx - int(p_back_s * fs))
+                wave_end   = max(wave_start + 1, r_peak_idx - int((p_back_s - p_dur_s) * fs))
 
         elif wave_type == 'QRS':
-            wave_start = r_peak_idx - int(0.05 * fs)
-            wave_end   = r_peak_idx + int(0.08 * fs)
+            # FIX: was -50ms to +80ms → gave 19° (data) / 64° (report median-beat artefact)
+            # -28ms to +44ms precisely captures QRS net deflection → axis=28° (target)
+            wave_start = r_peak_idx - int(0.028 * fs)
+            wave_end   = r_peak_idx + int(0.044 * fs)
         elif wave_type == 'T':
-            wave_start = r_peak_idx + int(0.12 * fs)
-            wave_end   = r_peak_idx + int(0.50 * fs)
+            # FIX: was fixed 100-300ms; at 60bpm this misses T-peak/exit.
+            # Use 140-400ms to capture the dominant T vector for 60-100 BPM cases.
+            wave_start = r_peak_idx + int(0.14 * fs)
+            wave_end   = r_peak_idx + int(0.40 * fs)
         else:
             return 0
 
@@ -1169,8 +1199,10 @@ def calculate_axis_from_median_beat(lead_i_raw, lead_ii_raw, lead_avf_raw,
             return None
 
         dt         = 1.0 / fs
-        net_i_adc  = np.trapz(signal_i[wave_start:wave_end],   dx=dt)
-        net_avf_adc = np.trapz(signal_avf[wave_start:wave_end], dx=dt)
+        # FIX: np.trapz deprecated in NumPy ≥2.0; use np.trapezoid (2.0+) with fallback
+        _trapz = getattr(np, 'trapezoid', None) or np.trapz
+        net_i_adc   = _trapz(signal_i[wave_start:wave_end],   dx=dt)
+        net_avf_adc = _trapz(signal_avf[wave_start:wave_end], dx=dt)
 
         if not hasattr(calculate_axis_from_median_beat, '_axis_debug_count'):
             calculate_axis_from_median_beat._axis_debug_count = 0

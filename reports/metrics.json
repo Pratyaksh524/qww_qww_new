@@ -1,6276 +1,1884 @@
 [
   {
-    "timestamp": "2025-12-08 15:04:43",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251208_150438.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.915,
-    "P_QRS_T_mm": [
-      187,
-      5,
-      39
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.749,
-      1.166
-    ]
-  },
-  {
-    "timestamp": "2025-12-08 15:07:25",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251208_150722.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-08 17:44:37",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251208_174435.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-08 17:51:17",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251208_175114.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:08:54",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_100850.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:12:11",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_101207.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:18:19",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_101815.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:22:47",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_102243.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:46:22",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_104608.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 10:59:48",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_105943.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 12:13:14",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_121310.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-09 12:17:11",
-    "file": "/Users/indresh/Downloads/Hyperkalemia_Report_20251209_121708.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 14:31:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_143126.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 14:38:17",
-    "file": "/Users/indresh/Downloads/HRV_Report_20251210_143814.pdf",
-    "HR_bpm": 119,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 504,
-    "HRV_SDNN_ms": 4.098509965038269,
-    "HRV_RMSSD_ms": 4.361998054450165,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 1.2196427118919573,
-    "Original_HR_bpm": 60
-  },
-  {
-    "timestamp": "2025-12-10 14:40:02",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_143959.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 150,
-    "QRS_ms": 71,
-    "QT_ms": 500,
-    "QTc_ms": 520,
-    "ST_ms": 6,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 2.046,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.26,
-      0.786
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 14:51:46",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_145143.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 14:52:28",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_145224.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 14:59:18",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_145915.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.917,
-    "P_QRS_T_mm": [
-      186,
-      3,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.749,
-      1.168
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:03:41",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_150338.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:09:34",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_150931.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      187,
-      6,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:15:45",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_151541.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:22:45",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_152242.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.924,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      35
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.751,
-      1.174
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:26:01",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_152558.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:29:23",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_152919.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:34:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_153426.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:39:42",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_153939.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:42:28",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_154225.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.915,
-    "P_QRS_T_mm": [
-      187,
-      5,
-      37
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.75,
-      1.166
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:45:04",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_154502.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-10 15:47:07",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251210_154704.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2025-12-11 10:49:28",
-    "file": "/Users/indresh/Downloads/HRV_Report_20251211_104925.pdf",
-    "HR_bpm": 84,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 714,
-    "HRV_SDNN_ms": 390.2642450137028,
-    "HRV_RMSSD_ms": 672.8829913142404,
-    "HRV_NN50": 200,
-    "HRV_pNN50": 99.50248756218906,
-    "HRV_SDANN_ms": 94.9118260398683,
-    "Original_HR_bpm": 60
-  },
-  {
-    "timestamp": "2025-12-11 17:46:43",
-    "file": "/Users/indresh/Downloads/HRV_Report_20251211_174639.pdf",
-    "HR_bpm": 96,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 625,
-    "HRV_SDNN_ms": 350.7279626808054,
-    "HRV_RMSSD_ms": 609.1633606841435,
-    "HRV_NN50": 16,
-    "HRV_pNN50": 94.11764705882352,
-    "HRV_SDANN_ms": 94.66021104749109,
-    "Original_HR_bpm": 84
-  },
-  {
-    "timestamp": "2025-12-12 16:39:49",
-    "file": "/Users/indresh/Desktop/19_noc code  duplicate/modularecg/src/ECG_Report_20251212_163946.pdf",
-    "HR_bpm": 297,
-    "PR_ms": 150,
-    "QRS_ms": 85,
-    "QT_ms": 436,
-    "QTc_ms": 456,
-    "ST_ms": 6,
-    "RR_ms": 202,
-    "RV5_plus_SV1_mV": 1.905,
-    "P_QRS_T_mm": [
-      182,
-      34,
-      25
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.869,
-      0.035
-    ]
-  },
-  {
-    "timestamp": "2025-12-12 16:52:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251212_165202.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 200,
-    "QRS_ms": 105,
-    "QT_ms": 414,
-    "QTc_ms": 434,
-    "ST_ms": -1,
-    "RR_ms": 1111,
-    "RV5_plus_SV1_mV": 2.8,
-    "P_QRS_T_mm": [
-      53,
-      29,
-      47
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.903,
-      0.897
-    ]
-  },
-  {
-    "timestamp": "2025-12-12 16:52:39",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251212_165235.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 178,
-    "QRS_ms": 83,
-    "QT_ms": 311,
-    "QTc_ms": 331,
-    "ST_ms": -1,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.617,
-    "P_QRS_T_mm": [
-      52,
-      29,
-      47
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.925,
-      0.692
-    ]
-  },
-  {
-    "timestamp": "2025-12-12 17:00:02",
-    "file": "/Users/indresh/Desktop/ECG_Report_20251212_165958.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 182,
-    "QRS_ms": 88,
-    "QT_ms": 311,
-    "QTc_ms": 331,
-    "ST_ms": -2,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 3.229,
-    "P_QRS_T_mm": [
-      52,
-      28,
-      48
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.923,
-      1.306
-    ]
-  },
-  {
-    "timestamp": "2025-12-12 17:48:25",
-    "file": "/Users/indresh/Desktop/19_noc code  duplicate/ECG_Report_20251212_174823.pdf",
-    "HR_bpm": 91,
-    "PR_ms": 150,
-    "QRS_ms": 69,
-    "QT_ms": 296,
-    "QTc_ms": 316,
-    "ST_ms": 2,
-    "RR_ms": 659,
-    "RV5_plus_SV1_mV": 0.003,
-    "P_QRS_T_mm": [
-      185,
-      -15,
-      18
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      0.001,
-      0.002
-    ]
-  },
-  {
-    "timestamp": "2025-12-13 09:47:53",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251213_094747.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.921,
-    "P_QRS_T_mm": [
-      187,
-      6,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.754,
-      1.166
-    ]
-  },
-  {
-    "timestamp": "2025-12-13 09:48:36",
-    "file": "/Users/indresh/Downloads/ECG_Report_20251213_094833.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 360,
-    "QTc_ms": 380,
-    "ST_ms": 90,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 2.919,
-    "P_QRS_T_mm": [
-      186,
-      5,
-      36
-    ],
-    "QTCF": 0.049,
-    "RV5_SV1_mV": [
-      1.752,
-      1.167
-    ]
-  },
-  {
-    "timestamp": "2026-01-17 12:10:53",
-    "file": "C:\\Users\\DELL\\Downloads\\ECGNEWCAL\\ECGdiv\\src\\ECG_Report_20260117_121050.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 135,
-    "QRS_ms": 86,
-    "QT_ms": 299,
-    "QTc_ms": 423,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.828,
-    "P_QRS_T_mm": [
-      -138,
-      -111,
-      -83
-    ],
-    "QTCF": 299.0,
-    "RV5_SV1_mV": [
-      0.565,
-      -0.263
-    ]
-  },
-  {
-    "timestamp": "2026-01-21 11:34:34",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260121_113429.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 170,
-    "QRS_ms": 86,
-    "QT_ms": 373,
-    "QTc_ms": 304,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      -106,
-      9,
-      -5
-    ],
-    "QTCF": 470.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-01-21 11:35:04",
-    "file": "C:\\Users\\DELL\\Downloads\\ECGNEWCAL\\ECGdiv\\src\\ECG_Report_20260121_113502.pdf",
-    "HR_bpm": 70,
-    "PR_ms": 143,
-    "QRS_ms": 87,
-    "QT_ms": 316,
-    "QTc_ms": 341,
-    "ST_ms": 0.0,
-    "RR_ms": 857,
-    "RV5_plus_SV1_mV": 0.002,
-    "P_QRS_T_mm": [
-      -99,
-      -10,
-      -138
-    ],
-    "QTCF": 276.1,
-    "RV5_SV1_mV": [
-      0.001,
-      -0.001
-    ]
-  },
-  {
-    "timestamp": "2026-01-21 12:52:08",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260121_125159.pdf",
-    "HR_bpm": 162,
-    "PR_ms": 123,
-    "QRS_ms": 85,
-    "QT_ms": 243,
-    "QTc_ms": 400,
-    "ST_ms": 0.0,
-    "RR_ms": 370,
-    "RV5_plus_SV1_mV": 3.231,
-    "P_QRS_T_mm": [
-      -133,
-      -139,
-      168
-    ],
-    "QTCF": 255.8,
-    "RV5_SV1_mV": [
-      2.267,
-      -0.964
-    ]
-  },
-  {
-    "timestamp": "2026-01-21 12:52:29",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260121_125222.pdf",
-    "HR_bpm": 260,
-    "PR_ms": 63,
-    "QRS_ms": 85,
-    "QT_ms": 177,
-    "QTc_ms": 362,
-    "ST_ms": 0.0,
-    "RR_ms": 230,
-    "RV5_plus_SV1_mV": 4.945,
-    "P_QRS_T_mm": [
-      -137,
-      45,
-      46
-    ],
-    "QTCF": 246.6,
-    "RV5_SV1_mV": [
-      2.413,
-      -2.532
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 11:49:25",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260123_114921.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.043,
-    "P_QRS_T_mm": [
-      -137,
-      0,
-      -153
-    ],
-    "QTCF": 466.8,
-    "RV5_SV1_mV": [
-      0.099,
-      -0.945
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 12:08:56",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260123_120853.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.209,
-    "P_QRS_T_mm": [
-      -138,
-      0,
-      -165
-    ],
-    "QTCF": 339.1,
-    "RV5_SV1_mV": [
-      0.083,
-      -1.127
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 12:18:17",
-    "file": "C:\\Users\\DELL\\Desktop\\backup\\Recaliberateecg\\ECG_Report_20260123_121815.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.022,
-    "P_QRS_T_mm": [
-      -136,
-      0,
-      -136
-    ],
-    "QTCF": 339.1,
-    "RV5_SV1_mV": [
-      0.062,
-      -0.96
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 12:21:21",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260123_122117.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.192,
-    "P_QRS_T_mm": [
-      -138,
-      0,
-      -157
-    ],
-    "QTCF": 339.1,
-    "RV5_SV1_mV": [
-      0.097,
-      -1.094
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 12:33:15",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_20260123_123310.pdf",
-    "HR_bpm": 195,
-    "PR_ms": 167,
-    "QRS_ms": 104,
-    "QT_ms": 250,
-    "QTc_ms": 450,
-    "ST_ms": 0.0,
-    "RR_ms": 307,
-    "RV5_plus_SV1_mV": 4.559,
-    "P_QRS_T_mm": [
-      -135,
-      43,
-      23
-    ],
-    "QTCF": 296.4,
-    "RV5_SV1_mV": [
-      3.128,
-      -1.431
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 12:53:41",
-    "file": "C:\\Users\\DELL\\Desktop\\backup\\Recaliberateecg\\ECG_Report_20260123_125335.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.031,
-    "P_QRS_T_mm": [
-      -137,
-      0,
-      -148
-    ],
-    "QTCF": 424.0,
-    "RV5_SV1_mV": [
-      0.007,
-      -1.024
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 13:58:32",
-    "file": "C:\\Users\\DELL\\Desktop\\backup\\Recaliberateecg\\ECG_Report_20260123_135829.pdf",
-    "HR_bpm": 135,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 395,
-    "QTc_ms": 594,
-    "ST_ms": 0.0,
-    "RR_ms": 444,
-    "RV5_plus_SV1_mV": 0.867,
-    "P_QRS_T_mm": [
-      -134,
-      52,
-      41
-    ],
-    "QTCF": 468.3,
-    "RV5_SV1_mV": [
-      0.526,
-      -0.341
-    ]
-  },
-  {
-    "timestamp": "2026-01-23 14:05:54",
-    "file": "C:\\Users\\DELL\\Desktop\\backup\\Recaliberateecg\\ECG_Report_20260123_140552.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": null,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-01-27 10:48:15",
-    "file": "C:\\Users\\DELL\\Desktop\\backup\\Recaliberateecg\\ECG_Report_20260127_104812.pdf",
-    "HR_bpm": 100,
-    "PR_ms": 174,
-    "QRS_ms": 90,
-    "QT_ms": 286,
-    "QTc_ms": 369,
-    "ST_ms": 0,
-    "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.198,
-    "P_QRS_T_mm": [
-      -138,
-      0,
-      -165
-    ],
-    "QTCF": 339.1,
-    "RV5_SV1_mV": [
-      0.078,
-      -1.12
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 10:44:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_104406.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 0.714,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": null,
-    "RV5_SV1_mV": [
-      0.614,
-      -0.1
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 10:58:13",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_105809.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 168,
-    "QRS_ms": 80,
-    "QT_ms": 389,
-    "QTc_ms": 389,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.777,
-    "P_QRS_T_mm": [
-      -134,
-      -68,
-      -128
-    ],
-    "QTCF": 389.0,
-    "RV5_SV1_mV": [
-      0.394,
-      -0.383
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:03:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_120305.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 343,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.744,
-    "P_QRS_T_mm": [
-      -151,
-      46,
-      -141
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.52,
-      -0.224
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:23:32",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_122328.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 131,
-    "QT_ms": 347,
-    "QTc_ms": 347,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.081,
-    "P_QRS_T_mm": [
-      -151,
-      55,
-      -146
-    ],
-    "QTCF": 347.0,
-    "RV5_SV1_mV": [
-      0.565,
-      -0.515
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:27:16",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_122712.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 162,
-    "QRS_ms": 131,
-    "QT_ms": 346,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.698,
-    "P_QRS_T_mm": [
-      -153,
-      37,
-      -135
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      0.688,
-      0.01
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:30:30",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_123026.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 345,
-    "QTc_ms": 368,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.184,
-    "P_QRS_T_mm": [
-      -150,
-      30,
-      -127
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      0.723,
-      0.461
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:39:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_123918.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 190,
-    "QRS_ms": 110,
-    "QT_ms": 340,
-    "QTc_ms": 338,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.685,
-    "P_QRS_T_mm": [
-      -151,
-      42,
-      -143
-    ],
-    "QTCF": 340.0,
-    "RV5_SV1_mV": [
-      0.637,
-      0.048
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 12:51:54",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_125151.pdf",
+    "timestamp": "2026-03-06 15:17:37",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_151730.pdf",
     "HR_bpm": 60,
     "PR_ms": 166,
-    "QRS_ms": 136,
-    "QT_ms": 343,
+    "QRS_ms": 99,
+    "QT_ms": 342,
     "QTc_ms": 343,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.037,
+    "RV5_plus_SV1_mV": 0.687,
     "P_QRS_T_mm": [
-      -152,
-      50,
-      -144
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.514,
-      -0.522
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:00:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_130010.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 170,
-    "QRS_ms": 65,
-    "QT_ms": 357,
-    "QTc_ms": 351,
-    "ST_ms": 0.0,
-    "RR_ms": 1034,
-    "RV5_plus_SV1_mV": 0.782,
-    "P_QRS_T_mm": [
-      -152,
-      50,
-      -145
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.533,
-      -0.249
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:28:51",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_132847.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 120,
-    "QRS_ms": 85,
-    "QT_ms": 341,
-    "QTc_ms": 341,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.951,
-    "P_QRS_T_mm": [
-      -151,
-      55,
-      -142
-    ],
-    "QTCF": 337.2,
-    "RV5_SV1_mV": [
-      0.609,
-      -0.342
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:34:18",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_133415.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 103,
-    "QT_ms": 343,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.951,
-    "P_QRS_T_mm": [
-      -151,
-      56,
-      -142
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.56,
-      -0.391
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:47:07",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_134704.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 190,
-    "QRS_ms": 98,
-    "QT_ms": 342,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.919,
-    "P_QRS_T_mm": [
-      -153,
-      57,
-      -145
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      0.59,
-      -0.329
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:50:20",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_135017.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 90,
-    "QT_ms": 346,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.832,
-    "P_QRS_T_mm": [
-      -151,
-      42,
-      -132
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      0.577,
-      0.255
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 13:59:04",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_135900.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 346,
-    "QTc_ms": 348,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.768,
-    "P_QRS_T_mm": [
-      -152,
-      40,
-      -132
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      0.683,
-      0.086
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 14:05:24",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_140521.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 135,
-    "QT_ms": 342,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.671,
-    "P_QRS_T_mm": [
-      -151,
-      52,
+      -67,
+      70,
       -142
     ],
     "QTCF": 342.0,
     "RV5_SV1_mV": [
-      0.548,
-      -0.123
+      0.674,
+      -0.013
     ]
   },
   {
-    "timestamp": "2026-01-28 14:06:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_140655.pdf",
-    "HR_bpm": 55,
-    "PR_ms": 200,
-    "QRS_ms": 93,
-    "QT_ms": 344,
-    "QTc_ms": 329,
-    "ST_ms": 0.0,
-    "RR_ms": 1090,
-    "RV5_plus_SV1_mV": 0.615,
-    "P_QRS_T_mm": [
-      -151,
-      49,
-      -143
-    ],
-    "QTCF": 344.0,
-    "RV5_SV1_mV": [
-      0.529,
-      0.086
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 14:21:11",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260128_142108.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 200,
-    "QRS_ms": 93,
-    "QT_ms": 344,
-    "QTc_ms": 329,
-    "ST_ms": 0,
-    "RR_ms": 1016,
-    "HRV_SDNN_ms": 2.309401076758503,
-    "HRV_RMSSD_ms": 2.335496832484569,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 2.0,
-    "Original_HR_bpm": 55
-  },
-  {
-    "timestamp": "2026-01-28 14:27:41",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260128_142737.pdf",
-    "HR_bpm": 109,
-    "PR_ms": 200,
-    "QRS_ms": 93,
-    "QT_ms": 344,
-    "QTc_ms": 329,
-    "ST_ms": 0,
-    "RR_ms": 550,
-    "HRV_SDNN_ms": 0.8660254037844386,
-    "HRV_RMSSD_ms": 1.5118578920369088,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0.8660254037844386,
-    "Original_HR_bpm": 59
-  },
-  {
-    "timestamp": "2026-01-28 14:30:02",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260128_142959.pdf",
-    "HR_bpm": 83,
-    "PR_ms": 200,
-    "QRS_ms": 93,
-    "QT_ms": 344,
-    "QTc_ms": 329,
-    "ST_ms": 0,
-    "RR_ms": 722,
-    "HRV_SDNN_ms": 1.4966629547095764,
-    "HRV_RMSSD_ms": 2.0,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 1.4966629547095764,
-    "Original_HR_bpm": 109
-  },
-  {
-    "timestamp": "2026-01-28 14:50:05",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_144959.pdf",
+    "timestamp": "2026-03-06 15:21:33",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_152128.pdf",
     "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 391,
-    "QTc_ms": 391,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.701,
-    "P_QRS_T_mm": [
-      -135,
-      51,
-      -149
-    ],
-    "QTCF": 435.8,
-    "RV5_SV1_mV": [
-      0.372,
-      -0.33
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:12:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_151253.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 143,
-    "QRS_ms": 183,
-    "QT_ms": 400,
-    "QTc_ms": 490,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.959,
-    "P_QRS_T_mm": [
-      -135,
-      -80,
-      -125
-    ],
-    "QTCF": 400.0,
-    "RV5_SV1_mV": [
-      0.469,
-      -0.491
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:20:27",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_152024.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 171,
-    "QRS_ms": 134,
-    "QT_ms": 345,
-    "QTc_ms": 345,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.892,
-    "P_QRS_T_mm": [
-      -151,
-      37,
-      -99
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      0.403,
-      -0.489
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:22:19",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_152215.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 171,
-    "QRS_ms": 134,
-    "QT_ms": 345,
-    "QTc_ms": 345,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.598,
-    "P_QRS_T_mm": [
-      -151,
-      50,
-      -140
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      0.504,
-      -0.094
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:24:39",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_152436.pdf",
-    "HR_bpm": 119,
-    "PR_ms": 171,
-    "QRS_ms": 134,
-    "QT_ms": 296,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 504,
-    "RV5_plus_SV1_mV": 0.646,
-    "P_QRS_T_mm": [
-      -153,
-      -147,
-      27
-    ],
-    "QTCF": 296.0,
-    "RV5_SV1_mV": [
-      0.646,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:29:33",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_152930.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 177,
-    "QRS_ms": 137,
-    "QT_ms": 342,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.598,
-    "P_QRS_T_mm": [
-      -151,
-      51,
-      -142
-    ],
-    "QTCF": 429.8,
-    "RV5_SV1_mV": [
-      0.513,
-      -0.085
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:31:38",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_153135.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 198,
-    "QRS_ms": 60,
-    "QT_ms": 297,
-    "QTc_ms": 723,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.945,
-    "P_QRS_T_mm": [
-      -154,
-      -177,
-      52
-    ],
-    "QTCF": 297.0,
-    "RV5_SV1_mV": [
-      0.81,
-      0.135
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:51:46",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_155143.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 198,
-    "QRS_ms": 60,
-    "QT_ms": 343,
-    "QTc_ms": 341,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.649,
-    "P_QRS_T_mm": [
-      -151,
-      54,
-      -145
-    ],
-    "QTCF": 432.2,
-    "RV5_SV1_mV": [
-      0.479,
-      -0.17
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 15:57:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_155711.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 342,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.685,
-    "P_QRS_T_mm": [
-      -151,
-      49,
-      -144
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      0.499,
-      -0.186
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:04:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_160426.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 344,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.627,
-    "P_QRS_T_mm": [
-      -151,
-      50,
-      -141
-    ],
-    "QTCF": 344.0,
-    "RV5_SV1_mV": [
-      0.504,
-      -0.123
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:06:13",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_160609.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 107,
-    "QT_ms": 342,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.552,
-    "P_QRS_T_mm": [
-      -152,
-      50,
-      -141
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      0.513,
-      -0.038
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:07:34",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_160730.pdf",
-    "HR_bpm": 150,
-    "PR_ms": 194,
-    "QRS_ms": 64,
-    "QT_ms": 347,
-    "QTc_ms": 545,
-    "ST_ms": 0.0,
-    "RR_ms": 400,
-    "RV5_plus_SV1_mV": 0.64,
-    "P_QRS_T_mm": [
-      -153,
-      -156,
-      178
-    ],
-    "QTCF": 347.0,
-    "RV5_SV1_mV": [
-      0.521,
-      -0.119
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:42:56",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_164253.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 344,
-    "QTc_ms": 344,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.703,
-    "P_QRS_T_mm": [
-      -147,
-      29,
-      -132
-    ],
-    "QTCF": 466.9,
-    "RV5_SV1_mV": [
-      0.457,
-      -0.247
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:47:35",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_164732.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 155,
-    "QRS_ms": 119,
-    "QT_ms": 343,
-    "QTc_ms": 344,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.792,
-    "P_QRS_T_mm": [
-      -148,
-      38,
-      -133
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.45,
-      -0.342
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 16:50:50",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_165047.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 200,
-    "QRS_ms": 85,
+    "PR_ms": 173,
+    "QRS_ms": 96,
     "QT_ms": 348,
-    "QTc_ms": 348,
+    "QTc_ms": 346,
     "ST_ms": 0.0,
-    "RR_ms": 1111,
-    "RV5_plus_SV1_mV": 0.628,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.191,
     "P_QRS_T_mm": [
-      -150,
-      39,
-      -135
+      -65,
+      50,
+      -141
     ],
     "QTCF": 348.0,
     "RV5_SV1_mV": [
-      0.57,
-      -0.058
+      0.682,
+      -0.509
     ]
   },
   {
-    "timestamp": "2026-01-28 17:00:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_170011.pdf",
+    "timestamp": "2026-03-06 15:22:26",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_152221.pdf",
     "HR_bpm": 60,
-    "PR_ms": 200,
-    "QRS_ms": 78,
-    "QT_ms": 345,
-    "QTc_ms": 345,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.514,
-    "P_QRS_T_mm": [
-      -150,
-      29,
-      -133
-    ],
-    "QTCF": 333.1,
-    "RV5_SV1_mV": [
-      0.456,
-      -0.058
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:05:37",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_170533.pdf",
-    "HR_bpm": 53,
-    "PR_ms": 170,
-    "QRS_ms": 107,
-    "QT_ms": 345,
-    "QTc_ms": 410,
-    "ST_ms": 0.0,
-    "RR_ms": 1132,
-    "RV5_plus_SV1_mV": 0.735,
-    "P_QRS_T_mm": [
-      -149,
-      39,
-      -131
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      0.462,
-      0.274
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:07:02",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_170659.pdf",
-    "HR_bpm": 55,
-    "PR_ms": 194,
-    "QRS_ms": 136,
-    "QT_ms": 344,
-    "QTc_ms": 326,
-    "ST_ms": 0.0,
-    "RR_ms": 1090,
-    "RV5_plus_SV1_mV": 0.541,
-    "P_QRS_T_mm": [
-      -150,
-      39,
-      -132
-    ],
-    "QTCF": 330.1,
-    "RV5_SV1_mV": [
-      0.452,
-      0.089
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:07:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_170726.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 194,
-    "QRS_ms": 136,
-    "QT_ms": 341,
-    "QTc_ms": 341,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.587,
-    "P_QRS_T_mm": [
-      -150,
-      38,
-      -137
-    ],
-    "QTCF": 331.3,
-    "RV5_SV1_mV": [
-      0.461,
-      -0.127
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:08:17",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_170814.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 194,
-    "QRS_ms": 136,
-    "QT_ms": 345,
-    "QTc_ms": 345,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.6,
-    "P_QRS_T_mm": [
-      -150,
-      34,
-      -134
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      0.451,
-      -0.149
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:15:06",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_171503.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 194,
-    "QRS_ms": 133,
-    "QT_ms": 343,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.734,
-    "P_QRS_T_mm": [
-      -150,
-      36,
-      -136
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.485,
-      -0.249
-    ]
-  },
-  {
-    "timestamp": "2026-01-28 17:18:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260128_171817.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 171,
-    "QRS_ms": 175,
-    "QT_ms": 342,
-    "QTc_ms": 339,
-    "ST_ms": 0.0,
-    "RR_ms": 1016,
-    "RV5_plus_SV1_mV": 0.779,
-    "P_QRS_T_mm": [
-      -150,
-      38,
-      -134
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      0.53,
-      -0.249
-    ]
-  },
-  {
-    "timestamp": "2026-02-06 12:11:05",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260206_121100.pdf",
-    "HR_bpm": 41,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 346,
-    "QTc_ms": 340,
-    "ST_ms": 0.0,
-    "RR_ms": 1463,
-    "RV5_plus_SV1_mV": 0.582,
-    "P_QRS_T_mm": [
-      -149,
-      42,
-      -105
-    ],
-    "QTCF": 344.2,
-    "RV5_SV1_mV": [
-      0.334,
-      0.248
-    ]
-  },
-  {
-    "timestamp": "2026-02-07 12:18:14",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260207_121810.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 200,
-    "QRS_ms": 85,
-    "QT_ms": 351,
-    "QTc_ms": 349,
-    "ST_ms": 0.0,
-    "RR_ms": 1111,
-    "RV5_plus_SV1_mV": 0.577,
-    "P_QRS_T_mm": [
-      -149,
-      39,
-      -131
-    ],
-    "QTCF": 309.2,
-    "RV5_SV1_mV": [
-      0.526,
-      0.051
-    ]
-  },
-  {
-    "timestamp": "2026-02-07 16:02:43",
-    "file": "C:\\Users\\DELL\\Documents\\merge\\merge\\ECG_Report_12_1_20260207_160240.pdf",
-    "HR_bpm": 159,
-    "PR_ms": 148,
-    "QRS_ms": 85,
-    "QT_ms": 348,
-    "QTc_ms": 556,
-    "ST_ms": 0.0,
-    "RR_ms": 377,
-    "RV5_plus_SV1_mV": 1.595,
-    "P_QRS_T_mm": [
-      -152,
-      -128,
-      -141
-    ],
-    "QTCF": 336.0,
-    "RV5_SV1_mV": [
-      0.545,
-      -1.05
-    ]
-  },
-  {
-    "timestamp": "2026-02-07 17:48:21",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260207_174817.pdf",
-    "HR_bpm": 43,
-    "PR_ms": 121,
-    "QRS_ms": 50,
-    "QT_ms": 342,
-    "QTc_ms": 341,
-    "ST_ms": 0.0,
-    "RR_ms": 1395,
-    "RV5_plus_SV1_mV": 0.681,
-    "P_QRS_T_mm": [
-      -149,
-      42,
-      -124
-    ],
-    "QTCF": 473.4,
-    "RV5_SV1_mV": [
-      0.401,
-      0.28
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 14:35:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260209_143505.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 170,
-    "QRS_ms": 85,
-    "QT_ms": 309,
-    "QTc_ms": 439,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.452,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 389.0,
-    "RV5_SV1_mV": [
-      0.838,
-      -0.614
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 15:08:04",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260209_150802.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 283,
-    "QRS_ms": 106,
+    "PR_ms": 166,
+    "QRS_ms": 92,
     "QT_ms": 340,
-    "QTc_ms": 335,
+    "QTc_ms": 344,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.605,
+    "RV5_plus_SV1_mV": 1.193,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
+      -79,
+      64,
+      -145
     ],
     "QTCF": 340.0,
     "RV5_SV1_mV": [
-      1.044,
-      -0.561
+      0.683,
+      -0.51
     ]
   },
   {
-    "timestamp": "2026-02-09 15:11:02",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260209_151059.pdf",
+    "timestamp": "2026-03-06 15:27:30",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_152724.pdf",
     "HR_bpm": 60,
-    "PR_ms": 119,
-    "QRS_ms": 52,
-    "QT_ms": 336,
-    "QTc_ms": 336,
+    "PR_ms": 167,
+    "QRS_ms": 78,
+    "QT_ms": 362,
+    "QTc_ms": 365,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.597,
+    "RV5_plus_SV1_mV": 1.203,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 336.0,
-    "RV5_SV1_mV": [
-      1.045,
-      -0.552
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 16:03:27",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260209_160324.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 119,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.724,
-    "P_QRS_T_mm": [
-      -149,
-      34,
-      -137
-    ],
-    "QTCF": 338.0,
-    "RV5_SV1_mV": [
-      0.459,
-      -0.265
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 16:03:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260209_160355.pdf",
-    "HR_bpm": 62,
-    "PR_ms": 123,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 337,
-    "ST_ms": 0.0,
-    "RR_ms": 967,
-    "RV5_plus_SV1_mV": 1.59,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      1.031,
-      -0.559
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 16:04:05",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260209_160402.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 122,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 343,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.386,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 338.0,
-    "RV5_SV1_mV": [
-      1.032,
-      -0.355
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 16:04:36",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260209_160432.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.425,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 338.0,
-    "RV5_SV1_mV": [
-      1.032,
-      -0.393
-    ]
-  },
-  {
-    "timestamp": "2026-02-09 16:05:41",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_160538.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 1016,
-    "HRV_SDNN_ms": 7.01346502452462,
-    "HRV_RMSSD_ms": 7.455128930368747,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 2.34970567945122,
-    "Original_HR_bpm": 60
-  },
-  {
-    "timestamp": "2026-02-09 16:07:52",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_160750.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 1016,
-    "HRV_SDNN_ms": 2.9080487280725356,
-    "HRV_RMSSD_ms": 2.696799449852968,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 2.4952114633661,
-    "Original_HR_bpm": 59
-  },
-  {
-    "timestamp": "2026-02-09 17:42:35",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_174232.pdf",
-    "HR_bpm": 150,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 400,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 59
-  },
-  {
-    "timestamp": "2026-02-09 17:49:54",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_174951.pdf",
-    "HR_bpm": 66,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 909,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 150
-  },
-  {
-    "timestamp": "2026-02-09 17:50:40",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_175037.pdf",
-    "HR_bpm": 66,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 909,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 66
-  },
-  {
-    "timestamp": "2026-02-09 17:55:35",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_175532.pdf",
-    "HR_bpm": 65,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 923,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 66
-  },
-  {
-    "timestamp": "2026-02-09 18:00:20",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_180016.pdf",
-    "HR_bpm": 65,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 923,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 65
-  },
-  {
-    "timestamp": "2026-02-09 18:01:48",
-    "file": "/Users/indresh/Desktop/27_jan_ecg/9feb/merge/reports/test_hrv_label.pdf",
-    "HR_bpm": 135,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 444,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 65
-  },
-  {
-    "timestamp": "2026-02-09 18:03:24",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_180320.pdf",
-    "HR_bpm": 66,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 909,
-    "HRV_SDNN_ms": 8.698403429493382,
-    "HRV_RMSSD_ms": 10.113640011673063,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 2.4801433650317612,
-    "Original_HR_bpm": 135
-  },
-  {
-    "timestamp": "2026-02-09 18:04:59",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260209_180457.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 1016,
-    "HRV_SDNN_ms": 8.148234044402916,
-    "HRV_RMSSD_ms": 8.501410036149283,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 3.286857116641278,
-    "Original_HR_bpm": 66
-  },
-  {
-    "timestamp": "2026-02-09 18:07:10",
-    "file": "/Users/indresh/Desktop/27_jan_ecg/9feb/merge/reports/test_hrv_label2.pdf",
-    "HR_bpm": 135,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 444,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 59
-  },
-  {
-    "timestamp": "2026-02-10 12:46:37",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_124632.pdf",
-    "HR_bpm": 98,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 612,
-    "HRV_SDNN_ms": 2.6434171674156266,
-    "HRV_RMSSD_ms": 1.0690449676496976,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 2.8792793253011317,
-    "Original_HR_bpm": 135
-  },
-  {
-    "timestamp": "2026-02-10 12:47:48",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_124745.pdf",
-    "HR_bpm": 98,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 612,
-    "HRV_SDNN_ms": 0.01,
-    "HRV_RMSSD_ms": 0.22,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 98
-  },
-  {
-    "timestamp": "2026-02-10 12:55:46",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_125543.pdf",
-    "HR_bpm": 57,
-    "PR_ms": 125,
-    "QRS_ms": 52,
-    "QT_ms": 338,
-    "QTc_ms": 338,
-    "ST_ms": 0,
-    "RR_ms": 1052,
-    "HRV_SDNN_ms": 3.356382892705923,
-    "HRV_RMSSD_ms": 3.6622076273584425,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 1.2121830534626505,
-    "Original_HR_bpm": 98
-  },
-  {
-    "timestamp": "2026-02-10 13:53:24",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260210_135317.pdf",
-    "HR_bpm": 50,
-    "PR_ms": 186,
-    "QRS_ms": 52,
-    "QT_ms": 340,
-    "QTc_ms": 310,
-    "ST_ms": 0.0,
-    "RR_ms": 1200,
-    "RV5_plus_SV1_mV": 0.638,
-    "P_QRS_T_mm": [
-      -150,
-      55,
-      -143
-    ],
-    "QTCF": 334.3,
-    "RV5_SV1_mV": [
-      0.51,
-      -0.128
-    ]
-  },
-  {
-    "timestamp": "2026-02-10 13:54:32",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_135429.pdf",
-    "HR_bpm": 55,
-    "PR_ms": 186,
-    "QRS_ms": 52,
-    "QT_ms": 340,
-    "QTc_ms": 310,
-    "ST_ms": 0,
-    "RR_ms": 1090,
-    "HRV_SDNN_ms": 4.59568208730397,
-    "HRV_RMSSD_ms": 6.661456297237114,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 1.5840641588203621,
-    "Original_HR_bpm": 50
-  },
-  {
-    "timestamp": "2026-02-10 14:51:45",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_145136.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 150,
-    "QRS_ms": 134,
-    "QT_ms": 329,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 983,
-    "HRV_SDNN_ms": 520.7183100536581,
-    "HRV_RMSSD_ms": 889.3623598843036,
-    "HRV_NN50": 96,
-    "HRV_pNN50": 92.3076923076923,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 50
-  },
-  {
-    "timestamp": "2026-02-10 14:58:51",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_145847.pdf",
-    "HR_bpm": 78,
-    "PR_ms": 189,
-    "QRS_ms": 85,
-    "QT_ms": 358,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 769,
-    "HRV_SDNN_ms": 58.15304470220647,
-    "HRV_RMSSD_ms": 19.454971179003586,
-    "HRV_NN50": 3,
-    "HRV_pNN50": 0.7633587786259541,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 50
-  },
-  {
-    "timestamp": "2026-02-10 15:03:38",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_150334.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 197,
-    "QRS_ms": 83,
-    "QT_ms": 343,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "HRV_SDNN_ms": 0.8123547010315567,
-    "HRV_RMSSD_ms": 1.251560352640829,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 0,
-    "Original_HR_bpm": 50
-  },
-  {
-    "timestamp": "2026-02-10 15:31:33",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260210_153130.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 197,
-    "QRS_ms": 83,
-    "QT_ms": 343,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 1034,
-    "HRV_SDNN_ms": 8.536258255835566,
-    "HRV_RMSSD_ms": 5.57275116576683,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 3.4373143230734513,
-    "Original_HR_bpm": 60
-  },
-  {
-    "timestamp": "2026-02-10 16:25:31",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260210_162528.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 185,
-    "QRS_ms": 52,
-    "QT_ms": 343,
-    "QTc_ms": 339,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.87,
-    "P_QRS_T_mm": [
-      -150,
-      34,
+      -113,
+      49,
       -138
     ],
-    "QTCF": 339.2,
+    "QTCF": 362.0,
     "RV5_SV1_mV": [
-      0.478,
-      -0.392
+      0.676,
+      -0.526
     ]
   },
   {
-    "timestamp": "2026-02-12 10:49:28",
-    "file": "C:\\Users\\tanya\\Downloads\\merge_main\\merge\\HRV_Report_20260212_104906.pdf",
-    "HR_bpm": 70,
-    "PR_ms": 185,
-    "QRS_ms": 52,
-    "QT_ms": 343,
-    "QTc_ms": 339,
-    "ST_ms": 0,
-    "RR_ms": 857,
-    "HRV_SDNN_ms": 11.392004993756707,
-    "HRV_RMSSD_ms": 12.186057606953941,
-    "HRV_NN50": 0,
-    "HRV_pNN50": 0,
-    "HRV_SDANN_ms": 11.392004993756707,
-    "Original_HR_bpm": 60
-  },
-  {
-    "timestamp": "2026-02-12 11:16:14",
-    "file": "C:\\Users\\tanya\\Downloads\\merge_main\\merge\\ECG_Report_12_1_20260212_111607.pdf",
-    "HR_bpm": 72,
-    "PR_ms": 95,
-    "QRS_ms": 56,
-    "QT_ms": 460,
-    "QTc_ms": 519,
-    "ST_ms": 0.0,
-    "RR_ms": 833,
-    "RV5_plus_SV1_mV": 1.742,
-    "P_QRS_T_mm": [
-      -138,
-      18,
-      30
-    ],
-    "QTCF": 484.3,
-    "RV5_SV1_mV": [
-      0.573,
-      -1.169
-    ]
-  },
-  {
-    "timestamp": "2026-02-12 11:18:03",
-    "file": "C:\\Users\\tanya\\Downloads\\merge_main\\merge\\ECG_Report_12_1_20260212_111801.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 1.024,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": null,
-    "RV5_SV1_mV": [
-      0.433,
-      -0.591
-    ]
-  },
-  {
-    "timestamp": "2026-02-12 11:58:38",
-    "file": "C:\\Users\\tanya\\Downloads\\ECG_Report_12_1_20260212_115834.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
+    "timestamp": "2026-03-06 15:36:16",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_153611.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 95,
+    "QT_ms": 348,
+    "QTc_ms": 351,
+    "ST_mV": 0,
+    "RR_ms": 1000,
     "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
       0,
-      0,
-      0
+      66,
+      -145
     ],
-    "QTCF": null,
+    "QTCF": 348.0,
     "RV5_SV1_mV": [
       0.0,
       0.0
     ]
   },
   {
-    "timestamp": "2026-02-16 14:31:03",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260216_143057.pdf",
-    "HR_bpm": 237,
-    "PR_ms": 219,
-    "QRS_ms": 115,
-    "QT_ms": 280,
-    "QTc_ms": 510,
-    "ST_ms": 0.0,
-    "RR_ms": 253,
-    "RV5_plus_SV1_mV": 2.325,
-    "P_QRS_T_mm": [
-      65,
-      56,
-      40
-    ],
-    "QTCF": 442.7,
-    "RV5_SV1_mV": [
-      0.696,
-      -1.629
-    ]
-  },
-  {
-    "timestamp": "2026-02-16 14:44:17",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260216_144414.pdf",
-    "HR_bpm": 200,
-    "PR_ms": 200,
-    "QRS_ms": 105,
-    "QT_ms": 302,
-    "QTc_ms": 552,
-    "ST_ms": 0.0,
-    "RR_ms": 300,
-    "RV5_plus_SV1_mV": 8.22,
-    "P_QRS_T_mm": [
-      -135,
-      36,
-      -114
-    ],
-    "QTCF": 477.5,
-    "RV5_SV1_mV": [
-      3.32,
-      -4.9
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 13:44:18",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260219_134414.pdf",
-    "HR_bpm": 110,
-    "PR_ms": 200,
-    "QRS_ms": 105,
-    "QT_ms": 302,
-    "QTc_ms": 552,
-    "ST_ms": 0,
-    "RR_ms": 545,
-    "HRV_SDNN_ms": 6.419927471228091,
-    "HRV_RMSSD_ms": 4.105310345602132,
-    "HRV_NN50": 2,
-    "HRV_pNN50": 0.4484304932735426,
-    "HRV_SDANN_ms": 48.49484451675203,
-    "Original_HR_bpm": 200
-  },
-  {
-    "timestamp": "2026-02-19 15:17:06",
-    "file": "/Users/indresh/Downloads/HRV_Report_20260219_151656.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 200,
-    "QRS_ms": 105,
-    "QT_ms": 302,
-    "QTc_ms": 552,
-    "ST_ms": 0,
-    "RR_ms": 1111,
-    "HRV_SDNN_ms": 158.18650430718654,
-    "HRV_RMSSD_ms": 62.21566977231213,
-    "HRV_NN50": 5,
-    "HRV_pNN50": 20.833333333333336,
-    "HRV_SDANN_ms": 153.35474451958328,
-    "Original_HR_bpm": 110
-  },
-  {
-    "timestamp": "2026-02-19 16:18:32",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_161828.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
-    "ST_ms": 0,
-    "RR_ms": 0,
+    "timestamp": "2026-03-06 15:36:37",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_153633.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 79,
+    "QT_ms": 360,
+    "QTc_ms": 355,
+    "ST_mV": 0,
+    "RR_ms": 1000,
     "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
       0,
-      0,
-      0
+      63,
+      -141
     ],
-    "QTCF": null,
+    "QTCF": 360.0,
     "RV5_SV1_mV": [
       0.0,
       0.0
     ]
   },
   {
-    "timestamp": "2026-02-19 16:38:37",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_163833.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0.0,
-    "QTc_ms": 0.0,
-    "ST_ms": 0.0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 11.664,
-    "P_QRS_T_mm": [
-      23,
-      -163,
-      -172
-    ],
-    "QTCF": 299.7,
-    "RV5_SV1_mV": [
-      3.296,
-      -8.368
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 16:46:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_164611.pdf",
-    "HR_bpm": 238,
-    "PR_ms": 72,
-    "QRS_ms": 92,
-    "QT_ms": 188,
-    "QTc_ms": 373,
-    "ST_ms": 0.0,
-    "RR_ms": 252,
-    "RV5_plus_SV1_mV": 11.881,
-    "P_QRS_T_mm": [
-      -72,
-      3,
-      -158
-    ],
-    "QTCF": 297.6,
-    "RV5_SV1_mV": [
-      3.14,
-      -8.741
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 16:50:15",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_165012.pdf",
-    "HR_bpm": 182,
-    "PR_ms": 84,
-    "QRS_ms": 91,
-    "QT_ms": 242,
-    "QTc_ms": 412,
-    "ST_ms": 0.0,
-    "RR_ms": 329,
-    "RV5_plus_SV1_mV": 0.555,
-    "P_QRS_T_mm": [
-      22,
-      26,
-      33
-    ],
-    "QTCF": 383.1,
-    "RV5_SV1_mV": [
-      0.44,
-      -0.115
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 16:54:55",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_165452.pdf",
-    "HR_bpm": 70,
-    "PR_ms": 148,
-    "QRS_ms": 97,
-    "QT_ms": 309,
-    "QTc_ms": 336,
-    "ST_ms": 0.0,
-    "RR_ms": 857,
-    "RV5_plus_SV1_mV": 1.591,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 325.0,
-    "RV5_SV1_mV": [
-      1.039,
-      -0.552
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 16:55:30",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_165527.pdf",
-    "HR_bpm": 70,
-    "PR_ms": 145,
-    "QRS_ms": 78,
-    "QT_ms": 310,
-    "QTc_ms": 336,
-    "ST_ms": 0.0,
-    "RR_ms": 857,
-    "RV5_plus_SV1_mV": 1.377,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 326.0,
-    "RV5_SV1_mV": [
-      1.038,
-      -0.339
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:13:50",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_171347.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 187,
-    "QRS_ms": 107,
-    "QT_ms": 386,
-    "QTc_ms": 360,
-    "ST_ms": 0.0,
-    "RR_ms": 1111,
-    "RV5_plus_SV1_mV": 0.932,
-    "P_QRS_T_mm": [
-      37,
-      40,
-      -132
-    ],
-    "QTCF": 406.4,
-    "RV5_SV1_mV": [
-      0.431,
-      -0.5
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:14:51",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_171447.pdf",
-    "HR_bpm": 56,
-    "PR_ms": 178,
-    "QRS_ms": 102,
-    "QT_ms": 378,
-    "QTc_ms": 354,
-    "ST_ms": 0.0,
-    "RR_ms": 1071,
-    "RV5_plus_SV1_mV": 0.614,
-    "P_QRS_T_mm": [
-      29,
-      40,
-      -134
-    ],
-    "QTCF": 365.0,
-    "RV5_SV1_mV": [
-      0.455,
-      -0.159
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:22:09",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172206.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 166,
-    "QRS_ms": 77,
-    "QT_ms": 346,
-    "QTc_ms": 350,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.647,
-    "P_QRS_T_mm": [
-      -36,
-      39,
-      -140
-    ],
-    "QTCF": 338.2,
-    "RV5_SV1_mV": [
-      0.468,
-      -0.179
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:23:22",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172318.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 161,
+    "timestamp": "2026-03-06 15:41:55",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_154150.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 172,
     "QRS_ms": 93,
-    "QT_ms": 288,
-    "QTc_ms": 406,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.657,
-    "P_QRS_T_mm": [
-      -36,
-      51,
-      36
-    ],
-    "QTCF": 289.7,
-    "RV5_SV1_mV": [
-      0.606,
-      -0.051
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:23:38",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260219_172335.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 161,
-    "QRS_ms": 94,
-    "QT_ms": 288,
-    "QTc_ms": 406,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.713,
-    "P_QRS_T_mm": [
-      -26,
-      90,
-      40
-    ],
-    "QTCF": 362.9,
-    "RV5_SV1_mV": [
-      0.62,
-      -0.093
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:25:51",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_172548.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 169,
-    "QRS_ms": 94,
-    "QT_ms": 352,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.596,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 353.0,
-    "RV5_SV1_mV": [
-      1.036,
-      -0.56
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:32:42",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_173239.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 78,
-    "QT_ms": 350,
-    "QTc_ms": 350,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.578,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 349.0,
-    "RV5_SV1_mV": [
-      1.024,
-      -0.554
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:33:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260219_173326.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 161,
-    "QRS_ms": 93,
-    "QT_ms": 288,
-    "QTc_ms": 408,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.105,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 363.0,
-    "RV5_SV1_mV": [
-      0.998,
-      -0.106
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:34:34",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_173432.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 98,
-    "QT_ms": 345,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.583,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      1.026,
-      -0.557
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:41:53",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_174149.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 168,
-    "QRS_ms": 98,
-    "QT_ms": 346,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.59,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      1.028,
-      -0.562
-    ]
-  },
-  {
-    "timestamp": "2026-02-19 17:49:16",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_174913.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 166,
-    "QRS_ms": 77,
     "QT_ms": 354,
-    "QTc_ms": 353,
-    "ST_ms": 0.0,
-    "RR_ms": 1034,
-    "RV5_plus_SV1_mV": 1.3,
+    "QTc_ms": 354,
+    "ST_mV": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
       0,
-      0,
-      0
+      55,
+      -137
     ],
     "QTCF": 354.0,
     "RV5_SV1_mV": [
-      1.029,
-      -0.271
+      0.0,
+      0.0
     ]
   },
   {
-    "timestamp": "2026-02-19 17:54:02",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260219_175359.pdf",
-    "HR_bpm": 54,
-    "PR_ms": 185,
-    "QRS_ms": 108,
-    "QT_ms": 389,
-    "QTc_ms": 364,
+    "timestamp": "2026-03-06 15:53:47",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_155341.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 177,
+    "QRS_ms": 113,
+    "QT_ms": 420,
+    "QTc_ms": 419,
     "ST_ms": 0.0,
-    "RR_ms": 1111,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.577,
+    "P_QRS_T_mm": [
+      43,
+      34,
+      -76
+    ],
+    "QTCF": 420.0,
+    "RV5_SV1_mV": [
+      0.877,
+      -0.701
+    ]
+  },
+  {
+    "timestamp": "2026-03-06 16:00:23",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_160016.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 178,
+    "QRS_ms": 156,
+    "QT_ms": 420,
+    "QTc_ms": 420,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
     "RV5_plus_SV1_mV": 1.585,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
+      43,
+      24,
+      -118
     ],
-    "QTCF": 376.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.03,
-      -0.555
+      0.884,
+      -0.7
     ]
   },
   {
-    "timestamp": "2026-02-20 09:52:10",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_095208.pdf",
-    "HR_bpm": 53,
-    "PR_ms": 188,
-    "QRS_ms": 104,
-    "QT_ms": 392,
-    "QTc_ms": 362,
-    "ST_ms": 0.0,
-    "RR_ms": 1132,
-    "RV5_plus_SV1_mV": 0.894,
-    "P_QRS_T_mm": [
-      30,
-      37,
-      -127
-    ],
-    "QTCF": 378.5,
-    "RV5_SV1_mV": [
-      0.526,
-      -0.369
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 09:52:47",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_095244.pdf",
+    "timestamp": "2026-03-06 16:26:09",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_162603.pdf",
     "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 94,
-    "QT_ms": 345,
-    "QTc_ms": 344,
+    "PR_ms": 159,
+    "QRS_ms": 85,
+    "QT_ms": 420,
+    "QTc_ms": 418,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.689,
+    "RV5_plus_SV1_mV": 1.696,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
+      48,
+      32,
+      -106
     ],
-    "QTCF": 345.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.105,
-      -0.584
+      0.876,
+      -0.82
     ]
   },
   {
-    "timestamp": "2026-02-20 09:53:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_095305.pdf",
+    "timestamp": "2026-03-06 16:45:49",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_164544.pdf",
     "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 95,
-    "QT_ms": 345,
-    "QTc_ms": 344,
+    "PR_ms": 163,
+    "QRS_ms": 140,
+    "QT_ms": 420,
+    "QTc_ms": 419,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.675,
+    "RV5_plus_SV1_mV": 1.126,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
+      -136,
+      64,
+      -155
     ],
-    "QTCF": 345.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.091,
-      -0.584
+      0.823,
+      -0.303
     ]
   },
   {
-    "timestamp": "2026-02-20 10:00:49",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_100046.pdf",
+    "timestamp": "2026-03-06 16:46:13",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_164609.pdf",
     "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 96,
-    "QT_ms": 345,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.653,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 344.0,
-    "RV5_SV1_mV": [
-      1.081,
-      -0.572
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:01:52",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_100150.pdf",
-    "HR_bpm": 212,
-    "PR_ms": 76,
-    "QRS_ms": 99,
-    "QT_ms": 205,
-    "QTc_ms": 390,
-    "ST_ms": 0.0,
-    "RR_ms": 283,
-    "RV5_plus_SV1_mV": 1.706,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 312.0,
-    "RV5_SV1_mV": [
-      1.115,
-      -0.591
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:02:26",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_100223.pdf",
-    "HR_bpm": 234,
-    "PR_ms": 76,
-    "QRS_ms": 98,
-    "QT_ms": 210,
-    "QTc_ms": 388,
-    "ST_ms": 0.0,
-    "RR_ms": 256,
-    "RV5_plus_SV1_mV": 1.715,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 320.0,
-    "RV5_SV1_mV": [
-      1.12,
-      -0.596
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:02:50",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_100247.pdf",
-    "HR_bpm": 231,
-    "PR_ms": 71,
-    "QRS_ms": 91,
-    "QT_ms": 197,
-    "QTc_ms": 382,
-    "ST_ms": 0.0,
-    "RR_ms": 259,
-    "RV5_plus_SV1_mV": 12.463,
-    "P_QRS_T_mm": [
-      28,
-      20,
-      24
-    ],
-    "QTCF": 310.3,
-    "RV5_SV1_mV": [
-      3.705,
-      -8.758
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:03:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_100318.pdf",
-    "HR_bpm": 45,
-    "PR_ms": 257,
-    "QRS_ms": 96,
-    "QT_ms": 370,
-    "QTc_ms": 321,
-    "ST_ms": 0.0,
-    "RR_ms": 1333,
-    "RV5_plus_SV1_mV": 1.194,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 580.5,
-    "RV5_SV1_mV": [
-      0.676,
-      -0.518
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:13:10",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101306.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 163,
-    "QRS_ms": 95,
-    "QT_ms": 290,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.666,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 364.0,
-    "RV5_SV1_mV": [
-      1.059,
-      -0.606
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:13:24",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101322.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 163,
-    "QRS_ms": 94,
-    "QT_ms": 284,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.41,
-    "P_QRS_T_mm": [
-      4,
-      -141,
-      -31
-    ],
-    "QTCF": 357.8,
-    "RV5_SV1_mV": [
-      0.866,
-      -0.544
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:13:48",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101344.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 163,
-    "QRS_ms": 93,
-    "QT_ms": 284,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.664,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      1.057,
-      -0.607
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:14:16",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101413.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 163,
-    "QRS_ms": 92,
-    "QT_ms": 284,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.763,
-    "P_QRS_T_mm": [
-      -51,
-      135,
-      32
-    ],
-    "QTCF": 357.8,
-    "RV5_SV1_mV": [
-      0.632,
-      -0.131
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:14:38",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101435.pdf",
-    "HR_bpm": 128,
     "PR_ms": 158,
-    "QRS_ms": 93,
-    "QT_ms": 270,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 468,
-    "RV5_plus_SV1_mV": 1.668,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 345.0,
-    "RV5_SV1_mV": [
-      1.057,
-      -0.611
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:15:04",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_101501.pdf",
-    "HR_bpm": 117,
-    "PR_ms": 164,
-    "QRS_ms": 101,
-    "QT_ms": 292,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 512,
-    "RV5_plus_SV1_mV": 1.671,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 365.0,
-    "RV5_SV1_mV": [
-      1.061,
-      -0.609
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:15:16",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_101509.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 152,
-    "QRS_ms": 93,
-    "QT_ms": 272,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 1.661,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 349.0,
-    "RV5_SV1_mV": [
-      1.055,
-      -0.606
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:16:40",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_101638.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 152,
-    "QRS_ms": 92,
-    "QT_ms": 270,
-    "QTc_ms": 396,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 0.739,
-    "P_QRS_T_mm": [
-      44,
-      26,
-      27
-    ],
-    "QTCF": 346.8,
-    "RV5_SV1_mV": [
-      0.658,
-      -0.08
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:20:38",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102035.pdf",
-    "HR_bpm": 114,
-    "PR_ms": 167,
-    "QRS_ms": 103,
-    "QT_ms": 298,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 526,
-    "RV5_plus_SV1_mV": 0.627,
-    "P_QRS_T_mm": [
-      31,
-      -134,
-      -113
-    ],
-    "QTCF": 382.7,
-    "RV5_SV1_mV": [
-      0.627,
-      -0.001
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:20:52",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102044.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 152,
-    "QRS_ms": 93,
-    "QT_ms": 270,
-    "QTc_ms": 395,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 1.169,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      1.053,
-      -0.117
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:22:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102218.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 154,
-    "QRS_ms": 93,
-    "QT_ms": 274,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 0.7,
-    "P_QRS_T_mm": [
-      -69,
-      81,
-      34
-    ],
-    "QTCF": 351.9,
-    "RV5_SV1_mV": [
-      0.646,
-      -0.053
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:22:30",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102226.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 154,
-    "QRS_ms": 93,
-    "QT_ms": 274,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 1.367,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 351.0,
-    "RV5_SV1_mV": [
-      1.056,
-      -0.311
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:23:38",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_102335.pdf",
-    "HR_bpm": 113,
-    "PR_ms": 171,
-    "QRS_ms": 105,
-    "QT_ms": 304,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 530,
-    "RV5_plus_SV1_mV": 1.414,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 375.0,
-    "RV5_SV1_mV": [
-      1.07,
-      -0.344
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:24:43",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_102440.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 154,
-    "QRS_ms": 94,
-    "QT_ms": 274,
-    "QTc_ms": 397,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 1.66,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 352.0,
-    "RV5_SV1_mV": [
-      1.05,
-      -0.61
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:25:51",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_102549.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 154,
-    "QRS_ms": 93,
-    "QT_ms": 274,
-    "QTc_ms": 397,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 0.822,
-    "P_QRS_T_mm": [
-      21,
-      -57,
-      18
-    ],
-    "QTCF": 351.9,
-    "RV5_SV1_mV": [
-      0.75,
-      -0.073
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:30:36",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103033.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 154,
-    "QRS_ms": 93,
-    "QT_ms": 273,
-    "QTc_ms": 394,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 0.68,
-    "P_QRS_T_mm": [
-      45,
-      31,
-      31
-    ],
-    "QTCF": 350.6,
-    "RV5_SV1_mV": [
-      0.639,
-      -0.042
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:37:34",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103731.pdf",
-    "HR_bpm": 127,
-    "PR_ms": 152,
-    "QRS_ms": 95,
-    "QT_ms": 271,
-    "QTc_ms": 397,
-    "ST_ms": 0.0,
-    "RR_ms": 472,
-    "RV5_plus_SV1_mV": 1.315,
-    "P_QRS_T_mm": [
-      -52,
-      -143,
-      28
-    ],
-    "QTCF": 348.1,
-    "RV5_SV1_mV": [
-      0.771,
-      -0.544
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:37:55",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_103752.pdf",
-    "HR_bpm": 125,
-    "PR_ms": 154,
-    "QRS_ms": 94,
-    "QT_ms": 271,
-    "QTc_ms": 394,
-    "ST_ms": 0.0,
-    "RR_ms": 480,
-    "RV5_plus_SV1_mV": 1.658,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 348.0,
-    "RV5_SV1_mV": [
-      1.05,
-      -0.608
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:39:06",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_103901.pdf",
-    "HR_bpm": 125,
-    "PR_ms": 152,
-    "QRS_ms": 94,
-    "QT_ms": 272,
-    "QTc_ms": 396,
-    "ST_ms": 0.0,
-    "RR_ms": 480,
-    "RV5_plus_SV1_mV": 1.209,
-    "P_QRS_T_mm": [
-      28,
-      74,
-      36
-    ],
-    "QTCF": 347.4,
-    "RV5_SV1_mV": [
-      0.658,
-      -0.551
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:39:58",
-    "file": "/Users/indresh/Desktop/27_jan_ecg/11_feb/ECG_Report_12_1_20260220_103956.pdf",
-    "HR_bpm": 23,
-    "PR_ms": 198,
-    "QRS_ms": 112,
-    "QT_ms": 564,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 2608,
-    "RV5_plus_SV1_mV": 0.951,
-    "P_QRS_T_mm": [
-      20,
-      45,
-      -127
-    ],
-    "QTCF": 720.3,
-    "RV5_SV1_mV": [
-      0.434,
-      -0.517
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:40:45",
-    "file": "/Users/indresh/Desktop/27_jan_ecg/11_feb/ECG_Report_4_3_20260220_104043.pdf",
-    "HR_bpm": 27,
-    "PR_ms": 273,
-    "QRS_ms": 95,
-    "QT_ms": 430,
-    "QTc_ms": 303,
-    "ST_ms": 0.0,
-    "RR_ms": 2222,
-    "RV5_plus_SV1_mV": 1.648,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 342.0,
-    "RV5_SV1_mV": [
-      1.075,
-      -0.573
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 10:42:41",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_104238.pdf",
-    "HR_bpm": 27,
-    "PR_ms": 280,
-    "QRS_ms": 96,
-    "QT_ms": 430,
-    "QTc_ms": 303,
-    "ST_ms": 0.0,
-    "RR_ms": 2222,
-    "RV5_plus_SV1_mV": 1.022,
-    "P_QRS_T_mm": [
-      -134,
-      44,
-      -112
-    ],
-    "QTCF": 329.5,
-    "RV5_SV1_mV": [
-      0.062,
-      -0.96
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:05:47",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_110544.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 263,
-    "QRS_ms": 139,
-    "QT_ms": 516,
-    "QTc_ms": 423,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 1.418,
-    "P_QRS_T_mm": [
-      -135,
-      0,
-      -147
-    ],
-    "QTCF": 395.4,
-    "RV5_SV1_mV": [
-      0.424,
-      -0.994
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:06:44",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_110642.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 263,
-    "QRS_ms": 139,
-    "QT_ms": 516,
-    "QTc_ms": 423,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 1.049,
-    "P_QRS_T_mm": [
-      -135,
-      0,
-      -158
-    ],
-    "QTCF": 450.8,
-    "RV5_SV1_mV": [
-      0.114,
-      -0.935
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:17:27",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_111724.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.271,
-    "P_QRS_T_mm": [
-      -135,
-      0,
-      -169
-    ],
-    "QTCF": 294.4,
-    "RV5_SV1_mV": [
-      0.042,
-      -1.229
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:20:39",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112037.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 170,
-    "QRS_ms": 94,
-    "QT_ms": 346,
-    "QTc_ms": 346,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.81,
-    "P_QRS_T_mm": [
-      -36,
-      44,
-      -137
-    ],
-    "QTCF": 346.0,
-    "RV5_SV1_mV": [
-      0.481,
-      -0.329
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:22:23",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112221.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 96,
-    "QT_ms": 350,
-    "QTc_ms": 350,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.091,
-    "P_QRS_T_mm": [
-      -135,
-      43,
-      -134
-    ],
-    "QTCF": 350.0,
-    "RV5_SV1_mV": [
-      0.106,
-      -0.986
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:28:52",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_112850.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.03,
-    "P_QRS_T_mm": [
-      -134,
-      0,
-      -138
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.113,
-      -0.917
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:34:34",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_113431.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.837,
-    "P_QRS_T_mm": [
-      -134,
-      0,
-      58
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.814,
-      -1.023
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:35:39",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_113536.pdf",
-    "HR_bpm": 35,
-    "PR_ms": 167,
-    "QRS_ms": 107,
-    "QT_ms": 343,
-    "QTc_ms": 363,
-    "ST_ms": 0,
-    "RR_ms": 1714,
-    "RV5_plus_SV1_mV": 2.264,
-    "P_QRS_T_mm": [
-      -136,
-      0,
-      46
-    ],
-    "QTCF": 343.0,
-    "RV5_SV1_mV": [
-      0.813,
-      -1.45
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:42:10",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_114207.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.909,
-    "P_QRS_T_mm": [
-      -134,
-      0,
-      141
-    ],
-    "QTCF": 281.6,
-    "RV5_SV1_mV": [
-      0.063,
-      -0.847
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:54:55",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_115452.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.771,
-    "P_QRS_T_mm": [
-      -135,
-      0,
-      -119
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.523,
-      -1.249
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 11:55:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_115527.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 172,
-    "QRS_ms": 97,
-    "QT_ms": 352,
-    "QTc_ms": 348,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.826,
-    "P_QRS_T_mm": [
-      -56,
-      44,
-      -140
-    ],
-    "QTCF": 352.0,
-    "RV5_SV1_mV": [
-      0.515,
-      -0.312
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 12:33:06",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123303.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 168,
-    "QRS_ms": 96,
-    "QT_ms": 349,
-    "QTc_ms": 348,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.633,
-    "P_QRS_T_mm": [
-      -51,
-      37,
-      -133
-    ],
-    "QTCF": 349.0,
-    "RV5_SV1_mV": [
-      0.454,
-      -0.178
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 12:38:12",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123808.pdf",
-    "HR_bpm": 53,
-    "PR_ms": 190,
-    "QRS_ms": 107,
-    "QT_ms": 416,
-    "QTc_ms": 388,
-    "ST_ms": 0.0,
-    "RR_ms": 1132,
-    "RV5_plus_SV1_mV": 1.028,
-    "P_QRS_T_mm": [
-      -11,
-      43,
-      -136
-    ],
-    "QTCF": 416.0,
-    "RV5_SV1_mV": [
-      0.52,
-      -0.508
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 12:38:28",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_123826.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 173,
-    "QRS_ms": 95,
-    "QT_ms": 359,
-    "QTc_ms": 359,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.835,
-    "P_QRS_T_mm": [
-      -75,
-      42,
-      -137
-    ],
-    "QTCF": 344.5,
-    "RV5_SV1_mV": [
-      0.512,
-      -0.322
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 13:46:07",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_134604.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 13:54:24",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_135421.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:11:40",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141137.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:18:35",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141831.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:19:12",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_141907.pdf",
-    "HR_bpm": 110,
-    "PR_ms": 149,
-    "QRS_ms": 97,
-    "QT_ms": 290,
-    "QTc_ms": 385,
-    "ST_ms": 0.0,
-    "RR_ms": 545,
-    "RV5_plus_SV1_mV": 1.079,
-    "P_QRS_T_mm": [
-      -29,
-      -134,
-      -122
-    ],
-    "QTCF": 290.0,
-    "RV5_SV1_mV": [
-      0.567,
-      -0.512
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:24:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_142418.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.194,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 412.6,
-    "RV5_SV1_mV": [
-      0.691,
-      -0.502
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:39:55",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_143952.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:50:49",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_145046.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 14:55:30",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_145527.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:00:25",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150022.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 86,
-    "QT_ms": 337,
-    "QTc_ms": 357,
-    "ST_ms": 0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 337.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:00:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150056.pdf",
-    "HR_bpm": 82,
-    "PR_ms": 128,
-    "QRS_ms": 94,
-    "QT_ms": 338,
-    "QTc_ms": 390,
-    "ST_ms": 0.0,
-    "RR_ms": 731,
-    "RV5_plus_SV1_mV": 1.125,
-    "P_QRS_T_mm": [
-      41,
-      -167,
-      -152
-    ],
-    "QTCF": 338.0,
-    "RV5_SV1_mV": [
-      0.624,
-      -0.501
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:07:26",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150724.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.292,
-    "P_QRS_T_mm": [
-      -136,
-      -143,
-      37
-    ],
-    "QTCF": 396.3,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.596
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:08:06",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150803.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.312,
-    "P_QRS_T_mm": [
-      -134,
-      -8,
-      33
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.617
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:08:13",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150810.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.311,
-    "P_QRS_T_mm": [
-      -138,
-      -15,
-      33
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.616
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:09:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_150911.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.283,
-    "P_QRS_T_mm": [
-      -134,
-      -102,
-      27
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.588
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:10:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151012.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.135,
-    "P_QRS_T_mm": [
-      -120,
-      -131,
-      23
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.44
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:11:26",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151123.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 168,
-    "QRS_ms": 96,
-    "QT_ms": 349,
-    "QTc_ms": 351,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.791,
-    "P_QRS_T_mm": [
-      27,
-      43,
-      -145
-    ],
-    "QTCF": 349.0,
-    "RV5_SV1_mV": [
-      0.406,
-      -0.385
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:15:22",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151519.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.261,
-    "P_QRS_T_mm": [
-      -125,
-      -119,
-      65
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.565
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:15:42",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_151540.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.252,
-    "P_QRS_T_mm": [
-      -134,
-      -129,
-      27
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.557
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:16:43",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_151641.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 166,
-    "QRS_ms": 94,
-    "QT_ms": 350,
-    "QTc_ms": 350,
-    "ST_ms": 0.0,
-    "RR_ms": 1034,
-    "RV5_plus_SV1_mV": 1.669,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 351.0,
-    "RV5_SV1_mV": [
-      1.091,
-      -0.578
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:24:47",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_152444.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.249,
-    "P_QRS_T_mm": [
-      -131,
-      -124,
-      20
-    ],
-    "QTCF": 353.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.553
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:29:01",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_152857.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.187,
-    "P_QRS_T_mm": [
-      -119,
-      -123,
-      24
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.491
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:30:14",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_153010.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 168,
     "QRS_ms": 94,
     "QT_ms": 348,
     "QTc_ms": 348,
     "ST_ms": 0.0,
-    "RR_ms": 1034,
-    "RV5_plus_SV1_mV": 0.0,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 348.0,
-    "RV5_SV1_mV": [
-      0.0,
-      0.0
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:31:46",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_153144.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.254,
+    "RV5_plus_SV1_mV": 1.189,
     "P_QRS_T_mm": [
-      -130,
-      -129,
-      28
-    ],
-    "QTCF": 353.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.559
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:38:45",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260220_153842.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.688,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      1.113,
-      -0.575
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:38:54",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_153852.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.688,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      1.113,
-      -0.575
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:39:01",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_153858.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.248,
-    "P_QRS_T_mm": [
-      -134,
-      -76,
-      28
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      0.695,
-      -0.553
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:39:44",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260220_153941.pdf",
-    "HR_bpm": 60.0,
-    "PR_ms": 167.0,
-    "QRS_ms": 86.0,
-    "QT_ms": 357.0,
-    "QTc_ms": 357.0,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.688,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 357.0,
-    "RV5_SV1_mV": [
-      1.113,
-      -0.575
-    ]
-  },
-  {
-    "timestamp": "2026-02-20 15:51:48",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260220_155145.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 171,
-    "QRS_ms": 94,
-    "QT_ms": 364,
-    "QTc_ms": 298,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 0.692,
-    "P_QRS_T_mm": [
-      -61,
-      45,
-      -142
-    ],
-    "QTCF": 364.0,
-    "RV5_SV1_mV": [
-      0.504,
-      -0.188
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 11:32:22",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_113218.pdf",
-    "HR_bpm": 99,
-    "PR_ms": 166,
-    "QRS_ms": 88,
-    "QT_ms": 324,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 606,
-    "RV5_plus_SV1_mV": 5.906,
-    "P_QRS_T_mm": [
-      41,
-      -44,
-      -16
-    ],
-    "QTCF": 283.0,
-    "RV5_SV1_mV": [
-      1.784,
-      -4.123
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:06:29",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_120626.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 202,
-    "QRS_ms": 81,
-    "QT_ms": 513,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 5.98,
-    "P_QRS_T_mm": [
-      15,
-      51,
+      -114,
+      69,
       -144
     ],
-    "QTCF": 606.2,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.438,
-      -4.542
+      0.682,
+      -0.507
     ]
   },
   {
-    "timestamp": "2026-02-23 12:07:08",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260223_120704.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 202,
-    "QRS_ms": 150,
-    "QT_ms": 513,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 2.252,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 447.0,
-    "RV5_SV1_mV": [
-      1.35,
-      -0.902
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:07:41",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_120738.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 202,
-    "QRS_ms": 98,
-    "QT_ms": 513,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 5.741,
-    "P_QRS_T_mm": [
-      -107,
-      44,
-      -140
-    ],
-    "QTCF": 448.1,
-    "RV5_SV1_mV": [
-      1.308,
-      -4.433
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:08:02",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260223_120759.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 197,
-    "QRS_ms": 98,
-    "QT_ms": 513,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 2.304,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 447.0,
-    "RV5_SV1_mV": [
-      1.487,
-      -0.818
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:08:25",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_120823.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 197,
-    "QRS_ms": 84,
-    "QT_ms": 513,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 5.668,
-    "P_QRS_T_mm": [
-      -105,
-      43,
-      -140
-    ],
-    "QTCF": 448.1,
-    "RV5_SV1_mV": [
-      1.513,
-      -4.156
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:08:41",
-    "file": "/Users/indresh/Downloads/ECG_Report_4_3_20260223_120838.pdf",
-    "HR_bpm": 43,
-    "PR_ms": 191,
-    "QRS_ms": 157,
-    "QT_ms": 511,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1395,
-    "RV5_plus_SV1_mV": 1.695,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 448.0,
-    "RV5_SV1_mV": [
-      1.297,
-      -0.398
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:09:11",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_120908.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 235,
-    "QRS_ms": 126,
-    "QT_ms": 515,
-    "QTc_ms": 415,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 7.087,
-    "P_QRS_T_mm": [
-      16,
-      37,
-      -132
-    ],
-    "QTCF": 460.9,
-    "RV5_SV1_mV": [
-      1.601,
-      -5.486
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:12:10",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_121207.pdf",
-    "HR_bpm": 38,
-    "PR_ms": 292,
-    "QRS_ms": 154,
-    "QT_ms": 513,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1578,
-    "RV5_plus_SV1_mV": 7.39,
-    "P_QRS_T_mm": [
-      47,
-      39,
-      -85
-    ],
-    "QTCF": 448.1,
-    "RV5_SV1_mV": [
-      1.919,
-      -5.471
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:23:21",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_122318.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 209,
-    "QRS_ms": 84,
-    "QT_ms": 514,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 6.684,
-    "P_QRS_T_mm": [
-      18,
-      33,
-      -106
-    ],
-    "QTCF": 441.5,
-    "RV5_SV1_mV": [
-      1.639,
-      -5.045
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:23:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_122355.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 204,
-    "QRS_ms": 154,
-    "QT_ms": 514,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 5.846,
-    "P_QRS_T_mm": [
-      42,
-      40,
-      -138
-    ],
-    "QTCF": 449.0,
-    "RV5_SV1_mV": [
-      1.648,
-      -4.198
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:32:07",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_123204.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 195,
-    "QRS_ms": 84,
-    "QT_ms": 514,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 6.132,
-    "P_QRS_T_mm": [
-      -12,
-      45,
-      -140
-    ],
-    "QTCF": 449.0,
-    "RV5_SV1_mV": [
-      1.379,
-      -4.754
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:37:53",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_123750.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 205,
-    "QRS_ms": 156,
-    "QT_ms": 520,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 6.327,
-    "P_QRS_T_mm": [
-      35,
-      39,
-      -122
-    ],
-    "QTCF": 454.3,
-    "RV5_SV1_mV": [
-      1.504,
-      -4.824
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:38:16",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_123814.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 195,
-    "QRS_ms": 96,
-    "QT_ms": 516,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 5.967,
-    "P_QRS_T_mm": [
-      44,
-      52,
-      -140
-    ],
-    "QTCF": 450.8,
-    "RV5_SV1_mV": [
-      1.317,
-      -4.65
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 12:38:58",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260223_123855.pdf",
-    "HR_bpm": 40,
-    "PR_ms": 265,
-    "QRS_ms": 96,
-    "QT_ms": 525,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 1500,
-    "RV5_plus_SV1_mV": 1.979,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 452.0,
-    "RV5_SV1_mV": [
-      1.33,
-      -0.649
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 13:36:48",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260223_133645.pdf",
-    "HR_bpm": 80,
-    "PR_ms": 166,
-    "QRS_ms": 87,
-    "QT_ms": 363,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 750,
-    "RV5_plus_SV1_mV": 1.959,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 399.0,
-    "RV5_SV1_mV": [
-      1.359,
-      -0.6
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 13:37:27",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260223_133724.pdf",
-    "HR_bpm": 80,
-    "PR_ms": 160,
-    "QRS_ms": 150,
-    "QT_ms": 363,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 750,
-    "RV5_plus_SV1_mV": 2.175,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 400.0,
-    "RV5_SV1_mV": [
-      1.421,
-      -0.754
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 13:39:20",
-    "file": "/Users/indresh/Downloads/ECG_Report_12_1_20260223_133917.pdf",
-    "HR_bpm": 80,
-    "PR_ms": 162,
-    "QRS_ms": 59,
+    "timestamp": "2026-03-06 16:58:42",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_165836.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 174,
+    "QRS_ms": 83,
     "QT_ms": 360,
-    "QTc_ms": 419,
+    "QTc_ms": 359,
     "ST_ms": 0.0,
-    "RR_ms": 750,
-    "RV5_plus_SV1_mV": 6.172,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.114,
     "P_QRS_T_mm": [
-      44,
-      -158,
-      -157
-    ],
-    "QTCF": 396.2,
-    "RV5_SV1_mV": [
-      1.26,
-      -4.912
-    ]
-  },
-  {
-    "timestamp": "2026-02-23 13:50:06",
-    "file": "/Users/indresh/Downloads/ECG_Report_6_2_20260223_135003.pdf",
-    "HR_bpm": 80,
-    "PR_ms": 163,
-    "QRS_ms": 86,
-    "QT_ms": 363,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 750,
-    "RV5_plus_SV1_mV": 2.209,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 398.0,
-    "RV5_SV1_mV": [
-      1.43,
-      -0.78
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 10:11:30",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_101125.pdf",
-    "HR_bpm": 98,
-    "PR_ms": 159,
-    "QRS_ms": 93,
-    "QT_ms": 308,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 612,
-    "RV5_plus_SV1_mV": 0.659,
-    "P_QRS_T_mm": [
-      -32,
-      -131,
-      -81
-    ],
-    "QTCF": 339.0,
-    "RV5_SV1_mV": [
-      0.588,
-      -0.071
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 15:44:37",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_154431.pdf",
-    "HR_bpm": 84,
-    "PR_ms": 200,
-    "QRS_ms": 67,
-    "QT_ms": 351,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 714,
-    "RV5_plus_SV1_mV": 5.474,
-    "P_QRS_T_mm": [
-      -108,
-      -167,
-      -135
-    ],
-    "QTCF": 413.4,
-    "RV5_SV1_mV": [
-      1.462,
-      -4.012
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 15:45:09",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_154506.pdf",
-    "HR_bpm": 87,
-    "PR_ms": 192,
-    "QRS_ms": 87,
-    "QT_ms": 339,
-    "QTc_ms": 415,
-    "ST_ms": 0.0,
-    "RR_ms": 689,
-    "RV5_plus_SV1_mV": 5.701,
-    "P_QRS_T_mm": [
-      34,
-      57,
-      38
-    ],
-    "QTCF": 379.3,
-    "RV5_SV1_mV": [
-      1.339,
-      -4.362
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 16:49:42",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_164938.pdf",
-    "HR_bpm": 75,
-    "PR_ms": 214,
-    "QRS_ms": 94,
-    "QT_ms": 308,
-    "QTc_ms": 398,
-    "ST_ms": 0.0,
-    "RR_ms": 800,
-    "RV5_plus_SV1_mV": 1.118,
-    "P_QRS_T_mm": [
-      46,
-      61,
-      -161
-    ],
-    "QTCF": 348.7,
-    "RV5_SV1_mV": [
-      0.627,
-      -0.491
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:14:30",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_171425.pdf",
-    "HR_bpm": 85,
-    "PR_ms": 220,
-    "QRS_ms": 126,
-    "QT_ms": 286,
-    "QTc_ms": 408,
-    "ST_ms": 0.0,
-    "RR_ms": 705,
-    "RV5_plus_SV1_mV": 1.076,
-    "P_QRS_T_mm": [
-      48,
-      110,
-      -141
-    ],
-    "QTCF": 308.1,
-    "RV5_SV1_mV": [
-      0.584,
-      -0.492
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:17:02",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_171659.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 158,
-    "QRS_ms": 93,
-    "QT_ms": 283,
-    "QTc_ms": 407,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 0.663,
-    "P_QRS_T_mm": [
-      24,
-      -133,
-      -11
-    ],
-    "QTCF": 318.0,
-    "RV5_SV1_mV": [
-      0.643,
-      -0.02
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:18:14",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_171811.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 183,
-    "QRS_ms": 106,
-    "QT_ms": 283,
-    "QTc_ms": 407,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.105,
-    "P_QRS_T_mm": [
-      46,
+      -151,
       50,
-      -77
-    ],
-    "QTCF": 356.6,
-    "RV5_SV1_mV": [
-      0.613,
-      -0.492
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:40:37",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_174033.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 168,
-    "QRS_ms": 93,
-    "QT_ms": 296,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 4.782,
-    "P_QRS_T_mm": [
-      42,
-      69,
       -143
     ],
-    "QTCF": 372.9,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.987,
-      -3.795
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:41:16",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_174113.pdf",
-    "HR_bpm": 62,
-    "PR_ms": 175,
-    "QRS_ms": 75,
-    "QT_ms": 419,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 967,
-    "RV5_plus_SV1_mV": 4.988,
-    "P_QRS_T_mm": [
-      43,
-      62,
-      -139
-    ],
-    "QTCF": 527.9,
-    "RV5_SV1_mV": [
-      1.113,
-      -3.875
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:41:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_174146.pdf",
-    "HR_bpm": 120,
-    "PR_ms": 155,
-    "QRS_ms": 83,
-    "QT_ms": 295,
-    "QTc_ms": 422,
-    "ST_ms": 0.0,
-    "RR_ms": 500,
-    "RV5_plus_SV1_mV": 1.492,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 371.0,
-    "RV5_SV1_mV": [
-      1.203,
-      -0.289
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:48:19",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_174815.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 137,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.33,
-    "P_QRS_T_mm": [
-      45,
-      59,
-      -149
-    ],
-    "QTCF": 526.6,
-    "RV5_SV1_mV": [
-      1.346,
-      -2.984
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:48:59",
-    "file": "C:\\Users\\DELL\\Desktop\\ECG_Report_12_1_20260228_174855.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 94,
-    "QT_ms": 417,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.824,
-    "P_QRS_T_mm": [
-      -87,
-      70,
-      -151
-    ],
-    "QTCF": 417.0,
-    "RV5_SV1_mV": [
-      1.106,
-      -3.718
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 17:50:55",
-    "file": "C:\\Users\\DELL\\Desktop\\ECG_Report_4_3_20260228_175048.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 169,
-    "QRS_ms": 83,
-    "QT_ms": 418,
-    "QTc_ms": 422,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.354,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 420.0,
-    "RV5_SV1_mV": [
-      1.064,
-      -0.29
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:02:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_180244.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 159,
-    "QRS_ms": 88,
-    "QT_ms": 419,
-    "QTc_ms": 420,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.412,
-    "P_QRS_T_mm": [
-      40,
-      59,
-      12
-    ],
-    "QTCF": 419.0,
-    "RV5_SV1_mV": [
-      1.1,
-      -3.312
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:11:29",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181124.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 165,
-    "QRS_ms": 99,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.585,
-    "P_QRS_T_mm": [
-      27,
-      56,
-      -148
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      0.478,
-      -0.107
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:15:33",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181529.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 169,
-    "QRS_ms": 98,
-    "QT_ms": 419,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.044,
-    "P_QRS_T_mm": [
-      31,
-      66,
-      -140
-    ],
-    "QTCF": 419.0,
-    "RV5_SV1_mV": [
-      0.482,
-      -0.562
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:15:41",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181537.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 89,
-    "QT_ms": 416,
-    "QTc_ms": 422,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.721,
-    "P_QRS_T_mm": [
-      -69,
-      61,
-      -137
-    ],
-    "QTCF": 416.0,
-    "RV5_SV1_mV": [
-      0.471,
-      -0.25
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:15:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181546.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 101,
-    "QT_ms": 418,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.689,
-    "P_QRS_T_mm": [
-      36,
-      61,
-      -142
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      0.48,
-      -0.209
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:16:00",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_181555.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 163,
-    "QRS_ms": 103,
-    "QT_ms": 424,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.602,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 429.0,
-    "RV5_SV1_mV": [
-      1.047,
-      -0.555
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:16:22",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_181605.pdf",
-    "HR_bpm": 45,
-    "PR_ms": 266,
-    "QRS_ms": 117,
-    "QT_ms": 484,
-    "QTc_ms": 415,
-    "ST_ms": 0.0,
-    "RR_ms": 1333,
-    "RV5_plus_SV1_mV": 1.595,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 439.0,
-    "RV5_SV1_mV": [
-      1.045,
-      -0.55
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:16:33",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181629.pdf",
-    "HR_bpm": 62,
-    "PR_ms": 165,
-    "QRS_ms": 90,
-    "QT_ms": 417,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 967,
-    "RV5_plus_SV1_mV": 0.681,
-    "P_QRS_T_mm": [
-      -43,
-      37,
-      -94
-    ],
-    "QTCF": 378.9,
-    "RV5_SV1_mV": [
-      0.382,
-      -0.299
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:16:43",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_181638.pdf",
-    "HR_bpm": 62,
-    "PR_ms": 165,
-    "QRS_ms": 92,
-    "QT_ms": 417,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 967,
-    "RV5_plus_SV1_mV": 1.598,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      1.046,
-      -0.552
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:16:52",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181647.pdf",
-    "HR_bpm": 62,
-    "PR_ms": 165,
-    "QRS_ms": 102,
-    "QT_ms": 420,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 967,
-    "RV5_plus_SV1_mV": 0.611,
-    "P_QRS_T_mm": [
-      39,
-      62,
-      -139
-    ],
-    "QTCF": 424.7,
-    "RV5_SV1_mV": [
-      0.466,
-      -0.145
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:17:02",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_181657.pdf",
-    "HR_bpm": 58,
-    "PR_ms": 167,
-    "QRS_ms": 78,
-    "QT_ms": 359,
-    "QTc_ms": 410,
-    "ST_ms": 0.0,
-    "RR_ms": 1034,
-    "RV5_plus_SV1_mV": 1.613,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 364.0,
-    "RV5_SV1_mV": [
-      1.044,
-      -0.57
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:17:13",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181709.pdf",
-    "HR_bpm": 64,
-    "PR_ms": 160,
-    "QRS_ms": 73,
-    "QT_ms": 410,
-    "QTc_ms": 424,
-    "ST_ms": 0.0,
-    "RR_ms": 937,
-    "RV5_plus_SV1_mV": 0.799,
-    "P_QRS_T_mm": [
-      -65,
-      67,
-      -143
-    ],
-    "QTCF": 405.5,
-    "RV5_SV1_mV": [
-      0.476,
-      -0.323
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:17:57",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181753.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 155,
-    "QT_ms": 418,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.723,
-    "P_QRS_T_mm": [
-      -124,
-      58,
-      -137
-    ],
-    "QTCF": 427.2,
-    "RV5_SV1_mV": [
-      1.278,
-      -3.445
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:18:36",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_181813.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 150,
-    "QT_ms": 418,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 5.004,
-    "P_QRS_T_mm": [
-      34,
-      72,
-      -132
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      1.084,
-      -3.919
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:24:55",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_182450.pdf",
-    "HR_bpm": 55,
-    "PR_ms": 214,
-    "QRS_ms": 92,
-    "QT_ms": 438,
-    "QTc_ms": 420,
-    "ST_ms": 0.0,
-    "RR_ms": 1090,
-    "RV5_plus_SV1_mV": 3.646,
-    "P_QRS_T_mm": [
-      43,
-      69,
-      -145
-    ],
-    "QTCF": 438.0,
-    "RV5_SV1_mV": [
-      0.899,
-      -2.748
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:25:30",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_182525.pdf",
-    "HR_bpm": 55,
-    "PR_ms": 217,
-    "QRS_ms": 99,
-    "QT_ms": 440,
-    "QTc_ms": 420,
-    "ST_ms": 0.0,
-    "RR_ms": 1090,
-    "RV5_plus_SV1_mV": 3.739,
-    "P_QRS_T_mm": [
-      43,
-      57,
-      -147
-    ],
-    "QTCF": 427.5,
-    "RV5_SV1_mV": [
-      1.141,
-      -2.598
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:25:55",
-    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\src\\ECG_Report_4_3_20260228_182551.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 153,
-    "QRS_ms": 79,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 1.767,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      1.046,
-      -0.721
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:26:09",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_182604.pdf",
-    "HR_bpm": 77,
-    "PR_ms": 133,
-    "QRS_ms": 58,
-    "QT_ms": 287,
-    "QTc_ms": 325,
-    "ST_ms": 0.0,
-    "RR_ms": 779,
-    "RV5_plus_SV1_mV": 1.613,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 311.0,
-    "RV5_SV1_mV": [
-      1.044,
-      -0.569
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:26:19",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_182614.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 173,
-    "QRS_ms": 94,
-    "QT_ms": 421,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 1.611,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 419.0,
-    "RV5_SV1_mV": [
-      1.045,
-      -0.565
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:26:28",
-    "file": "C:\\Users\\DELL\\Desktop\\ECG_Report_6_2_20260228_182624.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 173,
-    "QRS_ms": 91,
-    "QT_ms": 421,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 1.604,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 421.0,
-    "RV5_SV1_mV": [
-      1.048,
-      -0.556
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:26:39",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_182633.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 165,
-    "QRS_ms": 95,
-    "QT_ms": 421,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 1.593,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 422.0,
-    "RV5_SV1_mV": [
-      1.049,
-      -0.544
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:26:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_182646.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 165,
-    "QRS_ms": 79,
-    "QT_ms": 421,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 1.594,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 420.0,
-    "RV5_SV1_mV": [
-      1.047,
-      -0.547
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:27:11",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_6_2_20260228_182707.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 99,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.591,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 419.0,
-    "RV5_SV1_mV": [
-      1.039,
-      -0.552
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:27:32",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_182727.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 180,
-    "QRS_ms": 102,
-    "QT_ms": 421,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 1016,
-    "RV5_plus_SV1_mV": 1.585,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 421.0,
-    "RV5_SV1_mV": [
-      1.031,
-      -0.554
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 18:29:34",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_182929.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 162,
-    "QRS_ms": 100,
-    "QT_ms": 421,
-    "QTc_ms": 420,
-    "ST_ms": 0.0,
-    "RR_ms": 1016,
-    "RV5_plus_SV1_mV": 0.789,
-    "P_QRS_T_mm": [
-      33,
-      63,
-      -142
-    ],
-    "QTCF": 418.8,
-    "RV5_SV1_mV": [
-      0.476,
+      0.801,
       -0.313
     ]
   },
   {
-    "timestamp": "2026-02-28 19:12:41",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191235.pdf",
+    "timestamp": "2026-03-06 16:59:08",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_165904.pdf",
     "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 153,
-    "QT_ms": 418,
-    "QTc_ms": 418,
+    "PR_ms": 169,
+    "QRS_ms": 55,
+    "QT_ms": 360,
+    "QTc_ms": 359,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 5.436,
+    "RV5_plus_SV1_mV": 1.006,
     "P_QRS_T_mm": [
-      39,
-      56,
-      -147
+      -152,
+      51,
+      -143
     ],
-    "QTCF": 415.8,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.347,
-      -4.088
+      0.678,
+      -0.328
     ]
   },
   {
-    "timestamp": "2026-02-28 19:12:53",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191248.pdf",
+    "timestamp": "2026-03-06 17:00:47",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_170042.pdf",
     "HR_bpm": 60,
-    "PR_ms": 159,
-    "QRS_ms": 87,
-    "QT_ms": 410,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.818,
-    "P_QRS_T_mm": [
-      -2,
-      65,
-      -141
-    ],
-    "QTCF": 410.0,
-    "RV5_SV1_mV": [
-      1.126,
-      -3.691
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:13:04",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191259.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 94,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 5.032,
-    "P_QRS_T_mm": [
-      42,
-      61,
-      -157
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      1.205,
-      -3.827
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:13:15",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191310.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 158,
-    "QRS_ms": 91,
-    "QT_ms": 418,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 4.779,
-    "P_QRS_T_mm": [
-      45,
-      55,
-      -150
-    ],
-    "QTCF": 418.0,
-    "RV5_SV1_mV": [
-      1.031,
-      -3.748
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:13:41",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191336.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 153,
-    "QRS_ms": 99,
-    "QT_ms": 414,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.921,
-    "P_QRS_T_mm": [
-      0,
-      65,
-      -136
-    ],
-    "QTCF": 414.0,
-    "RV5_SV1_mV": [
-      0.483,
-      -0.438
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:13:53",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191348.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 164,
-    "QRS_ms": 99,
-    "QT_ms": 421,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.923,
-    "P_QRS_T_mm": [
-      -35,
-      79,
-      -138
-    ],
-    "QTCF": 423.4,
-    "RV5_SV1_mV": [
-      0.483,
-      -0.44
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:14:09",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191405.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 159,
-    "QRS_ms": 92,
-    "QT_ms": 415,
-    "QTc_ms": 419,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.833,
-    "P_QRS_T_mm": [
-      39,
-      65,
-      -145
-    ],
-    "QTCF": 417.4,
-    "RV5_SV1_mV": [
-      0.47,
-      -0.363
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:14:21",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191417.pdf",
-    "HR_bpm": 61,
     "PR_ms": 170,
-    "QRS_ms": 82,
-    "QT_ms": 333,
-    "QTc_ms": 337,
+    "QRS_ms": 68,
+    "QT_ms": 342,
+    "QTc_ms": 344,
     "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.856,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.201,
     "P_QRS_T_mm": [
-      -1,
-      64,
-      -142
-    ],
-    "QTCF": 334.9,
-    "RV5_SV1_mV": [
-      0.453,
-      -0.402
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:14:31",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191426.pdf",
-    "HR_bpm": 61,
-    "PR_ms": 175,
-    "QRS_ms": 81,
-    "QT_ms": 424,
-    "QTc_ms": 414,
-    "ST_ms": 0.0,
-    "RR_ms": 983,
-    "RV5_plus_SV1_mV": 0.962,
-    "P_QRS_T_mm": [
-      -11,
-      97,
+      -152,
+      49,
       -140
     ],
-    "QTCF": 426.4,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.474,
+      0.684,
+      -0.517
+    ]
+  },
+  {
+    "timestamp": "2026-03-06 17:13:45",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_171338.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 172,
+    "QRS_ms": 51,
+    "QT_ms": 360,
+    "QTc_ms": 358,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.078,
+    "P_QRS_T_mm": [
+      35,
+      36,
+      140
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.738,
+      -0.34
+    ]
+  },
+  {
+    "timestamp": "2026-03-06 17:14:11",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_171406.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 86,
+    "QT_ms": 358,
+    "QTc_ms": 357,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.185,
+    "P_QRS_T_mm": [
+      45,
+      31,
+      69
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.679,
+      -0.506
+    ]
+  },
+  {
+    "timestamp": "2026-03-06 17:16:14",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260306_171609.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 158,
+    "QRS_ms": 90,
+    "QT_ms": 223,
+    "QTc_ms": 285,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.229,
+    "P_QRS_T_mm": [
+      44,
+      28,
+      32
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.707,
+      -0.523
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:11:17",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_101110.pdf",
+    "HR_bpm": 70,
+    "PR_ms": 149,
+    "QRS_ms": 87,
+    "QT_ms": 314,
+    "QTc_ms": 339,
+    "ST_ms": 0.0,
+    "RR_ms": 857,
+    "RV5_plus_SV1_mV": 1.201,
+    "P_QRS_T_mm": [
+      43,
+      31,
+      65
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.685,
+      -0.516
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:13:37",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_101328.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 171,
+    "QRS_ms": 72,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.022,
+    "P_QRS_T_mm": [
+      43,
+      31,
+      77
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.683,
+      -0.339
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:32:56",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103251.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 171,
+    "QRS_ms": 92,
+    "QT_ms": 366,
+    "QTc_ms": 366,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.206,
+    "P_QRS_T_mm": [
+      47,
+      31,
+      34
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.685,
+      -0.521
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:33:30",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103325.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 93,
+    "QT_ms": 354,
+    "QTc_ms": 354,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.207,
+    "P_QRS_T_mm": [
+      42,
+      33,
+      122
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.686,
+      -0.521
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:33:50",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103345.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 94,
+    "QT_ms": 348,
+    "QTc_ms": 348,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.746,
+    "P_QRS_T_mm": [
+      44,
+      37,
+      71
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.686,
+      -0.06
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:36:01",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103556.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 171,
+    "QRS_ms": 94,
+    "QT_ms": 358,
+    "QTc_ms": 358,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.2,
+    "P_QRS_T_mm": [
+      46,
+      31,
+      34
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.687,
+      -0.514
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:36:20",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103615.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 91,
+    "QT_ms": 340,
+    "QTc_ms": 340,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.194,
+    "P_QRS_T_mm": [
+      45,
+      31,
+      49
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.686,
+      -0.509
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:37:18",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103714.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 94,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.13,
+    "P_QRS_T_mm": [
+      43,
+      30,
+      27
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.64,
+      -0.49
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:37:34",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103730.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 92,
+    "QT_ms": 352,
+    "QTc_ms": 352,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.14,
+    "P_QRS_T_mm": [
+      41,
+      30,
+      29
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.64,
+      -0.501
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:39:21",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103916.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 93,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.131,
+    "P_QRS_T_mm": [
+      40,
+      36,
+      47
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.643,
       -0.488
     ]
   },
   {
-    "timestamp": "2026-02-28 19:17:19",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_191711.pdf",
+    "timestamp": "2026-03-10 10:39:35",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_103931.pdf",
     "HR_bpm": 60,
-    "PR_ms": 167,
-    "QRS_ms": 79,
-    "QT_ms": 419,
-    "QTc_ms": 417,
+    "PR_ms": 156,
+    "QRS_ms": 84,
+    "QT_ms": 325,
+    "QTc_ms": 325,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 0.863,
+    "RV5_plus_SV1_mV": 1.137,
     "P_QRS_T_mm": [
-      9,
-      63,
-      -142
+      41,
+      30,
+      36
     ],
-    "QTCF": 421.4,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.463,
-      -0.4
+      0.643,
+      -0.494
     ]
   },
   {
-    "timestamp": "2026-02-28 19:36:57",
-    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\src\\test_report.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 0,
-    "QRS_ms": 0,
-    "QT_ms": 0,
-    "QTc_ms": 0,
+    "timestamp": "2026-03-10 10:50:06",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105001.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 165,
+    "QRS_ms": 92,
+    "QT_ms": 346,
+    "QTc_ms": 346,
     "ST_ms": 0.0,
-    "RR_ms": 0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.127,
+    "P_QRS_T_mm": [
+      39,
+      29,
+      33
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.638,
+      -0.489
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:50:19",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\src\\ECG_Report_12_1_20260310_105013.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 165,
+    "QRS_ms": 94,
+    "QT_ms": 352,
+    "QTc_ms": 352,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.126,
+    "P_QRS_T_mm": [
+      42,
+      30,
+      31
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.639,
+      -0.487
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:51:05",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105101.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 165,
+    "QRS_ms": 92,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.136,
+    "P_QRS_T_mm": [
+      41,
+      30,
+      -153
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.639,
+      -0.496
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:51:18",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105114.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 159,
+    "QRS_ms": 87,
+    "QT_ms": 331,
+    "QTc_ms": 331,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.13,
+    "P_QRS_T_mm": [
+      40,
+      30,
+      34
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.639,
+      -0.492
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:58:07",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105802.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 173,
+    "QRS_ms": 90,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.095,
+    "P_QRS_T_mm": [
+      41,
+      28,
+      32
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.64,
+      -0.455
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:58:14",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\src\\ECG_Report_12_1_20260310_105810.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 92,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.134,
+    "P_QRS_T_mm": [
+      41,
+      31,
+      58
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.639,
+      -0.495
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:58:20",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105816.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 163,
+    "QRS_ms": 91,
+    "QT_ms": 356,
+    "QTc_ms": 356,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.13,
+    "P_QRS_T_mm": [
+      40,
+      26,
+      -102
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.642,
+      -0.488
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:59:14",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105910.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 165,
+    "QRS_ms": 89,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.078,
+    "P_QRS_T_mm": [
+      40,
+      29,
+      -29
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.644,
+      -0.434
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 10:59:44",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_105940.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 93,
+    "QT_ms": 344,
+    "QTc_ms": 344,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.125,
+    "P_QRS_T_mm": [
+      40,
+      29,
+      -36
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.637,
+      -0.488
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 11:00:07",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_110004.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 166,
+    "QRS_ms": 94,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.132,
+    "P_QRS_T_mm": [
+      42,
+      31,
+      82
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.644,
+      -0.488
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:39:25",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_123917.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 131,
+    "QRS_ms": 96,
+    "QT_ms": 345,
+    "QTc_ms": 345,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.746,
+    "P_QRS_T_mm": [
+      41,
+      35,
+      69
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.666,
+      -0.08
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:39:43",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_123936.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 164,
+    "QRS_ms": 93,
+    "QT_ms": 337,
+    "QTc_ms": 337,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.157,
+    "P_QRS_T_mm": [
+      39,
+      35,
+      71
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.662,
+      -0.495
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:39:59",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_123955.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 164,
+    "QRS_ms": 93,
+    "QT_ms": 344,
+    "QTc_ms": 344,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.067,
+    "P_QRS_T_mm": [
+      40,
+      34,
+      68
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.658,
+      -0.409
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:42:19",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_124215.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 89,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.155,
+    "P_QRS_T_mm": [
+      40,
+      35,
+      64
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.658,
+      -0.497
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:42:35",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_124231.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 167,
+    "QRS_ms": 90,
+    "QT_ms": 346,
+    "QTc_ms": 346,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.835,
+    "P_QRS_T_mm": [
+      41,
+      34,
+      65
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.662,
+      -0.173
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:59:20",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_125913.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 96,
+    "QT_ms": 347,
+    "QTc_ms": 347,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.147,
+    "P_QRS_T_mm": [
+      49,
+      40,
+      79
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.654,
+      -0.493
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 12:59:42",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_125929.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 96,
+    "QT_ms": 347,
+    "QTc_ms": 347,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.958,
+    "P_QRS_T_mm": [
+      49,
+      40,
+      82
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.654,
+      -0.304
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 13:00:12",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_130001.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 95,
+    "QT_ms": 347,
+    "QTc_ms": 347,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.107,
+    "P_QRS_T_mm": [
+      48,
+      40,
+      78
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.653,
+      -0.455
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 13:52:19",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_135213.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 163,
+    "QRS_ms": 90,
+    "QT_ms": 363,
+    "QTc_ms": 363,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.126,
+    "P_QRS_T_mm": [
+      41,
+      35,
+      71
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.634,
+      -0.492
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 16:19:00",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_161854.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 163,
+    "QRS_ms": 142,
+    "QT_ms": 353,
+    "QTc_ms": 353,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.563,
+    "P_QRS_T_mm": [
+      39,
+      36,
+      67
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.835,
+      -0.728
+    ]
+  },
+  {
+    "timestamp": "2026-03-10 17:48:17",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260310_174812.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 162,
+    "QRS_ms": 95,
+    "QT_ms": 303,
+    "QTc_ms": 391,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.083,
+    "P_QRS_T_mm": [
+      41,
+      40,
+      69
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.675,
+      -0.408
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:15:30",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_121523.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 92,
+    "QT_ms": 342,
+    "QTc_ms": 342,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.148,
+    "P_QRS_T_mm": [
+      41,
+      35,
+      125
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.662,
+      -0.486
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:27:43",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_122738.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 168,
+    "QRS_ms": 92,
+    "QT_ms": 368,
+    "QTc_ms": 368,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.153,
+    "P_QRS_T_mm": [
+      39,
+      36,
+      75
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.664,
+      -0.489
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:29:33",
+    "file": "C:\\Users\\DELL\\Downloads\\40.pdf",
+    "HR_bpm": 40,
+    "PR_ms": 165,
+    "QRS_ms": 91,
+    "QT_ms": 365,
+    "QTc_ms": 298,
+    "ST_ms": 0.0,
+    "RR_ms": 1500,
+    "RV5_plus_SV1_mV": 0.845,
+    "P_QRS_T_mm": [
+      40,
+      34,
+      71
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.651,
+      -0.195
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:30:08",
+    "file": "C:\\Users\\DELL\\Downloads\\50.pdf",
+    "HR_bpm": 50,
+    "PR_ms": 165,
+    "QRS_ms": 91,
+    "QT_ms": 364,
+    "QTc_ms": 332,
+    "ST_ms": 0.0,
+    "RR_ms": 1200,
+    "RV5_plus_SV1_mV": 1.148,
+    "P_QRS_T_mm": [
+      39,
+      35,
+      69
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.649,
+      -0.499
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:30:47",
+    "file": "C:\\Users\\DELL\\Downloads\\60.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 165,
+    "QRS_ms": 91,
+    "QT_ms": 350,
+    "QTc_ms": 350,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.152,
+    "P_QRS_T_mm": [
+      42,
+      35,
+      72
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.66,
+      -0.493
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:31:34",
+    "file": "C:\\Users\\DELL\\Downloads\\70.pdf",
+    "HR_bpm": 70,
+    "PR_ms": 156,
+    "QRS_ms": 91,
+    "QT_ms": 314,
+    "QTc_ms": 339,
+    "ST_ms": 0.0,
+    "RR_ms": 857,
+    "RV5_plus_SV1_mV": 1.166,
+    "P_QRS_T_mm": [
+      43,
+      35,
+      71
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.667,
+      -0.498
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:32:22",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_123214.pdf",
+    "HR_bpm": 80,
+    "PR_ms": 156,
+    "QRS_ms": 95,
+    "QT_ms": 342,
+    "QTc_ms": 395,
+    "ST_ms": 0.0,
+    "RR_ms": 750,
+    "RV5_plus_SV1_mV": 1.163,
+    "P_QRS_T_mm": [
+      43,
+      34,
+      66
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.678,
+      -0.484
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:33:16",
+    "file": "C:\\Users\\DELL\\Downloads\\90.pdf",
+    "HR_bpm": 90,
+    "PR_ms": 151,
+    "QRS_ms": 95,
+    "QT_ms": 311,
+    "QTc_ms": 381,
+    "ST_ms": 0.0,
+    "RR_ms": 666,
+    "RV5_plus_SV1_mV": 1.174,
+    "P_QRS_T_mm": [
+      44,
+      34,
+      67
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.684,
+      -0.49
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:33:56",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_123352.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 156,
+    "QRS_ms": 98,
+    "QT_ms": 306,
+    "QTc_ms": 395,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.179,
+    "P_QRS_T_mm": [
+      45,
+      35,
+      56
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.693,
+      -0.486
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:34:35",
+    "file": "C:\\Users\\DELL\\Downloads\\110.pdf",
+    "HR_bpm": 110,
+    "PR_ms": 156,
+    "QRS_ms": 96,
+    "QT_ms": 290,
+    "QTc_ms": 393,
+    "ST_ms": 0.0,
+    "RR_ms": 545,
+    "RV5_plus_SV1_mV": 1.162,
+    "P_QRS_T_mm": [
+      46,
+      35,
+      58
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.685,
+      -0.477
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:35:30",
+    "file": "C:\\Users\\DELL\\Downloads\\120.pdf",
+    "HR_bpm": 120,
+    "PR_ms": 155,
+    "QRS_ms": 96,
+    "QT_ms": 288,
+    "QTc_ms": 407,
+    "ST_ms": 0.0,
+    "RR_ms": 500,
+    "RV5_plus_SV1_mV": 1.134,
+    "P_QRS_T_mm": [
+      44,
+      33,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.64,
+      -0.494
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:36:16",
+    "file": "C:\\Users\\DELL\\Downloads\\130.pdf",
+    "HR_bpm": 129,
+    "PR_ms": 155,
+    "QRS_ms": 96,
+    "QT_ms": 276,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 465,
+    "RV5_plus_SV1_mV": 0.958,
+    "P_QRS_T_mm": [
+      -142,
+      36,
+      54
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.635,
+      -0.323
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:36:43",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_123638.pdf",
+    "HR_bpm": 140,
+    "PR_ms": 132,
+    "QRS_ms": 96,
+    "QT_ms": 252,
+    "QTc_ms": 385,
+    "ST_ms": 0.0,
+    "RR_ms": 428,
+    "RV5_plus_SV1_mV": 0.78,
+    "P_QRS_T_mm": [
+      -137,
+      36,
+      57
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.64,
+      -0.14
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:38:14",
+    "file": "C:\\Users\\DELL\\Downloads\\150.pdf",
+    "HR_bpm": 149,
+    "PR_ms": 133,
+    "QRS_ms": 98,
+    "QT_ms": 265,
+    "QTc_ms": 418,
+    "ST_ms": 0.0,
+    "RR_ms": 402,
+    "RV5_plus_SV1_mV": 0.691,
+    "P_QRS_T_mm": [
+      -136,
+      35,
+      50
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.654,
+      -0.037
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:38:47",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_123843.pdf",
+    "HR_bpm": 160,
+    "PR_ms": 81,
+    "QRS_ms": 98,
+    "QT_ms": 274,
+    "QTc_ms": 447,
+    "ST_ms": 0.0,
+    "RR_ms": 375,
+    "RV5_plus_SV1_mV": 0.719,
+    "P_QRS_T_mm": [
+      -143,
+      56,
+      107
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.654,
+      -0.065
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:39:35",
+    "file": "C:\\Users\\DELL\\Downloads\\170.pdf",
+    "HR_bpm": 170,
+    "PR_ms": 81,
+    "QRS_ms": 98,
+    "QT_ms": 257,
+    "QTc_ms": 433,
+    "ST_ms": 0.0,
+    "RR_ms": 352,
+    "RV5_plus_SV1_mV": 0.95,
+    "P_QRS_T_mm": [
+      23,
+      36,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.645,
+      -0.306
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:40:11",
+    "file": "C:\\Users\\DELL\\Downloads\\180.pdf",
+    "HR_bpm": 180,
+    "PR_ms": 81,
+    "QRS_ms": 104,
+    "QT_ms": 244,
+    "QTc_ms": 423,
+    "ST_ms": 0.0,
+    "RR_ms": 333,
+    "RV5_plus_SV1_mV": 1.192,
+    "P_QRS_T_mm": [
+      42,
+      35,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.671,
+      -0.521
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:40:44",
+    "file": "C:\\Users\\DELL\\Downloads\\190.pdf",
+    "HR_bpm": 189,
+    "PR_ms": 81,
+    "QRS_ms": 103,
+    "QT_ms": 227,
+    "QTc_ms": 403,
+    "ST_ms": 0.0,
+    "RR_ms": 317,
+    "RV5_plus_SV1_mV": 1.195,
+    "P_QRS_T_mm": [
+      48,
+      36,
+      43
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.674,
+      -0.521
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:41:26",
+    "file": "C:\\Users\\DELL\\Downloads\\200.pdf",
+    "HR_bpm": 199,
+    "PR_ms": 76,
+    "QRS_ms": 104,
+    "QT_ms": 215,
+    "QTc_ms": 392,
+    "ST_ms": 0.0,
+    "RR_ms": 301,
+    "RV5_plus_SV1_mV": 1.19,
+    "P_QRS_T_mm": [
+      74,
+      35,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.678,
+      -0.512
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:42:07",
+    "file": "C:\\Users\\DELL\\Downloads\\210.pdf",
+    "HR_bpm": 209,
+    "PR_ms": 76,
+    "QRS_ms": 107,
+    "QT_ms": 215,
+    "QTc_ms": 401,
+    "ST_ms": 0.0,
+    "RR_ms": 287,
+    "RV5_plus_SV1_mV": 1.185,
+    "P_QRS_T_mm": [
+      -160,
+      36,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.678,
+      -0.507
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:42:37",
+    "file": "C:\\Users\\DELL\\Downloads\\220.pdf",
+    "HR_bpm": 219,
+    "PR_ms": 76,
+    "QRS_ms": 104,
+    "QT_ms": 201,
+    "QTc_ms": 384,
+    "ST_ms": 0.0,
+    "RR_ms": 273,
+    "RV5_plus_SV1_mV": 1.188,
+    "P_QRS_T_mm": [
+      -167,
+      36,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.673,
+      -0.516
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:43:11",
+    "file": "C:\\Users\\DELL\\Downloads\\230.pdf",
+    "HR_bpm": 229,
+    "PR_ms": 76,
+    "QRS_ms": 103,
+    "QT_ms": 201,
+    "QTc_ms": 393,
+    "ST_ms": 0.0,
+    "RR_ms": 262,
+    "RV5_plus_SV1_mV": 1.194,
+    "P_QRS_T_mm": [
+      -167,
+      35,
+      46
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.685,
+      -0.509
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:43:45",
+    "file": "C:\\Users\\DELL\\Downloads\\250.pdf",
+    "HR_bpm": 249,
+    "PR_ms": 57,
+    "QRS_ms": 104,
+    "QT_ms": 173,
+    "QTc_ms": 352,
+    "ST_ms": 0.0,
+    "RR_ms": 240,
+    "RV5_plus_SV1_mV": 1.182,
+    "P_QRS_T_mm": [
+      -156,
+      36,
+      37
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.673,
+      -0.509
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:44:12",
+    "file": "C:\\Users\\DELL\\Downloads\\270.pdf",
+    "HR_bpm": 269,
+    "PR_ms": 61,
+    "QRS_ms": 104,
+    "QT_ms": 162,
+    "QTc_ms": 343,
+    "ST_ms": 0.0,
+    "RR_ms": 223,
+    "RV5_plus_SV1_mV": 1.185,
+    "P_QRS_T_mm": [
+      -141,
+      35,
+      44
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.66,
+      -0.525
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 12:44:48",
+    "file": "C:\\Users\\DELL\\Downloads\\300.pdf",
+    "HR_bpm": 298,
+    "PR_ms": 56,
+    "QRS_ms": 96,
+    "QT_ms": 152,
+    "QTc_ms": 339,
+    "ST_ms": 0.0,
+    "RR_ms": 201,
+    "RV5_plus_SV1_mV": 0.888,
+    "P_QRS_T_mm": [
+      -130,
+      35,
+      38
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.671,
+      -0.217
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 14:55:47",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_145542.pdf",
+    "HR_bpm": 70,
+    "PR_ms": 150,
+    "QRS_ms": 94,
+    "QT_ms": 310,
+    "QTc_ms": 335,
+    "ST_ms": 0.0,
+    "RR_ms": 857,
+    "RV5_plus_SV1_mV": 1.166,
+    "P_QRS_T_mm": [
+      44,
+      35,
+      93
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.673,
+      -0.493
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:33:37",
+    "file": "C:\\Users\\DELL\\Downloads\\1500.pdf",
+    "HR_bpm": 149,
+    "PR_ms": 131,
+    "QRS_ms": 96,
+    "QT_ms": 269,
+    "QTc_ms": 424,
+    "ST_ms": 0.0,
+    "RR_ms": 402,
+    "RV5_plus_SV1_mV": 1.019,
+    "P_QRS_T_mm": [
+      -135,
+      35,
+      49
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.658,
+      -0.361
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:40:36",
+    "file": "C:\\Users\\DELL\\Downloads\\1111111.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 166,
+    "QRS_ms": 96,
+    "QT_ms": 312,
+    "QTc_ms": 403,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.175,
+    "P_QRS_T_mm": [
+      45,
+      34,
+      67
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.692,
+      -0.483
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:40:51",
+    "file": "C:\\Users\\DELL\\Downloads\\111111111111111.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 166,
+    "QRS_ms": 101,
+    "QT_ms": 328,
+    "QTc_ms": 423,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.179,
+    "P_QRS_T_mm": [
+      45,
+      35,
+      63
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.688,
+      -0.491
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:42:14",
+    "file": "C:\\Users\\DELL\\Downloads\\sdas.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 161,
+    "QRS_ms": 97,
+    "QT_ms": 308,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.188,
+    "P_QRS_T_mm": [
+      46,
+      35,
+      60
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.69,
+      -0.498
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:42:45",
+    "file": "C:\\Users\\DELL\\Downloads\\234334.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 161,
+    "QRS_ms": 97,
+    "QT_ms": 314,
+    "QTc_ms": 405,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.177,
+    "P_QRS_T_mm": [
+      45,
+      35,
+      59
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.693,
+      -0.484
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:43:36",
+    "file": "C:\\Users\\DELL\\Downloads\\111111111111111111111111111111111111.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 161,
+    "QRS_ms": 97,
+    "QT_ms": 308,
+    "QTc_ms": 398,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.187,
+    "P_QRS_T_mm": [
+      45,
+      35,
+      63
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.691,
+      -0.497
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 15:53:00",
+    "file": "C:\\Users\\DELL\\Downloads\\1111.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 161,
+    "QRS_ms": 98,
+    "QT_ms": 307,
+    "QTc_ms": 396,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.188,
+    "P_QRS_T_mm": [
+      44,
+      35,
+      58
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.688,
+      -0.5
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 16:05:20",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_160513.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 160,
+    "QRS_ms": 96,
+    "QT_ms": 304,
+    "QTc_ms": 392,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.171,
+    "P_QRS_T_mm": [
+      45,
+      35,
+      56
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.686,
+      -0.486
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 16:05:40",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\test_report.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      0,
+      0,
+      0
+    ],
+    "QTCF": 357.0,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 16:06:37",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\test_12_1.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
+    "ST_ms": 0.0,
+    "RR_ms": 1000,
     "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
       0,
@@ -6284,729 +1892,289 @@
     ]
   },
   {
-    "timestamp": "2026-02-28 19:38:11",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_193759.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 166,
-    "QRS_ms": 101,
-    "QT_ms": 418,
-    "QTc_ms": 418,
+    "timestamp": "2026-03-11 16:06:37",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\test_6_2.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.157,
+    "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
-      -29,
-      139,
-      -135
+      0,
+      0,
+      0
     ],
-    "QTCF": 418.0,
+    "QTCF": 357.0,
     "RV5_SV1_mV": [
-      0.656,
-      -0.501
+      0.0,
+      0.0
     ]
   },
   {
-    "timestamp": "2026-02-28 19:39:27",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_193922.pdf",
-    "HR_bpm": 59,
-    "PR_ms": 184,
-    "QRS_ms": 91,
-    "QT_ms": 416,
-    "QTc_ms": 420,
+    "timestamp": "2026-03-11 16:10:07",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_161001.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 155,
+    "QRS_ms": 97,
+    "QT_ms": 300,
+    "QTc_ms": 387,
     "ST_ms": 0.0,
-    "RR_ms": 1016,
-    "RV5_plus_SV1_mV": 1.152,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.047,
     "P_QRS_T_mm": [
-      -64,
-      68,
-      -142
+      46,
+      35,
+      88
     ],
-    "QTCF": 416.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.652,
-      -0.499
+      0.684,
+      -0.364
     ]
   },
   {
-    "timestamp": "2026-02-28 19:39:38",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_193934.pdf",
-    "HR_bpm": 64,
-    "PR_ms": 163,
-    "QRS_ms": 73,
-    "QT_ms": 430,
-    "QTc_ms": 380,
+    "timestamp": "2026-03-11 16:10:29",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_161024.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 154,
+    "QRS_ms": 94,
+    "QT_ms": 307,
+    "QTc_ms": 396,
     "ST_ms": 0.0,
-    "RR_ms": 937,
-    "RV5_plus_SV1_mV": 0.908,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.175,
     "P_QRS_T_mm": [
-      -63,
-      66,
-      -139
+      43,
+      35,
+      57
     ],
-    "QTCF": 427.7,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.656,
-      -0.252
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 19:40:04",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_193959.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 169,
-    "QRS_ms": 95,
-    "QT_ms": 418,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.141,
-    "P_QRS_T_mm": [
-      -53,
-      70,
-      -141
-    ],
-    "QTCF": 427.2,
-    "RV5_SV1_mV": [
-      0.657,
+      0.692,
       -0.483
     ]
   },
   {
-    "timestamp": "2026-02-28 19:40:18",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_194013.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 164,
-    "QRS_ms": 77,
-    "QT_ms": 423,
-    "QTc_ms": 417,
+    "timestamp": "2026-03-11 16:21:53",
+    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\test_12_1.pdf",
+    "HR_bpm": 60.0,
+    "PR_ms": 167.0,
+    "QRS_ms": 86.0,
+    "QT_ms": 357.0,
+    "QTc_ms": 357.0,
     "ST_ms": 0.0,
     "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.157,
+    "RV5_plus_SV1_mV": 0.0,
     "P_QRS_T_mm": [
-      -31,
-      82,
-      -144
+      0,
+      0,
+      0
     ],
-    "QTCF": 423.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.654,
-      -0.503
+      0.0,
+      0.0
     ]
   },
   {
-    "timestamp": "2026-02-28 19:40:32",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_194027.pdf",
-    "HR_bpm": 60,
-    "PR_ms": 163,
-    "QRS_ms": 98,
-    "QT_ms": 415,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 1000,
-    "RV5_plus_SV1_mV": 1.159,
-    "P_QRS_T_mm": [
-      23,
-      55,
-      -134
-    ],
-    "QTCF": 415.0,
-    "RV5_SV1_mV": [
-      0.654,
-      -0.506
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:17:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_201744.pdf",
-    "HR_bpm": 149,
-    "PR_ms": 130,
-    "QRS_ms": 91,
-    "QT_ms": 266,
-    "QTc_ms": 420,
-    "ST_ms": 0.0,
-    "RR_ms": 402,
-    "RV5_plus_SV1_mV": 1.048,
-    "P_QRS_T_mm": [
-      -75,
-      -138,
-      -141
-    ],
-    "QTCF": 266.0,
-    "RV5_SV1_mV": [
-      0.761,
-      -0.287
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:20:03",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_201958.pdf",
-    "HR_bpm": 131,
-    "PR_ms": 109,
-    "QRS_ms": 90,
-    "QT_ms": 282,
-    "QTc_ms": 340,
-    "ST_ms": 0.0,
-    "RR_ms": 458,
-    "RV5_plus_SV1_mV": 1.145,
-    "P_QRS_T_mm": [
-      -56,
-      170,
-      36
-    ],
-    "QTCF": 382.1,
-    "RV5_SV1_mV": [
-      0.626,
-      -0.519
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:30:06",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203001.pdf",
-    "HR_bpm": 130,
-    "PR_ms": 134,
+    "timestamp": "2026-03-11 16:23:59",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_162353.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 166,
     "QRS_ms": 93,
-    "QT_ms": 281,
+    "QT_ms": 313,
+    "QTc_ms": 404,
+    "ST_ms": 0.0,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 0.98,
+    "P_QRS_T_mm": [
+      48,
+      35,
+      105
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.689,
+      -0.291
+    ]
+  },
+  {
+    "timestamp": "2026-03-11 16:34:51",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_163446.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 168,
+    "QRS_ms": 98,
+    "QT_ms": 308,
     "QTc_ms": 398,
     "ST_ms": 0.0,
-    "RR_ms": 461,
-    "RV5_plus_SV1_mV": 1.161,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 0.993,
     "P_QRS_T_mm": [
-      40,
-      -8,
-      25
-    ],
-    "QTCF": 364.5,
-    "RV5_SV1_mV": [
-      0.633,
-      -0.528
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:31:58",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203152.pdf",
-    "HR_bpm": 298,
-    "PR_ms": 54,
-    "QRS_ms": 96,
-    "QT_ms": 152,
-    "QTc_ms": 338,
-    "ST_ms": 0.0,
-    "RR_ms": 201,
-    "RV5_plus_SV1_mV": 1.187,
-    "P_QRS_T_mm": [
-      -156,
-      -169,
-      47
-    ],
-    "QTCF": 196.8,
-    "RV5_SV1_mV": [
-      0.667,
-      -0.521
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:32:09",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203204.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 59,
-    "QRS_ms": 97,
-    "QT_ms": 173,
-    "QTc_ms": 362,
-    "ST_ms": 0.0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 0.705,
-    "P_QRS_T_mm": [
-      -143,
-      -153,
-      37
-    ],
-    "QTCF": 295.3,
-    "RV5_SV1_mV": [
-      0.672,
-      -0.033
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:32:20",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203215.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 54,
-    "QRS_ms": 88,
-    "QT_ms": 157,
-    "QTc_ms": 344,
-    "ST_ms": 0.0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 0.7,
-    "P_QRS_T_mm": [
-      21,
-      -150,
-      -150
+      47,
+      35,
+      53
     ],
     "QTCF": null,
     "RV5_SV1_mV": [
-      0.663,
-      -0.038
+      0.685,
+      -0.308
     ]
   },
   {
-    "timestamp": "2026-02-28 20:32:45",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203241.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 54,
-    "QRS_ms": 86,
-    "QT_ms": 151,
-    "QTc_ms": 338,
+    "timestamp": "2026-03-11 16:34:57",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_163453.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 168,
+    "QRS_ms": 98,
+    "QT_ms": 308,
+    "QTc_ms": 398,
     "ST_ms": 0.0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 1.184,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.173,
     "P_QRS_T_mm": [
-      -25,
-      -157,
-      -142
+      46,
+      36,
+      63
     ],
     "QTCF": null,
-    "RV5_SV1_mV": [
-      0.662,
-      -0.522
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:38:35",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203829.pdf",
-    "HR_bpm": 298,
-    "PR_ms": 54,
-    "QRS_ms": 89,
-    "QT_ms": 215,
-    "QTc_ms": 388,
-    "ST_ms": 0.0,
-    "RR_ms": 201,
-    "RV5_plus_SV1_mV": 1.172,
-    "P_QRS_T_mm": [
-      -151,
-      -135,
-      32
-    ],
-    "QTCF": 367.0,
-    "RV5_SV1_mV": [
-      0.666,
-      -0.506
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:38:53",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203848.pdf",
-    "HR_bpm": 299,
-    "PR_ms": 54,
-    "QRS_ms": 93,
-    "QT_ms": 154,
-    "QTc_ms": 336,
-    "ST_ms": 0.0,
-    "RR_ms": 200,
-    "RV5_plus_SV1_mV": 1.181,
-    "P_QRS_T_mm": [
-      -159,
-      -138,
-      -140
-    ],
-    "QTCF": 262.9,
-    "RV5_SV1_mV": [
-      0.663,
-      -0.518
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:39:11",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203906.pdf",
-    "HR_bpm": 295,
-    "PR_ms": 56,
-    "QRS_ms": 90,
-    "QT_ms": 228,
-    "QTc_ms": 405,
-    "ST_ms": 0.0,
-    "RR_ms": 203,
-    "RV5_plus_SV1_mV": 1.17,
-    "P_QRS_T_mm": [
-      -150,
-      -140,
-      -140
-    ],
-    "QTCF": 389.9,
-    "RV5_SV1_mV": [
-      0.665,
-      -0.505
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:39:34",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_203928.pdf",
-    "HR_bpm": 0,
-    "PR_ms": 51,
-    "QRS_ms": 88,
-    "QT_ms": 154,
-    "QTc_ms": 342,
-    "ST_ms": 0.0,
-    "RR_ms": 0,
-    "RV5_plus_SV1_mV": 1.191,
-    "P_QRS_T_mm": [
-      -9,
-      39,
-      34
-    ],
-    "QTCF": 262.0,
-    "RV5_SV1_mV": [
-      0.668,
-      -0.523
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:40:19",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204015.pdf",
-    "HR_bpm": 101,
-    "PR_ms": 165,
-    "QRS_ms": 97,
-    "QT_ms": 326,
-    "QTc_ms": 417,
-    "ST_ms": 0.0,
-    "RR_ms": 594,
-    "RV5_plus_SV1_mV": 1.177,
-    "P_QRS_T_mm": [
-      37,
-      -125,
-      -32
-    ],
-    "QTCF": 387.8,
     "RV5_SV1_mV": [
       0.681,
-      -0.496
+      -0.491
     ]
   },
   {
-    "timestamp": "2026-02-28 20:40:48",
-    "file": "C:\\Users\\DELL\\Downloads\\dfg\\merge\\src\\ECG_Report_12_1_20260228_204042.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 160,
-    "QRS_ms": 91,
-    "QT_ms": 321,
-    "QTc_ms": 416,
+    "timestamp": "2026-03-11 16:35:44",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_163538.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 169,
+    "QRS_ms": 98,
+    "QT_ms": 311,
+    "QTc_ms": 401,
     "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.172,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.168,
     "P_QRS_T_mm": [
-      30,
-      -113,
-      -37
+      47,
+      35,
+      103
     ],
-    "QTCF": 381.9,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.68,
-      -0.492
+      0.689,
+      -0.48
     ]
   },
   {
-    "timestamp": "2026-02-28 20:41:08",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204102.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 160,
-    "QRS_ms": 92,
-    "QT_ms": 323,
-    "QTc_ms": 417,
+    "timestamp": "2026-03-11 16:56:43",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260311_165637.pdf",
+    "HR_bpm": 100,
+    "PR_ms": 166,
+    "QRS_ms": 95,
+    "QT_ms": 310,
+    "QTc_ms": 400,
     "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.17,
+    "RR_ms": 600,
+    "RV5_plus_SV1_mV": 1.182,
     "P_QRS_T_mm": [
-      24,
-      -45,
-      -27
+      45,
+      35,
+      60
     ],
-    "QTCF": 385.5,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.68,
+      0.691,
       -0.49
     ]
   },
   {
-    "timestamp": "2026-02-28 20:41:28",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204123.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 160,
-    "QRS_ms": 85,
-    "QT_ms": 305,
-    "QTc_ms": 418,
-    "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.17,
-    "P_QRS_T_mm": [
-      -43,
-      -129,
-      -86
-    ],
-    "QTCF": 364.1,
-    "RV5_SV1_mV": [
-      0.682,
-      -0.489
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:41:45",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204138.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 160,
-    "QRS_ms": 92,
-    "QT_ms": 324,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.173,
-    "P_QRS_T_mm": [
-      27,
-      -139,
-      -95
-    ],
-    "QTCF": 386.7,
-    "RV5_SV1_mV": [
-      0.681,
-      -0.492
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:42:44",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_204239.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 157,
-    "QRS_ms": 91,
-    "QT_ms": 326,
-    "QTc_ms": 422,
-    "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.637,
-    "P_QRS_T_mm": [
-      0,
-      0,
-      0
-    ],
-    "QTCF": 390.0,
-    "RV5_SV1_mV": [
-      1.086,
-      -0.551
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:43:47",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204343.pdf",
-    "HR_bpm": 102,
-    "PR_ms": 163,
-    "QRS_ms": 90,
-    "QT_ms": 323,
-    "QTc_ms": 416,
-    "ST_ms": 0.0,
-    "RR_ms": 588,
-    "RV5_plus_SV1_mV": 1.169,
-    "P_QRS_T_mm": [
-      33,
-      -131,
-      -90
-    ],
-    "QTCF": 385.5,
-    "RV5_SV1_mV": [
-      0.682,
-      -0.487
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:44:28",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_4_3_20260228_204423.pdf",
+    "timestamp": "2026-03-11 16:57:02",
+    "file": "C:\\Users\\DELL\\Downloads\\qqqq.pdf",
     "HR_bpm": 100,
-    "PR_ms": 157,
-    "QRS_ms": 98,
-    "QT_ms": 322,
-    "QTc_ms": 415,
+    "PR_ms": 166,
+    "QRS_ms": 95,
+    "QT_ms": 310,
+    "QTc_ms": 400,
     "ST_ms": 0.0,
     "RR_ms": 600,
-    "RV5_plus_SV1_mV": 1.65,
+    "RV5_plus_SV1_mV": 1.181,
     "P_QRS_T_mm": [
-      0,
-      0,
-      0
+      44,
+      34,
+      60
     ],
-    "QTCF": 384.0,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      1.089,
-      -0.561
+      0.694,
+      -0.488
     ]
   },
   {
-    "timestamp": "2026-02-28 20:44:51",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204447.pdf",
-    "HR_bpm": 99,
-    "PR_ms": 162,
+    "timestamp": "2026-03-12 10:15:09",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260312_101502.pdf",
+    "HR_bpm": 81,
+    "PR_ms": 152,
+    "QRS_ms": 79,
+    "QT_ms": 346,
+    "QTc_ms": 402,
+    "ST_ms": 0.0,
+    "RR_ms": 740,
+    "RV5_plus_SV1_mV": 0.0,
+    "P_QRS_T_mm": [
+      81,
+      56,
+      10
+    ],
+    "QTCF": null,
+    "RV5_SV1_mV": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "timestamp": "2026-03-13 12:44:01",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260313_124351.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 171,
     "QRS_ms": 90,
-    "QT_ms": 323,
-    "QTc_ms": 414,
+    "QT_ms": 350,
+    "QTc_ms": 350,
     "ST_ms": 0.0,
-    "RR_ms": 606,
-    "RV5_plus_SV1_mV": 1.165,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.136,
     "P_QRS_T_mm": [
-      -51,
-      -132,
-      -67
+      44,
+      35,
+      74
     ],
-    "QTCF": 383.0,
-    "RV5_SV1_mV": [
-      0.682,
-      -0.483
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:48:13",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204809.pdf",
-    "HR_bpm": 30,
-    "PR_ms": 262,
-    "QRS_ms": 95,
-    "QT_ms": 428,
-    "QTc_ms": 302,
-    "ST_ms": 0.0,
-    "RR_ms": 2000,
-    "RV5_plus_SV1_mV": 0.7,
-    "P_QRS_T_mm": [
-      -17,
-      62,
-      -141
-    ],
-    "QTCF": 505.8,
+    "QTCF": null,
     "RV5_SV1_mV": [
       0.644,
-      -0.056
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:48:39",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_204835.pdf",
-    "HR_bpm": 30,
-    "PR_ms": 277,
-    "QRS_ms": 98,
-    "QT_ms": 437,
-    "QTc_ms": 308,
-    "ST_ms": 0.0,
-    "RR_ms": 2000,
-    "RV5_plus_SV1_mV": 1.143,
-    "P_QRS_T_mm": [
-      27,
-      65,
-      -145
-    ],
-    "QTCF": 346.8,
-    "RV5_SV1_mV": [
-      0.647,
-      -0.496
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:50:45",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_205040.pdf",
-    "HR_bpm": 46,
-    "PR_ms": 225,
-    "QRS_ms": 79,
-    "QT_ms": 366,
-    "QTc_ms": 318,
-    "ST_ms": 0.0,
-    "RR_ms": 1304,
-    "RV5_plus_SV1_mV": 1.135,
-    "P_QRS_T_mm": [
-      13,
-      88,
-      -142
-    ],
-    "QTCF": 290.5,
-    "RV5_SV1_mV": [
-      0.642,
-      -0.493
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:51:00",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_205056.pdf",
-    "HR_bpm": 53,
-    "PR_ms": 198,
-    "QRS_ms": 68,
-    "QT_ms": 318,
-    "QTc_ms": 302,
-    "ST_ms": 0.0,
-    "RR_ms": 1132,
-    "RV5_plus_SV1_mV": 1.138,
-    "P_QRS_T_mm": [
-      32,
-      91,
-      -146
-    ],
-    "QTCF": 291.1,
-    "RV5_SV1_mV": [
-      0.646,
       -0.492
     ]
   },
   {
-    "timestamp": "2026-02-28 20:51:36",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_205131.pdf",
-    "HR_bpm": 46,
-    "PR_ms": 264,
-    "QRS_ms": 96,
-    "QT_ms": 362,
-    "QTc_ms": 318,
+    "timestamp": "2026-03-13 12:46:42",
+    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260313_124636.pdf",
+    "HR_bpm": 60,
+    "PR_ms": 160,
+    "QRS_ms": 88,
+    "QT_ms": 340,
+    "QTc_ms": 340,
     "ST_ms": 0.0,
-    "RR_ms": 1304,
-    "RV5_plus_SV1_mV": 1.138,
+    "RR_ms": 1000,
+    "RV5_plus_SV1_mV": 1.136,
     "P_QRS_T_mm": [
-      31,
-      87,
-      -142
+      43,
+      36,
+      89
     ],
-    "QTCF": 347.3,
+    "QTCF": null,
     "RV5_SV1_mV": [
-      0.646,
-      -0.491
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:51:50",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_205145.pdf",
-    "HR_bpm": 51,
-    "PR_ms": 244,
-    "QRS_ms": 71,
-    "QT_ms": 334,
-    "QTc_ms": 311,
-    "ST_ms": 0.0,
-    "RR_ms": 1176,
-    "RV5_plus_SV1_mV": 1.137,
-    "P_QRS_T_mm": [
-      -47,
-      100,
-      -137
-    ],
-    "QTCF": 305.7,
-    "RV5_SV1_mV": [
-      0.646,
-      -0.491
-    ]
-  },
-  {
-    "timestamp": "2026-02-28 20:52:20",
-    "file": "C:\\Users\\DELL\\Downloads\\ECG_Report_12_1_20260228_205215.pdf",
-    "HR_bpm": 46,
-    "PR_ms": 255,
-    "QRS_ms": 98,
-    "QT_ms": 365,
-    "QTc_ms": 318,
-    "ST_ms": 0.0,
-    "RR_ms": 1304,
-    "RV5_plus_SV1_mV": 1.139,
-    "P_QRS_T_mm": [
-      32,
-      95,
-      -138
-    ],
-    "QTCF": 345.8,
-    "RV5_SV1_mV": [
-      0.644,
-      -0.495
+      0.642,
+      -0.494
     ]
   }
 ]
