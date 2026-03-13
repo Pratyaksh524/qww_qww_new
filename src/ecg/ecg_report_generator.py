@@ -953,15 +953,24 @@ def create_reportlab_ecg_drawing_with_real_data(lead_name, ecg_data, width=460, 
             ecg_mv = ecg_mv - trend  # ALWAYS remove trend - no threshold
             print(f" {lead_name}: FORCEFUL: Removed slope={slope:.6f} (no threshold)")
             
-            # Smoothly taper edges to baseline to avoid end-strip jump artifacts.
-            edge_samples = min(45, max(12, len(ecg_mv) // 20))
-            if len(ecg_mv) > edge_samples * 2:
-                # Raised-cosine taper from current value to baseline (0 after detrend).
+            # Edge conditioning for all BPM: smooth approach + hard-flat terminal segment.
+            edge_samples = min(80, max(20, len(ecg_mv) // 16))
+            if len(ecg_mv) > edge_samples * 3:
                 t = np.linspace(0.0, 1.0, edge_samples)
                 taper = 0.5 * (1.0 + np.cos(np.pi * t))
                 ecg_mv[:edge_samples] = ecg_mv[:edge_samples] * (1.0 - taper)
                 ecg_mv[-edge_samples:] = ecg_mv[-edge_samples:] * taper
-                print(f" {lead_name}: Applied edge taper ({edge_samples} samples) for clean strip ending")
+
+                # Guarantee a straight final edge (no up/down jump in report tail).
+                flat_tail = max(10, edge_samples // 4)
+                blend = max(8, edge_samples // 5)
+                if len(ecg_mv) > flat_tail + blend:
+                    blend_start = len(ecg_mv) - (flat_tail + blend)
+                    blend_end = len(ecg_mv) - flat_tail
+                    ramp = np.linspace(1.0, 0.0, blend)
+                    ecg_mv[blend_start:blend_end] = ecg_mv[blend_start:blend_end] * ramp
+                    ecg_mv[-flat_tail:] = 0.0
+                print(f" {lead_name}: Applied edge taper + flat tail ({flat_tail} samples)")
     
     # Gain once: mm per mV (AFTER all processing)
     y_mm = ecg_mv * wave_gain_mm_mv
