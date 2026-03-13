@@ -1,13 +1,16 @@
 {
-  "timestamp": "2026-03-13 12:48:14",
+  "timestamp": "2026-03-13 12:52:55",
   "findings": [
     "Normal heart rate",
-    "Normal PR interval",
-    "Normal QRS duration",
+    "Prolonged PR interval",
+    "Borderline QRS duration",
     "Normal QTc interval",
     "Low HRV"
   ],
   "recommendations": [
+    "Medical evaluation recommended for AV conduction assessment",
+    "Monitor for progression to higher-degree blocks",
+    "Monitor for progression, follow-up ECG if symptoms develop",
     "Ensure adequate rest and stress management",
     "Consider relaxation techniques, adequate sleep, and regular exercise"
   ]
