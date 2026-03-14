@@ -509,6 +509,7 @@ class SerialStreamReader:
             max_iterations = max(max_packets * 5, 500)  # Allow catching up significantly if we fell behind
             iteration = 0
             packets_processed = 0
+            dropped_for_ui = 0
             parse_deadline = time.perf_counter() + self.READ_LOOP_BUDGET_SECONDS
 
             while iteration < max_iterations and len(self.buf) >= PACKET_SIZE:
@@ -572,12 +573,20 @@ class SerialStreamReader:
                     if self.data_count % 500 == 0:
                         loss_info = f" (Lost: {self._total_sequence_lost})" if self._total_sequence_lost > 0 else ""
                         print(f" 📡 Packet #{self.data_count}{loss_info}")
-                    out.append(parsed)
+                    if len(out) < max_packets:
+                        out.append(parsed)
+                    else:
+                        dropped_for_ui += 1
             
             # If we processed many packets, we're catching up - this is good
             if packets_processed > max_packets * 2:
                 # We're catching up from backlog - this is expected and good
                 pass
+
+            if dropped_for_ui > 0:
+                if not hasattr(self, '_ui_drop_warn_time') or (time.time() - self._ui_drop_warn_time) > 2.0:
+                    print(f" ⚠️ UI throttle active: skipped {dropped_for_ui} packets this tick to keep UI responsive")
+                    self._ui_drop_warn_time = time.time()
             
             # Warn if buffer is accumulating too much data (indicates we're falling behind)
             if len(self.buf) > 50000:  # >50KB buffer indicates we're not reading fast enough
