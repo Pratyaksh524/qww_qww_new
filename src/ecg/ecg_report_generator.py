@@ -563,20 +563,10 @@ def apply_report_ecg_filters(signal, sampling_rate, settings_manager):
             filtered = filtered[hard_trim:n3 - hard_trim]
     except Exception:
         pass
-    try:
-        n4 = filtered.size
-        if n4 > 50:
-            alpha = 0.5
-            m = max(10, int((alpha * n4) / 2.0))
-            if m * 2 < n4:
-                ramp = 0.5 * (1 - np.cos(np.linspace(0, np.pi, m)))
-                w = np.ones(n4)
-                w[:m] = ramp
-                w[-m:] = ramp[::-1]
-                mu = float(np.mean(filtered))
-                filtered = mu + (filtered - mu) * w
-    except Exception:
-        pass
+    # NOTE:
+    # Do not force waveform edges to a flat mean value. Edge tapering hides
+    # clinically relevant terminal morphology and can create visible "humps"
+    # before the strip ends. Keep natural morphology after filtering.
     return filtered
 
 def create_ecg_grid_with_waveform(ecg_data, lead_name, width=6, height=2):
@@ -945,40 +935,20 @@ def create_reportlab_ecg_drawing_with_real_data(lead_name, ecg_data, width=460, 
         print(f" ECG data empty for {lead_name}")
         return drawing
 
-    # FORCEFUL STRAIGHTENING: Force straight baseline - no exceptions
+    # Gentle baseline conditioning for report rendering (no forced flat tail).
     if len(ecg_mv) > 0:
         # Remove DC offset first
-        dc_offset = np.nanmean(ecg_mv)  # Use mean for gentler removal
+        dc_offset = np.nanmedian(ecg_mv)
         ecg_mv = ecg_mv - dc_offset
-        
-        # FORCEFUL STRAIGHTENING: Always remove any slope
+
+        # Remove linear drift only (no artificial end flattening)
         if len(ecg_mv) > 20:
             x = np.arange(len(ecg_mv))
-            # Fit linear trend - ALWAYS remove it regardless of slope
-            coeffs = np.polyfit(x, ecg_mv, 1)  # Linear fit
+            coeffs = np.polyfit(x, ecg_mv, 1)
             slope = coeffs[0]
             trend = np.polyval(coeffs, x)
-            ecg_mv = ecg_mv - trend  # ALWAYS remove trend - no threshold
-            print(f" {lead_name}: FORCEFUL: Removed slope={slope:.6f} (no threshold)")
-            
-            # Edge conditioning for all BPM: smooth approach + hard-flat terminal segment.
-            edge_samples = min(80, max(20, len(ecg_mv) // 16))
-            if len(ecg_mv) > edge_samples * 3:
-                t = np.linspace(0.0, 1.0, edge_samples)
-                taper = 0.5 * (1.0 + np.cos(np.pi * t))
-                ecg_mv[:edge_samples] = ecg_mv[:edge_samples] * (1.0 - taper)
-                ecg_mv[-edge_samples:] = ecg_mv[-edge_samples:] * taper
-
-                # Guarantee a straight final edge (no up/down jump in report tail).
-                flat_tail = max(10, edge_samples // 4)
-                blend = max(8, edge_samples // 5)
-                if len(ecg_mv) > flat_tail + blend:
-                    blend_start = len(ecg_mv) - (flat_tail + blend)
-                    blend_end = len(ecg_mv) - flat_tail
-                    ramp = np.linspace(1.0, 0.0, blend)
-                    ecg_mv[blend_start:blend_end] = ecg_mv[blend_start:blend_end] * ramp
-                    ecg_mv[-flat_tail:] = 0.0
-                print(f" {lead_name}: Applied edge taper + flat tail ({flat_tail} samples)")
+            ecg_mv = ecg_mv - trend
+            print(f" {lead_name}: Removed baseline slope={slope:.6f}")
     
     # Gain once: mm per mV (AFTER all processing)
     y_mm = ecg_mv * wave_gain_mm_mv
