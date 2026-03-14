@@ -22,7 +22,15 @@ ECG_LARGE_BOX_MM = 210.0 / 40.0
 ECG_SMALL_BOX_MM = ECG_LARGE_BOX_MM / 5.0
 # Scale wave speed so 1 second equals 5 large boxes at 25 mm/s on 40-box grid
 ECG_SPEED_SCALE = ECG_LARGE_BOX_MM / ECG_BASE_BOX_MM
-FIXED_SAMPLES_PER_LEAD = 4000
+STANDARD_REPORT_WINDOW_SECONDS = 10.0
+
+
+def _samples_for_standard_report_window(sampling_rate):
+    """Return sample count for the standard last-10-second ECG strip."""
+    fs = _safe_float(sampling_rate, 500.0)
+    if not fs or fs <= 0:
+        fs = 500.0
+    return max(1, int(round(STANDARD_REPORT_WINDOW_SECONDS * fs)))
 
 LEAD_SEQUENCES = {
     "Standard": ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"],
@@ -1624,21 +1632,22 @@ def generate_ecg_report(
         else:
             print(f" Report Generator: Demo mode is OFF")
     
-    # Calculate number of samples to capture
-    calculated_time_window = None
+    # Always use the latest standard 10-second strip (hospital-style ECG printout)
+    calculated_time_window = STANDARD_REPORT_WINDOW_SECONDS
     if is_demo_mode:
-        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
-        computed_sampling_rate = 500
-        calculated_time_window = num_samples_to_capture / float(computed_sampling_rate)
+        if not computed_sampling_rate or computed_sampling_rate <= 0:
+            computed_sampling_rate = 500.0
+        num_samples_to_capture = _samples_for_standard_report_window(computed_sampling_rate)
         print(
-            f" DEMO MODE: Using fixed {num_samples_to_capture} samples at "
-            f"{computed_sampling_rate}Hz (~{calculated_time_window:.2f}s, ~7 beats at 60 BPM)"
+            f" DEMO MODE: Using latest {STANDARD_REPORT_WINDOW_SECONDS:.1f}s "
+            f"({num_samples_to_capture} samples at {computed_sampling_rate}Hz)"
         )
     else:
-        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
-        calculated_time_window = num_samples_to_capture / max(1e-6, computed_sampling_rate)
-        print(f" NORMAL MODE: Using fixed samples per lead: {num_samples_to_capture}")
-        print(f"   Effective time window: {calculated_time_window:.2f}s at sampling rate {computed_sampling_rate}Hz")
+        num_samples_to_capture = _samples_for_standard_report_window(computed_sampling_rate)
+        print(
+            f" NORMAL MODE: Using latest {STANDARD_REPORT_WINDOW_SECONDS:.1f}s "
+            f"({num_samples_to_capture} samples at {computed_sampling_rate}Hz)"
+        )
     
     for pos_info in lead_positions:
         lead = pos_info['lead']
@@ -1739,21 +1748,22 @@ def generate_ecg_report(
         else:
             print(f" Report Generator: Demo mode is OFF")
     
-    # Calculate number of samples to capture
-    calculated_time_window = None
+    # Always use the latest standard 10-second strip (hospital-style ECG printout)
+    calculated_time_window = STANDARD_REPORT_WINDOW_SECONDS
     if is_demo_mode:
-        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
-        computed_sampling_rate = 500
-        calculated_time_window = num_samples_to_capture / float(computed_sampling_rate)
+        if not computed_sampling_rate or computed_sampling_rate <= 0:
+            computed_sampling_rate = 500.0
+        num_samples_to_capture = _samples_for_standard_report_window(computed_sampling_rate)
         print(
-            f" DEMO MODE: Using fixed {num_samples_to_capture} samples at "
-            f"{computed_sampling_rate}Hz (~{calculated_time_window:.2f}s, ~7 beats at 60 BPM)"
+            f" DEMO MODE: Using latest {STANDARD_REPORT_WINDOW_SECONDS:.1f}s "
+            f"({num_samples_to_capture} samples at {computed_sampling_rate}Hz)"
         )
     else:
-        num_samples_to_capture = FIXED_SAMPLES_PER_LEAD
-        calculated_time_window = num_samples_to_capture / max(1e-6, computed_sampling_rate)
-        print(f" NORMAL MODE: Using fixed samples per lead: {num_samples_to_capture}")
-        print(f"   Effective time window: {calculated_time_window:.2f}s at sampling rate {computed_sampling_rate}Hz")
+        num_samples_to_capture = _samples_for_standard_report_window(computed_sampling_rate)
+        print(
+            f" NORMAL MODE: Using latest {STANDARD_REPORT_WINDOW_SECONDS:.1f}s "
+            f"({num_samples_to_capture} samples at {computed_sampling_rate}Hz)"
+        )
     
     for pos_info in lead_positions:
         lead = pos_info["lead"]
