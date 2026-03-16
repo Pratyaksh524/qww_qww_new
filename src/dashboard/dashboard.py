@@ -3131,8 +3131,7 @@ class Dashboard(QWidget):
 
         # Prevent overlapping report jobs (double-click / repeated clicks)
         if getattr(self, '_report_thread', None) is not None and self._report_thread.isRunning():
-            QMessageBox.information(self, "Report In Progress",
-                                    "Report generation is already running. Please wait for it to finish.")
+            print("ℹ️ Report generation is already running. Please wait for it to finish.")
             return
 
         # ── STEP 1: Freeze ALL metric values RIGHT NOW (before any background work) ──
@@ -3561,12 +3560,13 @@ class Dashboard(QWidget):
         def _on_failed(err):
             self._report_thread.quit()
             self._report_thread.wait()
-            QMessageBox.critical(self, "Error", f"Failed to generate PDF:\n{err}")
+            # Keep feedback non-blocking to avoid stalling live ECG painting on slower systems.
+            print(f"❌ Failed to generate PDF: {err}")
 
         self._report_worker.finished.connect(_on_finished)
         self._report_worker.failed.connect(_on_failed)
         # Run worker with low OS scheduling priority to minimize impact on live ECG UI refresh.
-        self._report_thread.start(QThread.LowPriority)
+        self._report_thread.start(QThread.LowestPriority)
 
 
 

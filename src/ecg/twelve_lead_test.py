@@ -6298,8 +6298,8 @@ class ECGTestPage(QWidget):
              file copies, index update) to a QThread so the event-loop / QTimer
              never miss a tick → waves keep flowing and BPM stays stable.
         """
-        from PyQt5.QtWidgets import QFileDialog, QMessageBox
         from PyQt5.QtCore import QThread, pyqtSignal, QObject
+        from PyQt5.QtCore import QStandardPaths
         import datetime, os, json, shutil, copy
 
         # Enforce per-report cooldown: every click restarts a 10-second wait.
@@ -6354,15 +6354,17 @@ class ECGTestPage(QWidget):
             except Exception:
                 pass
 
-        # ── STEP 3 (main thread): ask where to save ─────────────────────────────
-        filename, _ = QFileDialog.getSaveFileName(
-            self,
-            "Save ECG Report",
-            f"ECG_Report_{fmt}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf",
-            "PDF Files (*.pdf)"
+        # ── STEP 3 (main thread): precompute cross-platform output path ──────────
+        # Keep this non-blocking (no modal dialogs) so live ECG timers remain smooth.
+        # Prefer OS Downloads folder when available; fall back to project reports dir.
+        reports_dir = QStandardPaths.writableLocation(QStandardPaths.DownloadLocation)
+        if not reports_dir:
+            reports_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reports'))
+        os.makedirs(reports_dir, exist_ok=True)
+        filename = os.path.join(
+            reports_dir,
+            f"ECG_Report_{fmt}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         )
-        if not filename:
-            return   # user cancelled — nothing started, nothing to clean up
 
         # ── Capture lightweight refs needed by thread ─────────────────────────
         # IMPORTANT: do NO file I/O here — every ms on the main thread means a
@@ -6649,11 +6651,23 @@ class ECGTestPage(QWidget):
         self._report_worker = worker
 
         def on_finished(msg):
-            QMessageBox.information(self, "Report Saved", msg)
+            # Non-modal completion feedback to keep ECG rendering uninterrupted.
+            try:
+                if hasattr(self, 'status_label') and self.status_label is not None:
+                    self.status_label.setText("Status: Report saved")
+            except Exception:
+                pass
+            print(f"✅ {msg}")
             _cleanup()
 
         def on_error(msg):
-            QMessageBox.critical(self, "Report Error", f"Failed to generate PDF:\n{msg}")
+            # Keep UI responsive even when reporting errors.
+            try:
+                if hasattr(self, 'status_label') and self.status_label is not None:
+                    self.status_label.setText("Status: Report generation failed")
+            except Exception:
+                pass
+            print(f"❌ Failed to generate PDF: {msg}")
             _cleanup()
 
         def on_ui_refresh():
@@ -6684,7 +6698,7 @@ class ECGTestPage(QWidget):
         thread.finished.connect(thread.deleteLater)
 
         # Start worker thread immediately; heavy report I/O/rendering stays off UI thread.
-        thread.start()
+        thread.start(QThread.LowestPriority)
         # Main thread returns immediately — ECG timer keeps firing uninterrupted.
 
     def export_csv(self):

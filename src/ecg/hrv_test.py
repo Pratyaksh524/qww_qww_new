@@ -899,15 +899,13 @@ class HRVTestWindow(QWidget):
                               "No data available to generate report.")
             return
         
-        # Get save location
-        from PyQt5.QtWidgets import QFileDialog
-        default_filename = f"HRV_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        filepath, _ = QFileDialog.getSaveFileName(
-            self, "Save HRV Report", default_filename, "PDF Files (*.pdf)"
-        )
-        
-        if not filepath:
-            return
+        # Non-blocking save location (cross-platform) to avoid modal UI stalls.
+        from PyQt5.QtCore import QStandardPaths
+        reports_dir = QStandardPaths.writableLocation(QStandardPaths.DownloadLocation)
+        if not reports_dir:
+            reports_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reports'))
+        os.makedirs(reports_dir, exist_ok=True)
+        filepath = os.path.join(reports_dir, f"HRV_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
         
         try:
             # Import the HRV ECG report generator (separate file with EXACT same format as main report)
@@ -1104,19 +1102,16 @@ class HRVTestWindow(QWidget):
             )
             
             if result:
-                QMessageBox.information(self, "Report Generated", 
-                                      f"HRV ECG report saved successfully:\n{filepath}")
+                print(f"✅ HRV ECG report saved successfully: {filepath}")
                 try:
                     append_history_entry(patient, filepath, report_type="HRV", username=self.username)
                 except Exception as hist_err:
                     print(f" Failed to append HRV history: {hist_err}")
             else:
-                QMessageBox.warning(self, "Report Warning", 
-                                  "Report generation completed with warnings.")
+                print("⚠️ HRV report generation completed with warnings.")
             
         except Exception as e:
-            QMessageBox.critical(self, "Error", 
-                               f"Failed to generate report: {str(e)}")
+            print(f"❌ Failed to generate HRV report: {str(e)}")
             self.crash_logger.log_error(
                 message=f"HRV report generation error: {e}",
                 exception=e,

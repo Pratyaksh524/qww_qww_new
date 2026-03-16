@@ -1288,15 +1288,13 @@ class HyperkalemiaTestWindow(QWidget):
                               "No data available to generate report.")
             return
         
-        # Get save location
-        from PyQt5.QtWidgets import QFileDialog
-        default_filename = f"Hyperkalemia_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        filepath, _ = QFileDialog.getSaveFileName(
-            self, "Save Hyperkalemia Report", default_filename, "PDF Files (*.pdf)"
-        )
-        
-        if not filepath:
-            return
+        # Non-blocking save location (cross-platform) to avoid modal UI stalls.
+        from PyQt5.QtCore import QStandardPaths
+        reports_dir = QStandardPaths.writableLocation(QStandardPaths.DownloadLocation)
+        if not reports_dir:
+            reports_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'reports'))
+        os.makedirs(reports_dir, exist_ok=True)
+        filepath = os.path.join(reports_dir, f"Hyperkalemia_Report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf")
         
         
         try:
@@ -1471,16 +1469,14 @@ class HyperkalemiaTestWindow(QWidget):
             
             print(f"\n Report generation completed!")
             
-            QMessageBox.information(self, "Report Generated", 
-                                  f"Hyperkalemia detection report saved successfully:\n{filepath}")
+            print(f"✅ Hyperkalemia detection report saved successfully: {filepath}")
             try:
                 append_history_entry(patient, filepath, report_type="Hyperkalemia", username=self.username)
             except Exception as hist_err:
                 print(f" Failed to append Hyperkalemia history: {hist_err}")
             
         except Exception as e:
-            QMessageBox.critical(self, "Error", 
-                               f"Failed to generate report: {str(e)}")
+            print(f"❌ Failed to generate Hyperkalemia report: {str(e)}")
             self.crash_logger.log_error(
                 message=f"Hyperkalemia report generation error: {e}",
                 exception=e,
