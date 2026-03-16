@@ -52,13 +52,27 @@ class AutoSyncService:
         try:
             # Check reports directory for new/modified PDFs and JSONs
             if self.reports_dir.exists():
+                # Glob for PDFs
                 for file_path in self.reports_dir.glob("ECG_Report_*.pdf"):
                     if self._is_file_modified(file_path):
                         modified_files.append(file_path)
-                        # Also check for JSON twin
+                        # Also check for JSON twin in same dir
                         json_twin = file_path.with_suffix('.json')
                         if json_twin.exists() and self._is_file_modified(json_twin):
                             modified_files.append(json_twin)
+                
+                # Glob for unified JSON data files in subfolder
+                ecg_data_dir = self.reports_dir / "ecg_data"
+                if ecg_data_dir.exists():
+                    for file_path in ecg_data_dir.glob("ecg_data_*.json"):
+                        if self._is_file_modified(file_path):
+                            modified_files.append(file_path)
+            
+            # Check for generic metrics in reports root
+            for metric_file in ["metrics.json", "hyper_metric.json", "hrv_metric.json"]:
+                metric_path = self.reports_dir / metric_file
+                if metric_path.exists() and self._is_file_modified(metric_path):
+                    modified_files.append(metric_path)
             
             # Check for new user signups
             if self.users_file.exists() and self._is_file_modified(self.users_file):

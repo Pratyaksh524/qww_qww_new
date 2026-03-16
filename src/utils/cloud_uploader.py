@@ -275,10 +275,10 @@ class CloudUploader:
             file_ext = Path(file_path).suffix.lower()
             file_basename = os.path.basename(file_path).lower()
             
-            # ONLY upload reports and metrics - filter out everything else
+            # ONLY upload reports, metrics, and unified data - filter out everything else
             allowed_extensions = ['.pdf', '.json']
             is_report = file_ext in allowed_extensions and 'report' in file_basename
-            is_metric = file_ext == '.json' and 'metric' in file_basename
+            is_metric = file_ext == '.json' and ('metric' in file_basename or 'ecg_data' in file_basename)
             
             if not (is_report or is_metric):
                 return {

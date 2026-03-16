@@ -3984,15 +3984,24 @@ def generate_ecg_report(
                 "heart_rate": str(data.get('Heart_Rate', '')),
             }
             
-            # Upload the report
+            # Upload the report PDF
             result = cloud_uploader.upload_report(filename, metadata=upload_metadata)
             
             if result.get('status') == 'success':
-                print(f" Report uploaded successfully to {cloud_uploader.cloud_service}")
+                print(f" Report PDF uploaded successfully to {cloud_uploader.cloud_service}")
                 if 'url' in result:
                     print(f"  URL: {result['url']}")
             else:
-                print(f"  Cloud upload failed: {result.get('message', 'Unknown error')}")
+                print(f"  Cloud upload failed for PDF: {result.get('message', 'Unknown error')}")
+            
+            # ALSO upload the unified JSON data file if it exists
+            if 'saved_data_file_path' in locals() and saved_data_file_path and os.path.exists(saved_data_file_path):
+                print(f"  Uploading unified JSON data to cloud...")
+                json_result = cloud_uploader.upload_report(saved_data_file_path, metadata=upload_metadata)
+                if json_result.get('status') == 'success':
+                    print(f"  Unified JSON data uploaded successfully")
+                else:
+                    print(f"  Cloud upload failed for JSON: {json_result.get('message', 'Unknown error')}")
         else:
             print("  Cloud upload not configured (see cloud_config_template.txt)")
             

@@ -1,6 +1,16 @@
 import sys
 import os
 import json
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# When running as an executable, .env is bundled in the same directory
+if hasattr(sys, '_MEIPASS'):
+    env_path = os.path.join(sys._MEIPASS, '.env')
+    load_dotenv(env_path)
+else:
+    load_dotenv()
+
 from PyQt5.QtWidgets import (
     QApplication, QDialog, QLabel, QLineEdit, QPushButton, QVBoxLayout, QHBoxLayout, 
     QMessageBox, QStackedWidget, QWidget, QInputDialog, QSizePolicy

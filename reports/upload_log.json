@@ -309,5 +309,24 @@
       "machine_serial": "",
       "heart_rate": "100"
     }
+  },
+  {
+    "local_path": "C:\\Users\\Divyansh srivastava\\Documents\\ecg\\merge\\diagnostic_metric_test_20260316_111033.json",
+    "uploaded_at": "2026-03-16T11:10:38.117574",
+    "service": "s3",
+    "result": {
+      "status": "success",
+      "service": "s3",
+      "url": "https://deck-backend-demo.s3.us-east-1.amazonaws.com/ecg-reports/2026/03/16/diagnostic_metric_test_20260316_111033.json",
+      "key": "ecg-reports/2026/03/16/diagnostic_metric_test_20260316_111033.json",
+      "bucket": "deck-backend-demo"
+    },
+    "metadata": {
+      "filename": "diagnostic_metric_test_20260316_111033.json",
+      "uploaded_at": "2026-03-16T11:10:33.843842",
+      "file_size": 212,
+      "file_type": ".json",
+      "patient_name": "TEST_DIAGNOSTIC"
+    }
   }
 ]
