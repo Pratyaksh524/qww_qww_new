@@ -29,7 +29,9 @@ _LIMITS = {
     'heart_rate'  : (30,   300),   # BPM
     'pr_interval' : (80,   240),   # ms
     'qrs_duration': (40,   200),   # ms
-    'qt_interval' : (200,  600),   # ms
+    # NOTE: QT lower bound is handled dynamically in update_ecg_metrics_display
+    # because physiologic QT gets shorter as HR rises (e.g. 180-190 ms at ~240 BPM).
+    'qt_interval' : (150,  600),   # ms (fallback bound)
     'qtc_interval': (300,  500),   # ms (Bazett)
     'rr_interval' : (200, 2000),   # ms
     'p_duration'  : (40,   160),   # ms
@@ -48,6 +50,22 @@ def _clamp(key: str, value: int) -> Optional[int]:
         return value
     # Out of range — try to return the last good value
     return _last_valid.get(key, None)
+
+
+def _clamp_qt_for_hr(qt_ms: int, heart_rate: Optional[float]) -> Optional[int]:
+    """Clamp QT with an HR-adaptive lower bound to avoid false freezing at high HR."""
+    hr = float(heart_rate) if isinstance(heart_rate, (int, float)) else None
+    if hr is not None and hr > 0:
+        # Mirror the clinical QT acceptance logic used by median-beat measurement.
+        qt_min = 150 if hr > 200 else (170 if hr > 150 else 200)
+    else:
+        qt_min = _LIMITS['qt_interval'][0]
+
+    qt_max = _LIMITS['qt_interval'][1]
+    if qt_min <= qt_ms <= qt_max:
+        _last_valid['qt_interval'] = qt_ms
+        return qt_ms
+    return _last_valid.get('qt_interval', None)
 
 
 def _set_if_changed(label, text: str):
@@ -164,7 +182,7 @@ def update_ecg_metrics_display(
 
             if qt_ok:
                 qt_int = int(round(qt_interval))
-                qt_clamped = _clamp('qt_interval', qt_int)
+                qt_clamped = _clamp_qt_for_hr(qt_int, heart_rate)
                 if qt_clamped is not None:
                     parts.append(f"{qt_clamped}")
                 elif 'qt_interval' in _last_valid:
