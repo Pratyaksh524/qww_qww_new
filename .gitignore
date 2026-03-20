@@ -108,6 +108,13 @@ reports/
 !**/package.json
 !**/composer.json
 
+# Allow specific project files
+!requirements.txt
+!src/requirements.txt
+!dummycsv.csv
+!assets/
+!assets/**
+
 # Temporary/Data files
 *.txt
 *.csv
@@ -118,7 +125,7 @@ reports/
 *.webp
 *.wav
 RhythmUltraMax (1).txt
-dummycsv.csv
+# dummycsv.csv
 users.zip
 /site
 
