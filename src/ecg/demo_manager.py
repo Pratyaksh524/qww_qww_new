@@ -718,6 +718,15 @@ class DemoManager:
                                     except Exception as e:
                                         print(f" Error updating lead {lead} at row {row_index}: {e}")
                                         continue
+                                
+                                # ── Feed packet to HolterStreamWriter if recording ─────────────
+                                try:
+                                    if (hasattr(self.ecg_test_page, '_holter_writer') and 
+                                        self.ecg_test_page._holter_writer and 
+                                        self.ecg_test_page._holter_writer.is_running):
+                                        self.ecg_test_page._holter_writer.push(raw_lead_values)
+                                except Exception:
+                                    pass
                             
                             row_index += 1
                             consecutive_errors = 0  # Reset error counter on success

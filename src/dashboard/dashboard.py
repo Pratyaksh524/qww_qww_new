@@ -506,6 +506,13 @@ class Dashboard(QWidget):
         self.analysis_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         greet_row.addWidget(self.analysis_btn)
 
+        # --- Add Holter Monitor Button ---
+        self.holter_btn = QPushButton("Holter Monitor")
+        self.holter_btn.setStyleSheet("background: #E65100; color: white; border-radius: 16px; padding: 8px 24px;")
+        self.holter_btn.clicked.connect(self.open_holter_from_dashboard)
+        self.holter_btn.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        greet_row.addWidget(self.holter_btn)
+
         dashboard_layout.addLayout(greet_row)
 
         # --- Main Grid ---
@@ -1361,7 +1368,7 @@ class Dashboard(QWidget):
             # Iterate through dates in the visible month and fade past dates
             year = current_date.year()
             month = current_date.month()
-            days_in_month = QDate.daysInMonth(month, year)
+            days_in_month = QDate(year, month, 1).daysInMonth()
             
             for day in range(1, days_in_month + 1):
                 check_date = QDate(year, month, day)
@@ -1497,6 +1504,21 @@ class Dashboard(QWidget):
         except Exception as e:
             print(f"Error applying calendar selection: {e}")
             dialog.reject()
+
+    def open_holter_from_dashboard(self):
+        """Navigate to ECG page and open Holter menu"""
+        try:
+            # Switch to ECG test page
+            if hasattr(self, 'ecg_test_page'):
+                self.page_stack.setCurrentWidget(self.ecg_test_page)
+                # Call show_holter_menu on the test page
+                if hasattr(self.ecg_test_page, 'show_holter_menu'):
+                    self.ecg_test_page.show_holter_menu()
+            else:
+                QMessageBox.warning(self, "Holter Monitor", "ECG Test Page not initialized.")
+        except Exception as e:
+            print(f"Error opening Holter from dashboard: {e}")
+            QMessageBox.critical(self, "Error", f"Failed to open Holter Monitor: {str(e)}")
 
     def open_analysis_window(self):
         """Open the ECG Analysis Window"""

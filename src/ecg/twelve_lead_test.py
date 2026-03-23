@@ -666,6 +666,16 @@ class SwitchButton(QPushButton):
             
         painter.drawText(text_rect, Qt.AlignCenter, text)
 
+# Import Holter components from new modular structure
+try:
+    from .holter.stream_writer import HolterStreamWriter
+    from .holter.holter_ui import HolterMainWindow, HolterStartDialog
+    from .holter.analysis_worker import HolterAnalysisWorker
+    HOLTER_AVAILABLE = True
+except ImportError as e:
+    print(f" Holter modules not available: {e}")
+    HOLTER_AVAILABLE = False
+
 class ECGTestPage(QWidget):
     LEADS_MAP = {
         "Lead II ECG Test": ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"],
@@ -893,6 +903,7 @@ class ECGTestPage(QWidget):
         ecg_menu_buttons = [
             ("Save ECG", self.ecg_menu.show_save_ecg, "#28a745"),
             ("Open ECG", self.ecg_menu.show_open_ecg, "#17a2b8"),
+            ("Holter", self.show_holter_menu, "#E65100"),  # Added Holter button
             ("Working Mode", self.ecg_menu.show_working_mode, "#ffc107"),
             ("Report Setup", self.ecg_menu.show_report_setup, "#6c757d"),
             ("Set Filter", self.ecg_menu.show_set_filter, "#fd7e14"),
@@ -916,37 +927,67 @@ class ECGTestPage(QWidget):
 
         menu_layout.addStretch(1)
 
+        # Holter Monitor State
+        self.holter_mode_enabled = False
+        self._holter_writer = None
+        self._holter_ui = None
+        self._holter_worker = None
+
         self.apply_language(self.current_language)
 
         # Style menu buttons AFTER they're created - Compact styling
         for i, btn in enumerate(created_buttons):
+            text = ecg_menu_buttons[i][0]
             color = ecg_menu_buttons[i][2]
-            btn.setStyleSheet(f"""
-                QPushButton {{
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                        stop:0 #ffffff, stop:1 #f8f9fa);
-                    color: #1a1a1a;
-                    border: 2px solid #e9ecef;  /* Reduced from 3px */
-                    border-radius: 8px;  /* Reduced from 15px */
-                    padding: 8px 12px;  /* Reduced from 15px 20px */
-                    font-size: 12px;  /* Reduced from 16px */
-                    font-weight: bold;
-                    text-align: left;
-                    margin: 2px 0;  /* Reduced from 4px */
-                }}
-                QPushButton:hover {{
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                        stop:0 #fff5f0, stop:1 #ffe0cc);
-                    border: 2px solid {color};  /* Reduced from 4px */
-                    color: {color};
-                }}
-                QPushButton:pressed {{
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
-                        stop:0 #ffe0cc, stop:1 #ffcc99);
-                    border: 2px solid {color};  /* Reduced from 4px */
-                    color: {color};
-                }}
-            """)
+            
+            # Special style for Holter button to make it very visible
+            if text == "Holter":
+                btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 {color}, stop:1 #ff8c00);
+                        color: white;
+                        border: 2px solid {color};
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        font-size: 13px;
+                        font-weight: 900;
+                        text-align: center;
+                        margin: 4px 0;
+                    }}
+                    QPushButton:hover {{
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #ff8c00, stop:1 {color});
+                        border: 2px solid #ffcc99;
+                    }}
+                """)
+            else:
+                btn.setStyleSheet(f"""
+                    QPushButton {{
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #ffffff, stop:1 #f8f9fa);
+                        color: #1a1a1a;
+                        border: 2px solid #e9ecef;  /* Reduced from 3px */
+                        border-radius: 8px;  /* Reduced from 15px */
+                        padding: 8px 12px;  /* Reduced from 15px 20px */
+                        font-size: 12px;  /* Reduced from 16px */
+                        font-weight: bold;
+                        text-align: left;
+                        margin: 2px 0;  /* Reduced from 4px */
+                    }}
+                    QPushButton:hover {{
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #fff5f0, stop:1 #ffe0cc);
+                        border: 2px solid {color};  /* Reduced from 4px */
+                        color: {color};
+                    }}
+                    QPushButton:pressed {{
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #ffe0cc, stop:1 #ffcc99);
+                        border: 2px solid {color};  /* Reduced from 4px */
+                        color: {color};
+                    }}
+                """)
 
         created_buttons[0].clicked.disconnect()
         created_buttons[0].clicked.connect(self.ecg_menu.show_save_ecg)
@@ -955,22 +996,25 @@ class ECGTestPage(QWidget):
         created_buttons[1].clicked.connect(self.ecg_menu.show_open_ecg)
         
         created_buttons[2].clicked.disconnect()
-        created_buttons[2].clicked.connect(self.ecg_menu.show_working_mode)
+        created_buttons[2].clicked.connect(self.show_holter_menu)
         
         created_buttons[3].clicked.disconnect()
-        created_buttons[3].clicked.connect(self.ecg_menu.show_report_setup)
+        created_buttons[3].clicked.connect(self.ecg_menu.show_working_mode)
         
         created_buttons[4].clicked.disconnect()
-        created_buttons[4].clicked.connect(self.ecg_menu.show_set_filter)
+        created_buttons[4].clicked.connect(self.ecg_menu.show_report_setup)
         
         created_buttons[5].clicked.disconnect()
-        created_buttons[5].clicked.connect(self.ecg_menu.show_system_setup)
+        created_buttons[5].clicked.connect(self.ecg_menu.show_set_filter)
         
         created_buttons[6].clicked.disconnect()
-        created_buttons[6].clicked.connect(self.ecg_menu.show_load_default)
-
+        created_buttons[6].clicked.connect(self.ecg_menu.show_system_setup)
+        
         created_buttons[7].clicked.disconnect()
-        created_buttons[7].clicked.connect(self.ecg_menu.show_exit)
+        created_buttons[7].clicked.connect(self.ecg_menu.show_load_default)
+
+        created_buttons[8].clicked.disconnect()
+        created_buttons[8].clicked.connect(self.ecg_menu.show_exit)
 
         # Recording Toggle Button Section - Make it compact
         recording_frame = QFrame()
@@ -1467,6 +1511,15 @@ class ECGTestPage(QWidget):
     def on_demo_toggle_changed(self, checked):
         self.update_demo_toggle_label()
         self.demo_manager.toggle_demo_mode(checked)
+        
+        # --- HANDLE HOLTER IN DEMO MODE ---
+        if self.holter_mode_enabled:
+            if checked:
+                self._start_holter_session_internal()
+            else:
+                self._stop_holter_session_internal()
+        # ----------------------------------
+
         if hasattr(self, "generate_report_btn"):
             if checked:
                 # Demo mode ON - Start 10-second cooldown
@@ -4020,6 +4073,23 @@ class ECGTestPage(QWidget):
         metrics_layout.insertWidget(0, heart_rate_widget)
         self.metric_labels['heart_rate'] = heart_rate_val
         
+        # --- ADD HOLTER STATUS BADGE ---
+        self.holter_badge = QLabel(" HOLTER RECORDING ")
+        self.holter_badge.setStyleSheet("""
+            QLabel {
+                background: #E65100;
+                color: white;
+                border-radius: 4px;
+                padding: 4px 8px;
+                font-weight: bold;
+                font-size: 14px;
+                border: 1px solid white;
+            }
+        """)
+        self.holter_badge.setVisible(False)
+        metrics_layout.addWidget(self.holter_badge)
+        # -------------------------------
+
         # Reset all metrics to zero after creating the frame
         self.reset_metrics_to_zero()
         
@@ -5590,6 +5660,11 @@ class ECGTestPage(QWidget):
 
         print(f"Starting acquisition with configured Port: {port}, Baud: {baud}")
 
+        # --- START HOLTER SESSION IF ENABLED ---
+        if self.holter_mode_enabled:
+            self._start_holter_session_internal()
+        # ---------------------------------------
+
         # If user has not configured a port/baud, fall back to auto‑scan instead of blocking
         if port in ("Select Port", None):
             print(" No COM port configured in System Setup – will auto‑scan all ports for ECG device.")
@@ -5912,6 +5987,11 @@ class ECGTestPage(QWidget):
         # UPDATE STATE: Test stopped
         if hasattr(self, 'dashboard_instance') and self.dashboard_instance:
             self.dashboard_instance.update_test_state("12_lead_test", False)
+
+        # --- STOP HOLTER SESSION IF ENABLED ---
+        if self.holter_mode_enabled:
+            self._stop_holter_session_internal()
+        # --------------------------------------
 
         # ── Stop HolterBPMController ──────────────────────────────────────────
         try:
@@ -7972,6 +8052,138 @@ class ECGTestPage(QWidget):
         if mode in ['scroll', 'sweep']:
             self.display_mode = mode
 
+    def show_holter_menu(self):
+        """Toggles the Holter monitor mode for the current session"""
+        if not HOLTER_AVAILABLE:
+            QMessageBox.warning(self, "Holter Monitor", "Holter module is not available.")
+            return
+
+        # Toggle Holter mode
+        self.holter_mode_enabled = not self.holter_mode_enabled
+        
+        # Update button style to show it's active
+        holter_btn = None
+        for btn, text in self.menu_buttons:
+            if text == "Holter":
+                holter_btn = btn
+                break
+        
+        if holter_btn:
+            if self.holter_mode_enabled:
+                holter_btn.setText("Holter: ON")
+                holter_btn.setStyleSheet("""
+                    QPushButton {
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #2ecc71, stop:1 #27ae60);
+                        color: white;
+                        border: 2px solid #27ae60;
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        font-size: 13px;
+                        font-weight: 900;
+                        text-align: center;
+                        margin: 4px 0;
+                    }
+                """)
+                # Hide standard report button in Holter mode to avoid confusion
+                if hasattr(self, 'generate_report_btn'):
+                    self.generate_report_btn.setVisible(False)
+                
+                QMessageBox.information(self, "Holter Mode", 
+                    "Holter Mode Enabled.\nWaves and metrics will display normally.\nClick 'Start' to record; Click 'Stop' to generate Holter report.")
+            else:
+                holter_btn.setText("Holter")
+                holter_btn.setStyleSheet("""
+                    QPushButton {
+                        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, 
+                            stop:0 #E65100, stop:1 #ff8c00);
+                        color: white;
+                        border: 2px solid #E65100;
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        font-size: 13px;
+                        font-weight: 900;
+                        text-align: center;
+                        margin: 4px 0;
+                    }
+                """)
+                # Show standard report button when Holter mode is OFF
+                if hasattr(self, 'generate_report_btn'):
+                    self.generate_report_btn.setVisible(True)
+                
+                QMessageBox.information(self, "Holter Mode", "Holter Mode Disabled. Standard ECG testing only.")
+
+    def _start_holter_session_internal(self):
+        """Internal helper to start a Holter session during acquisition"""
+        # Get patient info from dashboard
+        patient_info = {}
+        try:
+            if hasattr(self.stacked_widget.parent(), 'patient_details'):
+                patient_info = self.stacked_widget.parent().patient_details
+        except Exception:
+            pass
+
+        # Use a default recording directory
+        out_dir = os.path.join(os.getcwd(), "recordings")
+        os.makedirs(out_dir, exist_ok=True)
+        
+        # Create the stream writer
+        self._holter_writer = HolterStreamWriter(
+            output_dir=out_dir,
+            patient_info=patient_info,
+            fs=500
+        )
+        
+        # Start recording
+        session_dir = self._holter_writer.start()
+        
+        # Start analysis worker thread
+        self._holter_worker = HolterAnalysisWorker(
+            analysis_queue=self._holter_writer.analysis_queue,
+            on_chunk_done=lambda result: self._holter_writer.update_live_stats(
+                result.get('hr_mean', 0), result.get('arrhythmias', [])
+            ),
+            fs=500
+        )
+        self._holter_worker.start()
+        
+        # Show Holter badge
+        if hasattr(self, 'holter_badge'):
+            self.holter_badge.setVisible(True)
+            
+        print(f"[Holter] Automatic recording started in {session_dir}")
+
+    def _stop_holter_session_internal(self):
+        """Internal helper to stop a Holter session and generate report"""
+        if self._holter_writer and self._holter_writer.is_running:
+            summary = self._holter_writer.stop()
+            
+            # Stop the worker thread
+            if self._holter_worker:
+                self._holter_worker.stop()
+            
+            # Generate the Holter report
+            from .holter.report_generator import generate_holter_report
+            report_path = generate_holter_report(
+                session_dir=summary['session_dir'],
+                patient_info=summary['patient_info'],
+                summary=summary
+            )
+            
+            # Open the report
+            if os.path.exists(report_path):
+                os.startfile(report_path)
+            
+            QMessageBox.information(self, "Holter Session Complete", 
+                                    f"Holter recording saved and report generated:\n{report_path}")
+            
+            self._holter_writer = None
+            self._holter_worker = None
+            
+            # Hide Holter badge
+            if hasattr(self, 'holter_badge'):
+                self.holter_badge.setVisible(False)
+
     def update_plots(self):
         """Update all ECG plots with current data using PyQtGraph (GitHub version)"""
         try:
@@ -8252,6 +8464,10 @@ class ECGTestPage(QWidget):
                         try:
                             if self._bpm_ctrl is not None:
                                 self._bpm_ctrl.push(packet)
+                            
+                            # ── Feed packet to HolterStreamWriter (fast, non-blocking) ─────
+                            if self._holter_writer and self._holter_writer.is_running:
+                                self._holter_writer.push(packet)
                         except Exception:
                             pass
 
