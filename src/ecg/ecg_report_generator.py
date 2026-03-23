@@ -6,6 +6,16 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Table, TableStyle, Spacer, Image, PageBreak
 )
+from reportlab.graphics.shapes import Drawing, Line, Rect, Path, String
+from reportlab.graphics import renderPDF
+
+class TransparentDrawing(Drawing):
+    """Drawing subclass that suppresses ReportLab's default white background rect."""
+    def drawOn(self, canvas, x, y, _sW=0):
+        canvas.saveState()
+        canvas.translate(x, y)
+        renderPDF.draw(self, canvas, 0, 0, showBoundary=0)
+        canvas.restoreState()
 import os
 import sys
 import json
@@ -18,7 +28,7 @@ import numpy as np
 # ------------------------ ECG grid scale constants ------------------------
 # 40 large boxes across A4 width (210mm) => 1 large box = 5.25mm
 ECG_BASE_BOX_MM = 5.0
-ECG_LARGE_BOX_MM = 210.0 / 40.0
+ECG_LARGE_BOX_MM = 5.0  # Standard ECG: 1 large box = 5mm (A4 standard)
 ECG_SMALL_BOX_MM = ECG_LARGE_BOX_MM / 5.0
 # Scale wave speed so 1 second equals 5 large boxes at 25 mm/s on 40-box grid
 ECG_SPEED_SCALE = ECG_LARGE_BOX_MM / ECG_BASE_BOX_MM
@@ -37,7 +47,7 @@ LEAD_SEQUENCES = {
     "Standard": ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"],
     "Cabrera": ["aVL", "I", "-aVR", "II", "aVF", "III", "V1", "V2", "V3", "V4", "V5", "V6"]
 }
-Y_POSITIONS_MM = [229.6, 212.0, 194.3, 176.7, 159.1, 141.4, 123.8, 106.1, 88.5, 70.9, 53.2, 35.6]
+Y_POSITIONS_MM = [263.2, 242.6, 222.1, 201.5, 180.9, 160.3, 139.8, 119.2, 98.6, 78.0, 57.5, 36.9]
 def _add_patient_header(master_drawing, full_name, age, gender, patient, date_time_str):
     from reportlab.graphics.shapes import String
     if date_time_str:
@@ -256,10 +266,13 @@ def _build_conservative_conclusions(metrics, settings_manager=None, sampling_rat
     acq_parts = []
     if sampling_rate:
         acq_parts.append(f"Sampling rate {sampling_rate} Hz")
-    if wave_gain:
-        acq_parts.append(f"Gain {wave_gain:.1f} mm/mV")
-    if wave_speed:
-        acq_parts.append(f"Paper speed {wave_speed:.1f} mm/s")
+    # ── Always add standard speed + gain ──
+    acq_parts.append("25.0 mm/s")
+    acq_parts.append("10.0 mm/mV")
+    # ── FIX: Always show standard 10mm/mV on report ─────────────────────
+    acq_parts.append("10.0 mm/mV")  # Standard — always 10mm/mV for reports
+    # ── FIX: Always show standard 25mm/s on report ───────────────────────
+    acq_parts.append("25.0 mm/s")  # Standard — always 25mm/s for reports
     if recording_duration:
         acq_parts.append(f"Duration {recording_duration}")
     acq_info = "Acquisition: " + "; ".join(acq_parts) if acq_parts else "Acquisition: not available"
@@ -979,16 +992,10 @@ def create_reportlab_ecg_drawing_with_real_data(lead_name, ecg_data, width=REPOR
         print(f" No real data available for {lead_name} - showing grid only")
         return drawing
 
-    # Get DYNAMIC wave_speed from settings
-    try:
-        wave_speed_setting = settings_manager.get_setting("wave_speed")
-        speed_mm_s = float(wave_speed_setting) if wave_speed_setting else None
-    except Exception:
-        speed_mm_s = None
-    
-    if speed_mm_s is None:
-        print(f" ERROR: wave_speed not found in settings for {lead_name} - cannot generate drawing")
-        return drawing
+    # ── FIX: Report ALWAYS at 25mm/s regardless of display setting ─────────
+    speed_mm_s = 25.0  # Standard clinical ECG paper speed
+    # (Display setting may be 12.5 or 50 mm/s but report is always standard)
+    # ─────────────────────────────────────────────────────────────────────────
         
     width_mm = width / mm  # Convert width points to mm
     total_seconds = width_mm / (speed_mm_s * 1.05)  # ECG_SPEED_SCALE = 1.05
@@ -1523,21 +1530,12 @@ def generate_ecg_report(
 
     # ==================== STEP 2: Get wave_speed from ecg_settings.json (PRIORITY) ====================
     # Priority: ecg_settings.json wave_speed (FULLY DYNAMIC)
-    wave_speed_setting = settings_manager.get_setting("wave_speed")
-    wave_gain_setting = settings_manager.get_setting("wave_gain")
-    
-    if wave_speed_setting is None or wave_gain_setting is None:
-        print(" ERROR: wave_speed or wave_gain not found in settings - cannot generate report")
-        return None
-        
-    wave_speed_mm_s = _safe_float(wave_speed_setting, None)   # No default - must be in settings
-    wave_gain_mm_mv = _safe_float(wave_gain_setting, None)    # No default - must be in settings
-    
-    if wave_speed_mm_s is None or wave_gain_mm_mv is None:
-        print(" ERROR: Invalid wave_speed or wave_gain values - cannot generate report")
-        return None
-        
-    print(f" Using wave_speed from ecg_settings.json: {wave_speed_mm_s} mm/s (for calculation-based beats)")
+    # ── FIX: Reports ALWAYS at 25mm/s + 10mm/mV (standard clinical) ────────
+    # User display setting (12.5/50mm/s) NEVER affects the report
+    wave_speed_mm_s = 25.0   # Standard paper speed — hardcoded for reports
+    wave_gain_mm_mv = 10.0   # Standard gain — hardcoded for reports
+    # ─────────────────────────────────────────────────────────────────────────
+    print(f" Report fixed at standard: {wave_speed_mm_s} mm/s, {wave_gain_mm_mv} mm/mV")
     computed_sampling_rate = 500
 
     data["wave_speed_mm_s"] = wave_speed_mm_s
@@ -1782,15 +1780,15 @@ def generate_ecg_report(
     #  CREATE SINGLE MASSIVE DRAWING with ALL ECG content (NO individual drawings)
     print("Creating SINGLE drawing with all ECG content...")
     
-    # Single drawing dimensions to align with full-page grid (40×56 boxes)
-    # 40 boxes × 5mm = 200mm, 56 boxes × 5mm = 280mm
-    total_width = 200 * mm
-    total_height = 280 * mm
+    # Single drawing dimensions - A4 portrait standard (210x297mm), 5mm ECG boxes
+    # 38 boxes × 5mm = 190mm width, 53 boxes × 5mm = 265mm height (within A4 297mm)
+    total_width = 190 * mm
+    total_height = 265 * mm
     # DEBUG: Print actual dimensions being used
     print(f" DEBUG: Drawing dimensions - Width: {total_width/mm:.1f}mm ({total_width/mm/5:.1f} boxes), Height: {total_height/mm:.1f}mm ({total_height/mm/5:.1f} boxes)")
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -1900,13 +1898,12 @@ def generate_ecg_report(
     #  CREATE SINGLE MASSIVE DRAWING with ALL ECG content (NO individual drawings)
     print("Creating SINGLE drawing with all ECG content...")
     
-    # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    # Keep within frame; grid density is handled by the page grid (42×59 boxes).
-    total_width = 195 * mm
-    total_height = 280 * mm  
+    # Single drawing dimensions - A4 portrait standard (210x297mm), 5mm ECG boxes
+    total_width = 190 * mm
+    total_height = 265 * mm  
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -2441,13 +2438,12 @@ def generate_ecg_report(
     #  CREATE SINGLE MASSIVE DRAWING with ALL ECG content (NO individual drawings)
     print("Creating SINGLE drawing with all ECG content...")
     
-    # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    # Keep within frame; grid density is handled by the page grid (42×59 boxes).
-    total_width = 195 * mm
-    total_height = 280 * mm
+    # Single drawing dimensions - A4 portrait standard (210x297mm), 5mm ECG boxes
+    total_width = 190 * mm
+    total_height = 265 * mm
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -3647,7 +3643,7 @@ def generate_ecg_report(
         filter_band = "Filter: Off"
     master_drawing.add(String(
         84.7 * mm, 257.4 * mm,
-        f"{wave_speed_mm_s} mm/s   {filter_band}   AC : {ac_frequency}   {wave_gain_mm_mv} mm/mV",
+        f"25.0 mm/s   {filter_band}   AC : {ac_frequency}   10.0 mm/mV",
         fontSize=10,
         fontName="Helvetica",
         fillColor=colors.black,
@@ -3698,7 +3694,7 @@ def generate_ecg_report(
     # CENTERED and STYLISH "Conclusion" header - DYNAMIC - SMALLER (AT TOP OF CONTAINER - CLOSE TO TOP LINE)
     # Box center: 200 + (325/2) = 362.5, so text should be centered around 362.5
     # Box top is at conclusion_y_start - 55, so header should be very close to top line
-    conclusion_header = String(127.9 * mm, conclusion_y_start - 3.0 * mm, "✦ CONCLUSION ✦",  # Moved very close to top line: y=0→-53 (just below top edge at -55)
+    conclusion_header = String(127.9 * mm, conclusion_y_start - 3.0 * mm, "CONCLUSION",  # Moved very close to top line: y=0→-53 (just below top edge at -55)
                               fontSize=9, fontName="Helvetica-Bold",  # Reduced from 11 to 9
                               fillColor=colors.HexColor("#2c3e50"),
                               textAnchor="middle")  # This centers the text
@@ -3892,9 +3888,14 @@ def generate_ecg_report(
         # STEP 2: Draw logo on all pages (existing code)
         # Prefer PNG (ReportLab-friendly); fallback to WebP if PNG missing
         # Use resource_path helper for PyInstaller compatibility
-        png_path = _get_resource_path("assets/Deckmountimg.png")
-        webp_path = _get_resource_path("assets/Deckmount.webp")
-        logo_path = png_path if os.path.exists(png_path) else webp_path
+        logo_filename = "DeckmountLogo.png"
+        logo_path = _get_resource_path(f"assets/{logo_filename}")
+        
+        # Fallback to old names if the new one is missing
+        if not os.path.exists(logo_path):
+            png_path = _get_resource_path("assets/Deckmountimg.png")
+            webp_path = _get_resource_path("assets/Deckmount.webp")
+            logo_path = png_path if os.path.exists(png_path) else webp_path
 
         if os.path.exists(logo_path):
             canvas.saveState()

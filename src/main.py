@@ -707,8 +707,24 @@ def main():
 
         app = QApplication(sys.argv)
         app.setApplicationName("ECG Monitor")
-        app.setApplicationVersion("1.3")    
-    
+        app.setApplicationVersion("1.3")
+
+        # ── Pre-warm heavy imports in background ──────────────────────
+        # matplotlib, scipy, pyqtgraph take 2-5s on first import
+        # Start loading now so by the time user types password → cached
+        def _prewarm():
+            try:
+                import matplotlib; matplotlib.use('Agg')
+                import matplotlib.pyplot
+                import scipy.signal
+                import scipy.ndimage
+                import pyqtgraph
+            except Exception:
+                pass
+        import threading
+        threading.Thread(target=_prewarm, daemon=True, name="Prewarm").start()
+        # ──────────────────────────────────────────────────────────────
+
         # Initialize login dialog
         login = LoginRegisterDialog()
         
@@ -757,6 +773,26 @@ def main():
                         # After admin dialog closes, show login again
                         login = LoginRegisterDialog()
                         continue
+                    # ── Show splash while Dashboard imports + constructs ──────
+                    # On first run / slow disk, matplotlib+scipy imports take 2-5s
+                    # Without splash: window appears frozen → user thinks crash
+                    try:
+                        from PyQt5.QtWidgets import QSplashScreen
+                        from PyQt5.QtGui import QPixmap, QColor
+                        from PyQt5.QtCore import Qt
+                        _splash_pix = QPixmap(420, 180)
+                        _splash_pix.fill(QColor("#1a1a2e"))
+                        _splash = QSplashScreen(_splash_pix,
+                                                Qt.WindowStaysOnTopHint)
+                        _splash.showMessage(
+                            "  Loading ECG Monitor…  Please wait",
+                            Qt.AlignCenter | Qt.AlignBottom,
+                            QColor("#ff6600"))
+                        _splash.show()
+                        app.processEvents()
+                    except Exception:
+                        _splash = None
+
                     # Create and show dashboard with user details
                     dashboard = Dashboard(username=login.username, role=None, user_details=login.user_details)
                     # Attach a session recorder for this user
@@ -776,8 +812,15 @@ def main():
                         dashboard._session_recorder = SessionRecorder(username=login.username, user_record=user_record or {})
                     except Exception as e:
                         logger.warning(f"Session recorder init failed: {e}")
+                    # Close splash and show dashboard
+                    if _splash is not None:
+                        try:
+                            _splash.finish(dashboard)
+                        except Exception:
+                            pass
+
                     dashboard.show()
-                    
+
                     # Run application
                     app.exec_()
                     

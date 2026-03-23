@@ -73,7 +73,7 @@ class OfflineQueue:
         # Perform connectivity check
         try:
             # Try to connect to Google DNS (8.8.8.8) on port 53
-            socket.create_connection(("8.8.8.8", 53), timeout=3)
+            socket.create_connection(("8.8.8.8", 53), timeout=0.5)  # FIX: 0.5s max (was 3s freeze)
             self._is_online = True
         except OSError:
             self._is_online = False
@@ -455,12 +455,17 @@ class OfflineQueue:
             return 0
     
     def force_sync_now(self) -> None:
-        """Force immediate sync attempt"""
-        print("🔄 Forcing immediate sync...")
-        if self.is_online(force_check=True):
-            self._process_queue()
-        else:
-            print("📴 Cannot sync - no internet connection")
+        """Force immediate sync attempt — always in background thread."""
+        # FIX: Never block main thread — run in background
+        import threading
+        def _bg_sync():
+            try:
+                if self.is_online(force_check=True):
+                    self._process_queue()
+            except Exception as e:
+                print(f"Background sync error: {e}")
+        t = threading.Thread(target=_bg_sync, daemon=True, name="ForceSyncNow")
+        t.start()
 
 
 # Global instance
@@ -472,4 +477,3 @@ def get_offline_queue() -> OfflineQueue:
     if _offline_queue is None:
         _offline_queue = OfflineQueue()
     return _offline_queue
-

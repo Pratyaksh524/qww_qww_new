@@ -6,7 +6,16 @@ from reportlab.platypus import (
     PageTemplate, Frame, NextPageTemplate, BaseDocTemplate
 )
 from reportlab.graphics.shapes import Drawing, Line, Rect, Path, String
+from reportlab.graphics import renderPDF
 from reportlab.lib.units import mm
+
+class TransparentDrawing(Drawing):
+    """Drawing subclass that suppresses ReportLab's default white background rect."""
+    def drawOn(self, canvas, x, y, _sW=0):
+        canvas.saveState()
+        canvas.translate(x, y)
+        renderPDF.draw(self, canvas, 0, 0, showBoundary=0)
+        canvas.restoreState()
 from reportlab.pdfbase.pdfmetrics import stringWidth
 import os
 import sys
@@ -1649,11 +1658,11 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     print("Creating SINGLE drawing with all ECG content...")
     
     # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    total_width = 780   # Full page width
+    total_width = landscape(A4)[0] - 40  # Exact landscape frame width (A4 - margins) to prevent page overflow
     total_height = 540  # Reduced to 720 to fit within page frame (max ~770) with margin
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -2165,11 +2174,11 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     print("Creating SINGLE drawing with all ECG content...")
     
     # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    total_width = 780   # Full page width
+    total_width = landscape(A4)[0] - 40  # Exact landscape frame width (A4 - margins) to prevent page overflow
     total_height = 540  # Reduced to 720 to fit within page frame (max ~770) with margin
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -3668,7 +3677,7 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     # CENTERED and STYLISH "Conclusion" header - DYNAMIC - SMALLER (AT TOP OF CONTAINER - CLOSE TO TOP LINE)
     # Box center: 450 + (355/2) = 627.5, so text should be centered around 627.5
     # Box top is at conclusion_y_start - 55, so header should be very close to top line
-    conclusion_header = String(627.5, conclusion_y_start + 8, "✦ CONCLUSION ✦",  # Centered in shifted box
+    conclusion_header = String(627.5, conclusion_y_start + 8, "CONCLUSION",  # Centered in shifted box
                               fontSize=9, fontName="Helvetica-Bold",  # Reduced from 11 to 9
                               fillColor=colors.HexColor("#2c3e50"),
                               textAnchor="middle")  # This centers the text
@@ -3862,9 +3871,14 @@ def generate_6_2_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
         # STEP 2: Draw logo on all pages (existing code)
         # Prefer PNG (ReportLab-friendly); fallback to WebP if PNG missing
         # Use resource_path helper for PyInstaller compatibility
-        png_path = _get_resource_path("assets/Deckmountimg.png")
-        webp_path = _get_resource_path("assets/Deckmount.webp")
-        logo_path = png_path if os.path.exists(png_path) else webp_path
+        logo_filename = "DeckmountLogo.png"
+        logo_path = _get_resource_path(f"assets/{logo_filename}")
+        
+        # Fallback to old names if the new one is missing
+        if not os.path.exists(logo_path):
+            png_path = _get_resource_path("assets/Deckmountimg.png")
+            webp_path = _get_resource_path("assets/Deckmount.webp")
+            logo_path = png_path if os.path.exists(png_path) else webp_path
 
         if os.path.exists(logo_path):
             canvas.saveState()

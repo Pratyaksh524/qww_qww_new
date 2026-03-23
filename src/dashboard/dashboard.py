@@ -167,24 +167,26 @@ class Dashboard(QWidget):
             self.auto_sync_service = None
         
         # ========================================
-        # INITIALIZE OFFLINE QUEUE FOR S3 UPLOADS
+        # INITIALIZE OFFLINE QUEUE (deferred to background)
         # ========================================
-        # This ensures reports are queued when offline and auto-synced when online
-        try:
-            from utils.offline_queue import get_offline_queue
-            self.offline_queue = get_offline_queue()
-            queue_stats = self.offline_queue.get_stats()
-            print(f"✅ Offline queue initialized")
-            print(f"   Pending uploads: {queue_stats.get('pending_count', 0)}")
-            print(f"   Online status: {queue_stats.get('is_online', False)}")
-            
-            # If there are pending items, try to sync immediately
-            if queue_stats.get('pending_count', 0) > 0:
-                print(f"🔄 Found {queue_stats.get('pending_count', 0)} pending uploads - attempting sync...")
-                self.offline_queue.force_sync_now()
-        except Exception as e:
-            print(f"⚠️ Could not initialize offline queue: {e}")
-            self.offline_queue = None
+        # FIX: OfflineQueue.__init__ calls is_online() → socket timeout 3s
+        # Defer to background thread so login → dashboard is instant
+        self.offline_queue = None
+
+        def _init_queue_bg():
+            try:
+                from utils.offline_queue import get_offline_queue
+                q = get_offline_queue()
+                self.offline_queue = q
+                stats = q.get_stats()
+                if stats.get('pending_count', 0) > 0:
+                    q.force_sync_now()  # already runs in background thread
+            except Exception as e:
+                print(f"Offline queue init error: {e}")
+
+        import threading
+        threading.Thread(target=_init_queue_bg, daemon=True,
+                         name="OfflineQueueInit").start()
         
         # Triple-click counter for heart rate metric
         self.heart_rate_click_count = 0
@@ -4591,14 +4593,32 @@ class Dashboard(QWidget):
                 self.date_btn.setStyleSheet(grey_style)
 
     def update_internet_status(self):
-        import socket
-        try:
-            socket.create_connection(("8.8.8.8", 53), timeout=2)
-            self.status_dot.setStyleSheet("border-radius: 9px; background: #00e676; border: 2px solid #fff;")
-            self.status_dot.setToolTip("Connected to Internet")
-        except Exception:
-            self.status_dot.setStyleSheet("border-radius: 9px; background: #e74c3c; border: 2px solid #fff;")
-            self.status_dot.setToolTip("No Internet Connection")
+        """Check internet status in background — never freeze UI."""
+        # FIX: was socket.create_connection(timeout=2) on main thread → 2s freeze
+        def _check():
+            import socket
+            try:
+                socket.create_connection(("8.8.8.8", 53), timeout=0.5)
+                online = True
+            except Exception:
+                online = False
+            # Update UI back on main thread via QTimer
+            from PyQt5.QtCore import QTimer
+            def _update():
+                try:
+                    if online:
+                        self.status_dot.setStyleSheet(
+                            "border-radius: 9px; background: #00e676; border: 2px solid #fff;")
+                        self.status_dot.setToolTip("Connected to Internet")
+                    else:
+                        self.status_dot.setStyleSheet(
+                            "border-radius: 9px; background: #e74c3c; border: 2px solid #fff;")
+                        self.status_dot.setToolTip("No Internet Connection")
+                except Exception:
+                    pass
+            QTimer.singleShot(0, _update)
+        import threading
+        threading.Thread(target=_check, daemon=True, name="InetStatus").start()
     def toggle_medical_mode(self):
         self.medical_mode = not self.medical_mode
         if self.medical_mode:
@@ -4627,61 +4647,62 @@ class Dashboard(QWidget):
             QMessageBox.critical(self, "Error", f"Unable to open admin reports: {e}")
 
     def auto_sync_to_cloud(self):
-        """Background auto-backup of reports/metrics when internet is available"""
-        try:
-            # Do not overlap
-            if getattr(self, '_cloud_sync_in_progress', False):
-                return
-            # Require internet
-            import socket
+        """Background auto-backup of reports/metrics. Never blocks main thread."""
+        if getattr(self, '_cloud_sync_in_progress', False):
+            return
+
+        def _bg_upload():
+            # FIX: ALL cloud work here — socket + upload off main thread
             try:
-                socket.create_connection(("8.8.8.8", 53), timeout=2)
-                online = True
-            except Exception:
-                online = False
-            if not online:
-                return
-            # Require cloud configured
-            from utils.cloud_uploader import get_cloud_uploader
-            cloud_uploader = get_cloud_uploader()
-            if not cloud_uploader.is_configured():
-                return
-            # Scan reports directory for new files not in upload log
-            import glob, os, json
-            reports_dir = "reports"
-            os.makedirs(reports_dir, exist_ok=True)
-            uploaded_names = set()
-            try:
-                history = cloud_uploader.get_upload_history(limit=1000)
-                for item in history:
-                    path = item.get('local_path') or ''
-                    if path:
-                        uploaded_names.add(os.path.basename(path))
-            except Exception:
-                pass
-            candidates = []
-            candidates += glob.glob(os.path.join(reports_dir, "ECG_Report_*.pdf"))
-            candidates += [p for p in glob.glob(os.path.join(reports_dir, "*.json"))
-                           if ('report' in os.path.basename(p).lower() or 'metric' in os.path.basename(p).lower())]
-            # Filter new files
-            pending = [p for p in candidates if os.path.basename(p) not in uploaded_names]
-            if not pending:
-                return
-            # Upload in background (sequential, small set)
-            self._cloud_sync_in_progress = True
-            original_text = self.cloud_sync_btn.text() if hasattr(self, 'cloud_sync_btn') else ''
-            if hasattr(self, 'cloud_sync_btn'):
-                self.cloud_sync_btn.setText("Syncing...")
-                self.cloud_sync_btn.setEnabled(False)
-            for path in pending:
-                cloud_uploader.upload_report(path)
-            if hasattr(self, 'cloud_sync_btn'):
-                self.cloud_sync_btn.setText(original_text or "Cloud Sync")
-                self.cloud_sync_btn.setEnabled(True)
-        except Exception:
-            pass
-        finally:
-            self._cloud_sync_in_progress = False
+                import socket, os, glob, json
+                # Quick connectivity check (0.5s max)
+                try:
+                    socket.create_connection(("8.8.8.8", 53), timeout=0.5)
+                except Exception:
+                    return  # No internet — silent return
+
+                from utils.cloud_uploader import get_cloud_uploader
+                cloud_uploader = get_cloud_uploader()
+                if not cloud_uploader.is_configured():
+                    return
+
+                reports_dir = "reports"
+                os.makedirs(reports_dir, exist_ok=True)
+                uploaded_names = set()
+                try:
+                    history = cloud_uploader.get_upload_history(limit=1000)
+                    for item in history:
+                        path = item.get('local_path') or ''
+                        if path:
+                            uploaded_names.add(os.path.basename(path))
+                except Exception:
+                    pass
+
+                candidates = []
+                candidates += glob.glob(os.path.join(reports_dir, "ECG_Report_*.pdf"))
+                candidates += [p for p in glob.glob(os.path.join(reports_dir, "*.json"))
+                               if ('report' in os.path.basename(p).lower() or
+                                   'metric' in os.path.basename(p).lower())]
+                pending = [p for p in candidates
+                           if os.path.basename(p) not in uploaded_names]
+                if not pending:
+                    return
+
+                self._cloud_sync_in_progress = True
+                for path in pending:
+                    try:
+                        cloud_uploader.upload_report(path)
+                    except Exception:
+                        pass
+            except Exception as e:
+                print(f"Auto-sync error: {e}")
+            finally:
+                self._cloud_sync_in_progress = False
+
+        import threading
+        t = threading.Thread(target=_bg_upload, daemon=True, name="AutoCloudSync")
+        t.start()
+
 
     def sync_to_cloud(self):
         """Sync ECG reports and metrics to AWS S3"""

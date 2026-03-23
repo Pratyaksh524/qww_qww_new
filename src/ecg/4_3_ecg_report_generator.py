@@ -6,7 +6,16 @@ from reportlab.platypus import (
     PageTemplate, Frame, NextPageTemplate, BaseDocTemplate
 )
 from reportlab.graphics.shapes import Drawing, Line, Rect, Path, String
+from reportlab.graphics import renderPDF
 from reportlab.lib.units import mm
+
+class TransparentDrawing(Drawing):
+    """Drawing subclass that suppresses ReportLab's default white background rect."""
+    def drawOn(self, canvas, x, y, _sW=0):
+        canvas.saveState()
+        canvas.translate(x, y)
+        renderPDF.draw(self, canvas, 0, 0, showBoundary=0)
+        canvas.restoreState()
 from reportlab.pdfbase.pdfmetrics import stringWidth
 import os
 import sys
@@ -1579,11 +1588,11 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     COLUMN_WIDTH_PTS = 18 * ECG_LARGE_BOX_MM * mm
     
     # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    total_width = 3 * COLUMN_WIDTH_PTS + 20   # Full width for 3 columns + small margin
+    total_width = landscape(A4)[0] - 40  # Exact landscape frame width (A4 - margins) to prevent page overflow
     total_height = 540  # Reduced to 720 to fit within page frame (max ~770) with margin
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -2304,11 +2313,11 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     COLUMN_WIDTH_PTS = 18 * ECG_LARGE_BOX_MM * mm
     
     # Single drawing dimensions - ADJUSTED HEIGHT to fit within page frame (max ~770)
-    total_width = 3 * COLUMN_WIDTH_PTS + 20   # Full width for 3 columns + small margin
+    total_width = landscape(A4)[0] - 40  # Exact landscape frame width (A4 - margins) to prevent page overflow
     total_height = 520  # Adjusted to fit within landscape frame (555.3 available)
     
     # Create ONE master drawing
-    master_drawing = Drawing(total_width, total_height)
+    master_drawing = TransparentDrawing(total_width, total_height)
     
     # STEP 1: NO background rectangle - let page pink grid show through
     
@@ -3589,7 +3598,7 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
     # CENTERED and STYLISH "Conclusion" header - DYNAMIC - SMALLER (AT TOP OF CONTAINER - CLOSE TO TOP LINE)
     # Box center: 200 + (325/2) = 362.5, so text should be centered around 362.5
     # Box top is at conclusion_y_start - 55, so header should be very close to top line
-    conclusion_header = String(617.5, conclusion_y_start + 8, "✦ CONCLUSION ✦",  # Shifted right by 255 points total (362.5 + 225 + 30 = 617.5)
+    conclusion_header = String(617.5, conclusion_y_start + 8, "CONCLUSION",  # Shifted right by 255 points total (362.5 + 225 + 30 = 617.5)
                               fontSize=9, fontName="Helvetica-Bold",  # Reduced from 11 to 9
                               fillColor=colors.HexColor("#2c3e50"),
                               textAnchor="middle")  # This centers the text
@@ -3785,9 +3794,14 @@ def generate_4_3_ecg_report(filename="ecg_report.pdf", data=None, lead_images=No
         # STEP 2: Draw logo on all pages (existing code)
         # Prefer PNG (ReportLab-friendly); fallback to WebP if PNG missing
         # Use resource_path helper for PyInstaller compatibility
-        png_path = _get_resource_path("assets/Deckmountimg.png")
-        webp_path = _get_resource_path("assets/Deckmount.webp")
-        logo_path = png_path if os.path.exists(png_path) else webp_path
+        logo_filename = "DeckmountLogo.png"
+        logo_path = _get_resource_path(f"assets/{logo_filename}")
+        
+        # Fallback to old names if the new one is missing
+        if not os.path.exists(logo_path):
+            png_path = _get_resource_path("assets/Deckmountimg.png")
+            webp_path = _get_resource_path("assets/Deckmount.webp")
+            logo_path = png_path if os.path.exists(png_path) else webp_path
 
         if os.path.exists(logo_path):
             canvas.saveState()

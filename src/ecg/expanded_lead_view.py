@@ -1773,7 +1773,19 @@ class ExpandedLeadView(QDialog):
             padded_start = max(0, start_idx - pad_samples)
             padded_end = min(total_samples, end_idx + pad_samples)
 
-            padded_signal = self.ecg_data[padded_start:padded_end]
+            signal_raw = self.ecg_data[padded_start:padded_end]
+
+            # ── FIX: Mirror-pad right edge when at buffer end ─────────────────
+            # When end_idx = total_samples (live view), right pad = 0
+            # → filtfilt has no causal data → Gibbs ringing → jump at right edge
+            # Solution: mirror-extend the last pad_samples worth of signal
+            right_missing = pad_samples - (padded_end - end_idx)
+            if right_missing > 0 and len(signal_raw) > right_missing:
+                mirror_right = signal_raw[-right_missing:][::-1]  # mirror last N samples
+                signal_raw = np.concatenate([signal_raw, mirror_right])
+            # ─────────────────────────────────────────────────────────────────
+
+            padded_signal = signal_raw
             if len(padded_signal) <= 1:
                 return
 
@@ -1851,19 +1863,26 @@ class ExpandedLeadView(QDialog):
                 if (len(display_signal) - (edge_trim * 2)) >= 5:
                     center_slice = display_signal[edge_trim:-edge_trim]
 
-            raw_center = (np.median(center_slice) if len(center_slice) > 0 else 0.0)
-            # Stabilize baseline center to avoid visible deformation during UI stalls/focus switches.
-            # Reset if the user jumps to a different history segment so stale EMA
-            # state cannot pull the newest edge of the trace.
+            # ── FIX: Percentile-based baseline — works at ALL BPM incl 219 ────
+            # median fails at high BPM: 36 beats in window → median IS the QRS
+            # P10 tracks the true isoelectric line regardless of heart rate
+            # (10th percentile ≈ TP segment baseline at any BPM)
+            if len(center_slice) > 0:
+                raw_center = float(np.percentile(center_slice, 10))
+            else:
+                raw_center = 0.0
+
             if (
                 not hasattr(self, '_display_center_ema')
                 or self._last_window_bounds is None
-                or abs(current_window_bounds[0] - self._last_window_bounds[0]) > max(1, int(self.sampling_rate * 2.0))
+                or abs(current_window_bounds[0] - self._last_window_bounds[0]) > max(1, int(self.sampling_rate * 30.0))
             ):
                 self._display_center_ema = raw_center
-            center_alpha = 0.12
+            # alpha=0.01 — very stable, won't react to individual beats
+            center_alpha = 0.01
             self._display_center_ema = (center_alpha * raw_center) + ((1.0 - center_alpha) * self._display_center_ema)
             self._last_window_bounds = current_window_bounds
+            # ─────────────────────────────────────────────────────────────────
 
             centered = display_signal - self._display_center_ema
             scaled = centered * (gain * self.amplification)

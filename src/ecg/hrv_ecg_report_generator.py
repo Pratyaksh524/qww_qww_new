@@ -2518,9 +2518,14 @@ def generate_ecg_report(filename="ecg_report.pdf", data=None, lead_images=None, 
         # STEP 2: Draw logo on all pages (existing code)
         # Prefer PNG (ReportLab-friendly); fallback to WebP if PNG missing
         # Use resource_path helper for PyInstaller compatibility
-        png_path = _get_resource_path("assets/Deckmountimg.png")
-        webp_path = _get_resource_path("assets/Deckmount.webp")
-        logo_path = png_path if os.path.exists(png_path) else webp_path
+        logo_filename = "DeckmountLogo.png"
+        logo_path = _get_resource_path(f"assets/{logo_filename}")
+        
+        # Fallback to old names if the new one is missing
+        if not os.path.exists(logo_path):
+            png_path = _get_resource_path("assets/Deckmountimg.png")
+            webp_path = _get_resource_path("assets/Deckmount.webp")
+            logo_path = png_path if os.path.exists(png_path) else webp_path
 
         if os.path.exists(logo_path):
             canvas.saveState()

@@ -59,7 +59,7 @@ class Lead12BlackPage(QWidget):
         """Clean up resources when widget is closed"""
         if hasattr(self, 'timer') and self.timer:
             self.timer.stop()
-            self.timer.deleteLater()
+            # self.timer.deleteLater() # Removed: can cause issues during close
         super().closeEvent(event)
 
     def update_data(self):
@@ -1458,12 +1458,20 @@ class ECGMenu(QGroupBox):
 
     def create_report_setup_content(self):
 
-        # Get current settings from settings manager
         if not self.settings_manager:
             self.settings_manager = SettingsManager()
 
-        # Define sections for report setup
+        # Define sections — Report Format added at top
         sections = [
+            {
+                'title': 'Report Format',
+                'options': [
+                    ("12:1  (Portrait)",   "12_1"),
+                    ("6:2  (Landscape)",   "6_2"),
+                    ("4:3  (Landscape)",   "4_3"),
+                ],
+                'setting_key': 'report_format'
+            },
             {
                 'title': 'Average Wave',
                 'options': [("On", "on"), ("Off", "off")],
@@ -1473,10 +1481,9 @@ class ECGMenu(QGroupBox):
                 'title': 'Lead Sequence',
                 'options': [("Standard", "Standard"), ("Cabrera", "Cabrera")],
                 'setting_key': 'lead_sequence'
-            }
+            },
         ]
-        
-        # Define buttons
+
         buttons = [
             {
                 'text': 'Save',
@@ -1489,14 +1496,29 @@ class ECGMenu(QGroupBox):
                 'style': 'danger'
             }
         ]
-        
+
         return self.create_unified_control_panel("Report Setup", sections, buttons)
 
     def on_report_setting_changed(self, value):
         print(f"Report setting changed to: {value}")
 
     def save_report_settings(self):
-        QMessageBox.information(self.parent(), "Saved", "Report settings saved successfully!")
+        from PyQt5.QtWidgets import QMessageBox
+        fmt_labels = {"12_1": "12:1 Portrait", "6_2": "6:2 Landscape", "4_3": "4:3 Landscape"}
+        try:
+            fmt = self.settings_manager.get_setting('report_format', '12_1') if self.settings_manager else '12_1'
+            label = fmt_labels.get(fmt, fmt)
+            QMessageBox.information(self.parent() or self,
+                "Saved", f"Report settings saved!\nFormat: {label}")
+        except Exception:
+            pass
+        # Refresh Generate Report button label on the ECG page
+        try:
+            if hasattr(self, 'ecg_test_page') and self.ecg_test_page:
+                if hasattr(self.ecg_test_page, '_refresh_report_btn_label'):
+                    self.ecg_test_page._refresh_report_btn_label()
+        except Exception:
+            pass
         self.hide_sliding_panel()
 
     # ----------------------------- Set Filter -----------------------------

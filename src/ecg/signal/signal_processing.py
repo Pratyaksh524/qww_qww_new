@@ -6,36 +6,29 @@ from collections import deque
 
 def extract_low_frequency_baseline(signal: np.ndarray, sampling_rate: float = 500.0) -> float:
     """
-    Extract very-low-frequency baseline estimate (< 0.3 Hz) for display anchoring.
-    
-    This removes respiration artifacts (0.1-0.35 Hz) while preserving very-low-frequency drift.
-    
+    Extract isoelectric baseline estimate for ECG display anchoring.
+
+    Uses 10th percentile (P10) which tracks the true isoelectric line at
+    ANY heart rate — 40 BPM or 220 BPM — because:
+    - P10 ≈ TP segment value regardless of how many beats are in the window
+    - Moving average fails at high BPM (includes QRS energy → inflated baseline)
+    - Median fails at high BPM (36 beats/10s → median IS the QRS, not baseline)
+
     Args:
         signal: ECG signal array
         sampling_rate: Sampling rate in Hz
-    
+
     Returns:
-        Baseline estimate value
+        Baseline estimate (isoelectric line value)
     """
     try:
-        if len(signal) < 100:
-            return np.mean(signal) if len(signal) > 0 else 0.0
-        
-        # Use moving average with window ~3.3 seconds (removes respiration ~0.3 Hz)
-        window_samples = int(3.3 * sampling_rate)
-        window_samples = max(10, min(window_samples, len(signal) // 4))
-        
-        if window_samples >= len(signal):
-            return np.mean(signal)
-        
-        # Simple moving average (low-pass filter)
-        kernel = np.ones(window_samples) / window_samples
-        baseline_estimate = np.convolve(signal, kernel, mode='same')
-        
-        # Return median of baseline estimate (more robust than mean)
-        return float(np.median(baseline_estimate))
-    except Exception as e:
-        print(f" Error extracting low-frequency baseline: {e}")
+        if len(signal) == 0:
+            return 0.0
+        if len(signal) < 10:
+            return float(np.median(signal))
+        # P10 = 10th percentile = isoelectric baseline at any BPM
+        return float(np.percentile(signal, 10))
+    except Exception:
         return float(np.mean(signal)) if len(signal) > 0 else 0.0
 
 
