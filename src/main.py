@@ -70,27 +70,41 @@ else:
     logger = FallbackLogger()
 
 # Import application modules with proper error handling
-try:
-    from auth.sign_in import SignIn
-    from auth.sign_out import SignOut
-    from dashboard.dashboard import Dashboard
-    logger.info(SUCCESS_MESSAGES["modules_loaded"])
-except ImportError as e:
-    logger.error(ERROR_MESSAGES["import_error"].format(e))
-    logger.error("💡 Make sure you're running from the src directory")
-    logger.error("💡 Try: cd src && python main.py")
-    sys.exit(1)
+def get_auth_modules():
+    try:
+        from auth.sign_in import SignIn
+        from auth.sign_out import SignOut
+        return SignIn, SignOut
+    except ImportError as e:
+        logger.error(ERROR_MESSAGES["import_error"].format(e))
+        logger.error("💡 Make sure you're running from the src directory")
+        logger.error("💡 Try: cd src && python main.py")
+        sys.exit(1)
+
+def get_dashboard_module():
+    try:
+        from dashboard.dashboard import Dashboard
+        return Dashboard
+    except ImportError as e:
+        logger.error(ERROR_MESSAGES["import_error"].format(e))
+        return None
 
 # Import ECG modules with fallback
-try:
-    from ecg.pan_tompkins import pan_tompkins
-    logger.info(SUCCESS_MESSAGES["ecg_modules_loaded"])
-except ImportError as e:
-    logger.warning(ERROR_MESSAGES["ecg_import_warning"].format(e))
-    logger.warning("💡 ECG analysis features may be limited")
-    # Create a dummy function to prevent errors
-    def pan_tompkins(ecg, fs=500):
-        return []
+def get_ecg_modules():
+    try:
+        from ecg.pan_tompkins import pan_tompkins
+        logger.info(SUCCESS_MESSAGES["ecg_modules_loaded"])
+        return pan_tompkins
+    except ImportError as e:
+        if "ecg_import_warning" in ERROR_MESSAGES:
+            logger.warning(ERROR_MESSAGES["ecg_import_warning"].format(e))
+        else:
+            logger.warning(f"ECG module import warning: {e}")
+        logger.warning("💡 ECG analysis features may be limited")
+        # Create a dummy function to prevent errors
+        def pan_tompkins(ecg, fs=500):
+            return []
+        return pan_tompkins
 
 # Get configuration
 config = get_config()
@@ -141,7 +155,7 @@ class LoginRegisterDialog(QDialog):
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
         
         # Initialize sign-in logic
-        from auth.sign_in import SignIn
+        SignIn, _ = get_auth_modules()
         self.sign_in_logic = SignIn()
 
         # Resize according to current screen size (~90% of available geometry)
@@ -794,6 +808,10 @@ def main():
                         _splash = None
 
                     # Create and show dashboard with user details
+                    Dashboard = get_dashboard_module()
+                    if Dashboard is None:
+                        QMessageBox.critical(None, "Error", "Failed to load Dashboard module. Please check logs.")
+                        break
                     dashboard = Dashboard(username=login.username, role=None, user_details=login.user_details)
                     # Attach a session recorder for this user
                     try:

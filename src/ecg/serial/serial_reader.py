@@ -582,14 +582,14 @@ class SerialStreamReader:
                     
                     self._last_packet_counter = packet_counter
                     
-                    # Only log every 500th packet to reduce console spam (optimized for performance)
+                    # Only log every 500th packet to reduce console spam
                     if self.data_count % 500 == 0:
                         loss_info = f" (Lost: {self._total_sequence_lost})" if self._total_sequence_lost > 0 else ""
                         print(f" 📡 Packet #{self.data_count}{loss_info}")
-                    if len(out) < max_packets:
-                        out.append(parsed)
-                    else:
-                        dropped_for_ui += 1
+                        
+                    # We append EVERYTHING we parse. The safety is the time budget (parse_deadline).
+                    # Dropping packets here causes missed heartbeats and false arrhythmias in the backend.
+                    out.append(parsed)
             
             # If we processed many packets, we're catching up - this is good
             if packets_processed > max_packets * 2:

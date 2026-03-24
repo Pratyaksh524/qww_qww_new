@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (
     QDialog, QLineEdit, QComboBox, QFormLayout, QMessageBox, QSizePolicy, QStackedWidget, QScrollArea, QSpacerItem, QSlider
 )
 from PyQt5.QtGui import QFont, QPixmap, QMovie
-from PyQt5.QtCore import Qt, QTimer, QSize
+from PyQt5.QtCore import Qt, QTimer, QSize, QThread, pyqtSignal
 try:
     from PyQt5.QtMultimedia import QSound
 except ImportError:
@@ -97,6 +97,52 @@ class MplCanvas(FigureCanvas):
         self.axes = fig.add_subplot(111)
         super().__init__(fig)
 
+class DeviceScanWorker(QThread):
+    """Worker thread for non-blocking serial port scanning"""
+    scan_finished = pyqtSignal(bool, str, str) # success, port, version
+
+    def __init__(self, settings_manager=None):
+        super().__init__()
+        self.settings_manager = settings_manager
+
+    def run(self):
+        try:
+            import serial
+            import serial.tools.list_ports
+            from ecg.serial.hardware_commands import HardwareCommandHandler
+
+            ports = list(serial.tools.list_ports.comports())
+            if sys.platform == "darwin":
+                ports = [p for p in ports if ("usbserial" in p.device) or ("usbmodem" in p.device)]
+            
+            if not ports:
+                self.scan_finished.emit(False, "", "")
+                return
+
+            # Prioritize the last saved port
+            if self.settings_manager:
+                saved_port = self.settings_manager.get_setting("serial_port")
+                if saved_port:
+                    ports.sort(key=lambda p: 0 if p.device == saved_port else 1)
+
+            for port in ports:
+                try:
+                    # Quick check
+                    ser = serial.Serial(port.device, 115200, timeout=0.1)
+                    handler = HardwareCommandHandler(ser)
+                    success, version, _ = handler.send_version_command(timeout=0.2)
+                    ser.close()
+                    
+                    if success and version:
+                        self.scan_finished.emit(True, port.device, version)
+                        return
+                except Exception:
+                    continue
+
+            self.scan_finished.emit(False, "", "")
+        except Exception as e:
+            print(f"Error in DeviceScanWorker: {e}")
+            self.scan_finished.emit(False, "", "")
 class SignInDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -407,11 +453,13 @@ class Dashboard(QWidget):
         self.settings_manager = SettingsManager()
         self.device_check_timer = QTimer(self)
         self.device_check_timer.timeout.connect(self.check_device_connection)
-        self.device_check_timer.start(100) # Check every 0.1 second
+        # self.device_check_timer.start(100) # Check every 0.1 second
+        self.device_check_timer.start(500) # Reduced frequency to 0.5 seconds per user request
 
         self._device_scan_in_progress = False
         self._last_device_scan_time = 0
         self._initial_scan_completed = False
+        self._last_available_ports = [] # Track port changes to avoid redundant scanning
 
         # Initialize UI as disconnected
         self.update_device_ui(False)
@@ -4258,13 +4306,18 @@ class Dashboard(QWidget):
             
             dialog.exec_()
         else:
-            hw_v = "Not Detected"
-            if hasattr(self, 'settings_manager'):
+            hw_v = ""
+            if hasattr(self, 'device_version') and self.device_version:
+                hw_v = self.device_version
+                
+            if not hw_v and hasattr(self, 'settings_manager'):
                 # Reload settings to ensure we have the latest from disk
                 self.settings_manager.settings = self.settings_manager.load_settings()
                 hw_v = self.settings_manager.get_setting("hardware_version", "Not Detected")
-                if not hw_v:
-                    hw_v = "Not Detected"
+                
+            if not hw_v:
+                hw_v = "Not Detected"
+                
             QMessageBox.information(self, "Version Information", f"Software Version: V 1.1.1\nHardware Version: {hw_v}")
 
     def handle_sign_out(self):
@@ -4416,16 +4469,20 @@ class Dashboard(QWidget):
         if not SERIAL_AVAILABLE:
             return
 
-        # If device is already connected, check if it's still there
-        if self.device_connected and self.device_port:
-            try:
-                available_ports = [p.device for p in serial.tools.list_ports.comports()]
-                if self.device_port not in available_ports:
+        try:
+            # Get current available ports
+            current_ports = [p.device for p in serial.tools.list_ports.comports()]
+            
+            # If device is already connected, check if it's still there
+            if self.device_connected and self.device_port:
+                if self.device_port not in current_ports:
                     print(f"⚠️ Port {self.device_port} disconnected.")
                     self.device_connected = False
                     self.device_port = None
                     self.update_device_ui(False)
-
+                    # Update port tracking to current state to avoid immediate re-scan
+                    self._last_available_ports = current_ports
+                    
                     # Inform user if on dashboard and no tests active
                     is_on_dashboard = self.page_stack.currentWidget() == self.dashboard_page
                     hrv_active = hasattr(self, 'hrv_window') and self.hrv_window and self.hrv_window.isVisible()
@@ -4466,39 +4523,32 @@ class Dashboard(QWidget):
 
                         QMessageBox.critical(self, "Test Failed", "Device disconnected. Test Failed")
                         self.page_stack.setCurrentWidget(self.dashboard_page)
+                return # Already connected and port exists, or just disconnected
 
-            except Exception:
-                pass
-        else:
-            # Not connected, scan for device
-            if sys.platform == "darwin":
-                now = time.time()
-                if getattr(self, "_device_scan_in_progress", False):
-                    return
-                last = getattr(self, "_last_device_scan_time", 0)
-                if now - last < 5.0:
-                    return
-
-                # Show searching status while scan is in progress
-                if hasattr(self, 'device_status_label'):
-                    self.device_status_label.setText("Searching for device...")
-                    self.device_status_label.setStyleSheet("color: orange; margin-right: 10px; font-weight: bold;")
+            # Not connected, only scan if the ports list has changed (new device plugged in)
+            if set(current_ports) != set(self._last_available_ports):
+                print(f"🔄 COM port change detected: {self._last_available_ports} -> {current_ports}")
+                self._last_available_ports = current_ports
                 
-                self._device_scan_in_progress = True
-                self._last_device_scan_time = now
-                try:
-                    self.scan_for_device_version()
-                finally:
-                    self._device_scan_in_progress = False
-            else:
-                # Non-macOS platforms: trigger scan immediately and show searching status
-                if hasattr(self, 'device_status_label'):
-                    self.device_status_label.setText("Searching for device...")
-                    self.device_status_label.setStyleSheet("color: orange; margin-right: 10px; font-weight: bold;")
+                # If a new port was added, try to scan
+                if len(current_ports) > 0:
+                    # Show searching status while scan is in progress
+                    if hasattr(self, 'device_status_label'):
+                        self.device_status_label.setText("Searching for device...")
+                        self.device_status_label.setStyleSheet("color: orange; margin-right: 10px; font-weight: bold;")
 
-                self.scan_for_device_version()
+                    # Only scan if not already in progress
+                    if not getattr(self, "_device_scan_in_progress", False):
+                        self._device_scan_in_progress = True
+                        
+                        # Use DeviceScanWorker to scan in background
+                        self.scan_worker = DeviceScanWorker(self.settings_manager)
+                        self.scan_worker.scan_finished.connect(self.on_scan_finished)
+                        self.scan_worker.start()
+            
+        except Exception as e:
+            print(f"Error in check_device_connection: {e}")
 
-        # Only skip scanning if NOT already connected and a test window is open
         # Skip if any test window is open (HRV or Hyperkalemia)
         if hasattr(self, 'hrv_window') and self.hrv_window and self.hrv_window.isVisible():
             return
@@ -4508,67 +4558,34 @@ class Dashboard(QWidget):
         if self.page_stack.currentWidget() == getattr(self, 'ecg_test_page', None):
             return
 
-    def scan_for_device_version(self):
-        """Scan all available ports for the device using version command"""
-        try:
-            scan_start = time.time()
-            ports = list(serial.tools.list_ports.comports())
-            if sys.platform == "darwin":
-                ports = [p for p in ports if ("usbserial" in p.device) or ("usbmodem" in p.device)]
-            if not ports:
-                self.update_device_ui(False)
-                self._initial_scan_completed = True
-                return
+    def on_scan_finished(self, success, port, version):
+        """Callback for background device scan"""
+        self._device_scan_in_progress = False
+        self._initial_scan_completed = True
 
-            # Prioritize the last saved port to speed up connection
+        if success:
+            # Inform user if not the initial scan
+            if getattr(self, '_initial_scan_completed', False):
+                QMessageBox.information(self, "Connection Status", "Device connected")
+
+            # Update hardware version if it's different from current
+            if self.device_version != version:
+                print(f"🔄 Hardware version changed from {self.device_version} to {version}")
+                self.device_version = version
+
+            self.device_port = port
+            self.device_connected = True
+            self.update_device_ui(True)
+
+            # Save to settings so test pages can use it
             if hasattr(self, 'settings_manager'):
-                saved_port = self.settings_manager.get_setting("serial_port")
-                if saved_port:
-                    # Move saved port to the front of the list
-                    ports.sort(key=lambda p: 0 if p.device == saved_port else 1)
-
-            for port in ports:
-                try:
-                    # Quick check
-                    ser = serial.Serial(port.device, 115200, timeout=0.1)
-                    handler = HardwareCommandHandler(ser)
-                    success, version, _ = handler.send_version_command(timeout=0.2)
-                    ser.close()
-                    
-                    if success and version:
-                        # Inform user if not the initial scan
-                        if getattr(self, '_initial_scan_completed', False):
-                            QMessageBox.information(self, "Connection Status", "Device connected")
-
-                        # Update hardware version if it's different from current
-                        if self.device_version != version:
-                            print(f"🔄 Hardware version changed from {self.device_version} to {version}")
-                            self.device_version = version
-
-                        self.device_port = port.device
-                        self.device_connected = True
-                        self.update_device_ui(True)
-
-                        # Save to settings so test pages can use it
-                        if hasattr(self, 'settings_manager'):
-                            self.settings_manager.set_setting("serial_port", port.device)
-                            self.settings_manager.set_setting("baud_rate", "115200")
-                            self.settings_manager.set_setting("hardware_version", version)
-                            self.settings_manager.save_settings()
-                            elapsed = time.time() - scan_start
-                            print(f"✅ Device found on {port.device} in {elapsed:.2f}s, saved to settings with version {version}.")
-                            self._initial_scan_completed = True
-                        return
-                except Exception:
-                    continue
-
-            # If loop finishes without success
+                self.settings_manager.set_setting("serial_port", port)
+                self.settings_manager.set_setting("baud_rate", "115200")
+                self.settings_manager.set_setting("hardware_version", version)
+                self.settings_manager.save_settings()
+                print(f"✅ Device found on {port} and saved to settings with version {version}.")
+        else:
             self.update_device_ui(False)
-            self._initial_scan_completed = True
-            
-        except Exception:
-            self._initial_scan_completed = True
-            pass
 
     def update_device_ui(self, connected):
         """Update UI elements based on device connection status"""

@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import Qt, QTimer
-import pyqtgraph as pg
+# import pyqtgraph as pg  # Lazy loaded in methods
 from scipy.signal import find_peaks, butter, filtfilt
 from scipy.ndimage import gaussian_filter1d
 
@@ -203,6 +203,7 @@ class HyperkalemiaTestWindow(QWidget):
         
     def init_ui(self):
         """Initialize the user interface"""
+        import pyqtgraph as pg
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
         layout.setContentsMargins(20, 20, 20, 20)

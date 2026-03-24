@@ -1843,8 +1843,30 @@ class ECGMenu(QGroupBox):
             # Reload settings to ensure we have the latest version from disk
             self.settings_manager.settings = self.settings_manager.load_settings()
         hardware_version = ""
-        if self.settings_manager:
-            hardware_version = self.settings_manager.get_setting("hardware_version", "")
+        
+        # Determine if physically disconnected at the dashboard level
+        is_connected = True
+        if hasattr(self, 'dashboard') and self.dashboard:
+            is_connected = getattr(self.dashboard, 'device_connected', True)
+            
+        if is_connected:
+            # 1. Try to get active version from current serial connection if streaming
+            if hasattr(self, 'ecg_test_page') and self.ecg_test_page:
+                if hasattr(self.ecg_test_page, 'serial_reader') and self.ecg_test_page.serial_reader:
+                    # Try getting the cached device version
+                    if hasattr(self.ecg_test_page.serial_reader, 'device_version') and self.ecg_test_page.serial_reader.device_version:
+                        hardware_version = self.ecg_test_page.serial_reader.device_version
+    
+            # 2. Fallback to settings
+            if not hardware_version and self.settings_manager:
+                hardware_version = self.settings_manager.get_setting("hardware_version", "")
+                
+            # 3. Cache it back to settings if we received a valid one
+            if hardware_version and hardware_version != "Not Detected" and self.settings_manager:
+                current_saved = self.settings_manager.get_setting("hardware_version", "")
+                if current_saved != hardware_version:
+                    self.settings_manager.set_setting("hardware_version", hardware_version)
+
         if not hardware_version:
             hardware_version = "Not Detected"
 
