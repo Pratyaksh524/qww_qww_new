@@ -45,7 +45,7 @@ except Exception:
     pg = None
 
 # ── Colour palette ─────────────────────────────────────────────────────────────
-COL_ORANGE  = "#E65100"
+COL_ORANGE  = "#00A86B"
 COL_DARK    = "#1A1A2E"
 COL_BLUE    = "#1565C0"
 COL_GREEN   = "#2E7D32"
@@ -56,7 +56,7 @@ COL_BG      = "#0D1117"    # dark ECG-style background
 COL_GREEN_ECG = "#00FF00"  # ECG trace green
 
 
-def _btn_style(bg="#E65100", fg="white", hover="#FF6D00"):
+def _btn_style(bg=COL_ORANGE, fg="white", hover="#22C55E"):
     return f"""
         QPushButton {{
             background: {bg};
@@ -112,7 +112,7 @@ class HolterStartDialog(QDialog):
         title = QLabel("🫀  Holter Monitor — Professional Setup")
         title.setStyleSheet(f"""
             background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                stop:0 {COL_ORANGE}, stop:1 {COL_BLUE});
+                stop:0 #064E3B, stop:1 #0E7490);
             color: white;
             font-size: 18px;
             font-weight: bold;
@@ -240,6 +240,12 @@ class HolterStartDialog(QDialog):
         dir_row.addWidget(browse_btn)
         rg_layout.addLayout(dir_row, 2, 1)
 
+        self._recording_count_label = QLabel("")
+        self._recording_count_label.setStyleSheet("font-size: 12px; color: #86EFAC; font-weight: 600;")
+        rg_layout.addWidget(QLabel("Recorded Sessions:"), 3, 0)
+        rg_layout.addWidget(self._recording_count_label, 3, 1)
+        self._refresh_recording_count()
+
         layout.addWidget(rg)
 
         # ── Buttons ──
@@ -263,6 +269,22 @@ class HolterStartDialog(QDialog):
         if d:
             self._result_dir = d
             self._dir_label.setText(d)
+            self._refresh_recording_count()
+
+    def _refresh_recording_count(self):
+        root = self._result_dir or self.output_dir
+        count = 0
+        try:
+            if os.path.isdir(root):
+                for name in os.listdir(root):
+                    session_dir = os.path.join(root, name)
+                    if not os.path.isdir(session_dir):
+                        continue
+                    if os.path.exists(os.path.join(session_dir, "recording.ecgh")):
+                        count += 1
+        except Exception:
+            count = 0
+        self._recording_count_label.setText(f"{count} completed recording(s)")
 
     def _on_start(self):
         # Build patient info
