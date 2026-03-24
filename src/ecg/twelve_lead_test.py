@@ -4697,9 +4697,11 @@ class ECGTestPage(QWidget):
             self.recording_toggle.setText(self.tr("Stop Recording"))
             
             # Start capture timer
+            import time
+            self.recording_start_time = time.time()
             self.recording_timer = QTimer()
             self.recording_timer.timeout.connect(self.capture_frame)
-            self.recording_timer.start(33)  # ~30 FPS
+            self.recording_timer.start(33)  # ~30 FPS target
 
             # Show notification as recording started
             QMessageBox.information(self, self.tr("Success"), self.tr("Recording started"))
@@ -4721,6 +4723,10 @@ class ECGTestPage(QWidget):
             
             # Ask user if they want to save the recording
             if len(self.recording_frames) > 0:
+                import time
+                duration = time.time() - getattr(self, 'recording_start_time', time.time() - 1)
+                self._actual_fps = max(1.0, len(self.recording_frames) / max(0.1, duration))
+                
                 reply = QMessageBox.question(
                     self, 
                     "Save Recording", 
@@ -4767,7 +4773,7 @@ class ECGTestPage(QWidget):
                 ptr = image.bits()
                 ptr.setsize(height * width * 4)
                 arr = np.frombuffer(ptr, np.uint8).reshape((height, width, 4))
-                arr = cv2.cvtColor(arr, cv2.COLOR_RGBA2BGR)
+                arr = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
                 
                 # Store frame
                 self.recording_frames.append(arr)
@@ -4798,7 +4804,8 @@ class ECGTestPage(QWidget):
                 
                 # Create video writer
                 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-                out = cv2.VideoWriter(file_path, fourcc, 30.0, (width, height))
+                fps = getattr(self, '_actual_fps', 30.0)
+                out = cv2.VideoWriter(file_path, fourcc, fps, (width, height))
                 
                 # Write frames
                 for frame in self.recording_frames:
@@ -7497,6 +7504,60 @@ class ECGTestPage(QWidget):
 
                 fig._grid_lines = grid_artists
 
+                try:
+                    import types
+
+                    wave_speed_mm_s = 25.0
+                    try:
+                        if hasattr(self, "settings_manager"):
+                            wave_speed_mm_s = float(self.settings_manager.get_wave_speed())
+                    except Exception:
+                        wave_speed_mm_s = 25.0
+
+                    sampling_rate_hz = 500.0
+                    try:
+                        if hasattr(self, "sampler") and hasattr(self.sampler, "sampling_rate") and self.sampler.sampling_rate and self.sampler.sampling_rate > 10:
+                            sampling_rate_hz = float(self.sampler.sampling_rate)
+                        elif hasattr(self, "sampling_rate") and self.sampling_rate and self.sampling_rate > 10:
+                            sampling_rate_hz = float(self.sampling_rate)
+                        elif hasattr(self, "demo_manager") and self.demo_manager and hasattr(self.demo_manager, "samples_per_second") and self.demo_manager.samples_per_second:
+                            sampling_rate_hz = float(self.demo_manager.samples_per_second)
+                    except Exception:
+                        sampling_rate_hz = 500.0
+
+                    samples_per_mm = sampling_rate_hz / max(1e-6, wave_speed_mm_s)
+
+                    axis_width_mm = width_mm
+                    axes = getattr(self, "_overlay_axes", [])
+                    if axes:
+                        axis_widths = []
+                        for ax in axes:
+                            try:
+                                bbox = ax.get_position()
+                                axis_widths.append(float(bbox.width) * width_mm)
+                            except Exception:
+                                pass
+                        if axis_widths:
+                            axis_width_mm = max(1.0, min(axis_widths))
+
+                    target_buffer_len = int(round(axis_width_mm * samples_per_mm)) + 1
+                    self._graph_mode_target_buffer_len = max(2, target_buffer_len)
+
+                    if not hasattr(self, "_graph_mode_target_len_wrapped"):
+                        self._graph_mode_original_get_overlay_target_buffer_len = self._get_overlay_target_buffer_len
+
+                        def _graph_mode_get_overlay_target_buffer_len(this, is_demo_mode):
+                            if getattr(this, "_current_overlay_mode", None) == "graph":
+                                v = getattr(this, "_graph_mode_target_buffer_len", None)
+                                if v:
+                                    return int(v)
+                            return this._graph_mode_original_get_overlay_target_buffer_len(is_demo_mode)
+
+                        self._get_overlay_target_buffer_len = types.MethodType(_graph_mode_get_overlay_target_buffer_len, self)
+                        self._graph_mode_target_len_wrapped = True
+                except Exception as e:
+                    print(f"Error applying graph mode scaling: {e}")
+
             # Make all axes transparent
             for ax in getattr(self, '_overlay_axes', []):
                 ax.set_facecolor('none')
@@ -7515,6 +7576,14 @@ class ECGTestPage(QWidget):
                 line.set_linewidth(0.8)
                 line.set_alpha(1.0)
                 line.set_zorder(50)
+
+            try:
+                if getattr(self, "_current_overlay_layout", "12x1") == "6x2":
+                    self._update_two_column_plots()
+                else:
+                    self._update_overlay_plots()
+            except Exception:
+                pass
 
         except Exception as e:
             print(f"Error applying graph mode: {e}")

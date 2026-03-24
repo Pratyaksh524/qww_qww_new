@@ -545,7 +545,7 @@ class HardwareCommandHandler:
         print("📥 STOP ACK ←", ack.hex(" ").upper())
         return True
     
-    def send_version_command(self, counter: int = 0, timeout: float = 0.5) -> Tuple[bool, Optional[str], Optional[Dict]]:
+    def send_version_command(self, counter: int = 0, timeout: float = 1.0, retries: int = 2) -> Tuple[bool, Optional[str], Optional[Dict]]:
         """
         Hardware protocol:
         App → 0x14
@@ -557,74 +557,88 @@ class HardwareCommandHandler:
         
         Args:
             counter: Packet counter (default: 0, but uses 1 for VERSION packet)
+            timeout: Timeout in seconds (increased for stability)
+            retries: Number of retry attempts
         
         Returns:
             tuple: (success: bool, version_string: str or None, response: dict or None)
         """
-        print("\n" + "="*60)
-        print("🔍 VERSION COMMAND: Requesting device version...")
-        print("="*60)
-        
-        CMD_VERSION = OPCODE_VERSION  # 0x14
-        
-        try:
-            # First, stop the device if it's streaming
-            try:
-                self._send_stop(timeout=timeout)
-                print("✅ STOP confirmed")
-                time.sleep(0.1)
-            except TimeoutError:
-                # Device might already be stopped, continue anyway
-                print("⚠️ STOP ACK timeout (device may already be stopped)")
-            
-            # Reset buffer before sending VERSION
-            self.ser.reset_input_buffer()
-            
-            # Send VERSION command
-            pkt = self._build_simple_packet(1, CMD_VERSION)
-            print("📤 VERSION →", pkt.hex(" ").upper())
-            self.ser.write(pkt)
-            self.ser.flush()
-            
-            # Wait for ACK (filters out ECG_STREAM frames)
-            ack = self._wait_for_ack(CMD_VERSION, timeout=timeout)
-            print("📥 VERSION ACK ←", ack.hex(" ").upper())
-            
-            # Wait for DATA (filters out ECG_STREAM frames)
-            data = self._wait_for_data(timeout=timeout)
-            print("📥 VERSION DATA ←", data.hex(" ").upper())
-            
-            # Decode version from bytes 5-21
-            version = data[5:21].decode("ascii").rstrip("\x00").strip()
-            
+        for attempt in range(retries + 1):
+            if attempt > 0:
+                print(f"🔄 Retrying VERSION command (attempt {attempt + 1}/{retries + 1})...")
+                time.sleep(0.2) # Wait before retry
+
             print("\n" + "="*60)
-            print("✅ VERSION COMMAND SUCCESS")
+            print(f"🔍 VERSION COMMAND (Attempt {attempt + 1}): Requesting device version...")
             print("="*60)
-            print("✅ DEVICE VERSION:", version)
-            print("="*60 + "\n")
             
-            # Create response dict for compatibility
-            data_response = {
-                "type": "version_data",
-                "counter": data[1],
-                "length": data[2],
-                "code": data[3],
-                "checksum": data[4],
-                "data": data[5:21],
-            }
+            CMD_VERSION = OPCODE_VERSION  # 0x14
             
-            return True, version, data_response
+            try:
+                # First, stop the device if it's streaming
+                try:
+                    self._send_stop(timeout=timeout)
+                    print("✅ STOP confirmed")
+                    time.sleep(0.1)
+                except TimeoutError:
+                    # Device might already be stopped, continue anyway
+                    print("⚠️ STOP ACK timeout (device may already be stopped)")
                 
-        except TimeoutError as e:
-            print(f"❌ VERSION COMMAND: {e}")
-            print("="*60 + "\n")
-            return False, None, None
-        except Exception as e:
-            print(f"❌ VERSION COMMAND: Error occurred: {e}")
-            import traceback
-            print(f"   Traceback: {traceback.format_exc()}")
-            print("="*60 + "\n")
-            return False, None, None
+                # Reset buffer before sending VERSION
+                self.ser.reset_input_buffer()
+                
+                # Send VERSION command
+                pkt = self._build_simple_packet(1, CMD_VERSION)
+                print("📤 VERSION →", pkt.hex(" ").upper())
+                self.ser.write(pkt)
+                self.ser.flush()
+                
+                # Wait for ACK (filters out ECG_STREAM frames)
+                ack = self._wait_for_ack(CMD_VERSION, timeout=timeout)
+                print("📥 VERSION ACK ←", ack.hex(" ").upper())
+                
+                # Wait for DATA (filters out ECG_STREAM frames)
+                data = self._wait_for_data(timeout=timeout)
+                print("📥 VERSION DATA ←", data.hex(" ").upper())
+                
+                # Decode version from bytes 5-21
+                try:
+                    version = data[5:21].decode("ascii").rstrip("\x00").strip()
+                except UnicodeDecodeError:
+                    version = data[5:21].hex().upper()
+                
+                print("\n" + "="*60)
+                print("✅ VERSION COMMAND SUCCESS")
+                print("="*60)
+                print("✅ DEVICE VERSION:", version)
+                print("="*60 + "\n")
+                
+                # Create response dict for compatibility
+                data_response = {
+                    "type": "version_data",
+                    "counter": data[1],
+                    "length": data[2],
+                    "code": data[3],
+                    "checksum": data[4],
+                    "data": data[5:21],
+                }
+                
+                return True, version, data_response
+                    
+            except TimeoutError as e:
+                print(f"❌ VERSION COMMAND: {e}")
+                if attempt == retries:
+                    print("="*60 + "\n")
+                    return False, None, None
+            except Exception as e:
+                print(f"❌ VERSION COMMAND: Error occurred: {e}")
+                if attempt == retries:
+                    import traceback
+                    print(f"   Traceback: {traceback.format_exc()}")
+                    print("="*60 + "\n")
+                    return False, None, None
+        
+        return False, None, None
     
     def send_close_command(self) -> Tuple[bool, Optional[Dict]]:
         """

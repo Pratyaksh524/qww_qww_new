@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtGui import QFont, QColor
 from PyQt5.QtCore import Qt, QTimer
-import pyqtgraph as pg
+# import pyqtgraph as pg  # Lazy loaded in methods
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak, Image
@@ -179,6 +179,7 @@ class HRVTestWindow(QWidget):
         
     def init_ui(self):
         """Initialize the user interface"""
+        import pyqtgraph as pg
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
         layout.setContentsMargins(20, 20, 20, 20)
@@ -688,6 +689,7 @@ class HRVTestWindow(QWidget):
 
     def update_plot(self):
         """Update the plot with new data"""
+        import pyqtgraph as pg
         if not self.is_capturing or not self.serial_reader:
             return
 
