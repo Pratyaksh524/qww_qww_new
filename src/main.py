@@ -110,7 +110,7 @@ def get_ecg_modules():
 # Get configuration
 config = get_config()
 USER_DATA_FILE = resource_path("users.json")
-
+USER_VALIDATION_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "user_validation.json")
 
 @log_function_call
 def load_users():
@@ -122,13 +122,48 @@ def load_users():
                 logger.info(f"Loaded {len(users)} users from {USER_DATA_FILE}")
                 return users
         else:
-            logger.info(f"User file {USER_DATA_FILE} not found, creating empty user database")
+            logger.info(f"User data file {USER_DATA_FILE} not found, creating empty user database")
             return {}
     except (json.JSONDecodeError, IOError) as e:
         logger.error(f"Error loading users: {e}")
         logger.error("Creating empty user database")
         return {}
 
+@log_function_call
+def validate_user(username, password):
+    """Validate user credentials against users JSON"""
+    try:
+        if os.path.exists(USER_DATA_FILE):
+            with open(USER_DATA_FILE, "r") as f:
+                users = json.load(f)
+                
+                # Check direct username match
+                if username in users:
+                    user_record = users[username]
+                    if user_record.get('password') == password:
+                        logger.info(f"User {username} validated successfully")
+                        return True, user_record
+                    else:
+                        logger.warning(f"Password mismatch for user {username}")
+                        return False, None
+                
+                # Check phone number fallback
+                for uname, user_data in users.items():
+                    if str(user_data.get('phone', '')) == username:
+                        if user_data.get('password') == password:
+                            logger.info(f"User {username} validated successfully via phone")
+                            return True, user_data
+                        else:
+                            logger.warning(f"Password mismatch for user {username}")
+                            return False, None
+                            
+        else:
+            logger.error(f"User data file {USER_DATA_FILE} not found")
+            return False, None
+            
+    except Exception as e:
+        logger.error(f"Error validating user: {e}")
+        return False, None
 
 @log_function_call
 def save_users(users):
@@ -755,19 +790,13 @@ def main():
                     logger.info(f"User {login.username} logged in successfully")
                     # Attach machine serial ID to crash logger for email subject/body   tagging
                     try:
-                        users = load_users()
-                        record = None
-                        if isinstance(users, dict) and login.username in users:
-                            record = users.get(login.username)
+                        # Use validation function instead of load_users
+                        is_valid, user_record = validate_user(login.username, login.password)
+                        
+                        if is_valid:
+                            record = user_record
                         else:
-                            # Fallback: search by phone/contact stored under 'phone'    
-                            for uname, rec in (users or {}).items():
-                                try:
-                                    if str(rec.get('phone', '')) == str(login.username):
-                                        record = rec
-                                        break
-                                except Exception:
-                                    continue
+                            record = None
                         serial_id = ''
                         if isinstance(record, dict):
                             serial_id = str(record.get('serial_id', ''))
@@ -822,17 +851,11 @@ def main():
                     # Attach a session recorder for this user
                     try:
                         user_record = None
-                        users = load_users()
-                        if isinstance(users, dict) and login.username in users:
-                            user_record = users.get(login.username)
-                        else:
-                            for uname, rec in (users or {}).items():
-                                try:
-                                    if str(rec.get('phone', '')) == str(login.username):
-                                        user_record = rec
-                                        break
-                                except Exception:
-                                    continue
+                        # Use validation function instead of load_users for login validation
+                        is_valid, validated_user = validate_user(login.username, login.password)
+                        
+                        if is_valid:
+                            user_record = validated_user
                         dashboard._session_recorder = SessionRecorder(username=login.username, user_record=user_record or {})
                     except Exception as e:
                         logger.warning(f"Session recorder init failed: {e}")

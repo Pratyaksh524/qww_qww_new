@@ -16,6 +16,33 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
 from config.settings import resource_path
 
+# File paths for different user types
+HEAD_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "head_users.json")
+
+def load_head_users():
+    """Load head users from separate file"""
+    try:
+        if os.path.exists(HEAD_USERS_FILE):
+            with open(HEAD_USERS_FILE, "r") as f:
+                data = json.load(f)
+                return data.get("head_users", {})
+        else:
+            return {}
+    except Exception as e:
+        print(f"Error loading head users: {e}")
+        return {}
+
+def save_head_users(head_users):
+    """Save head users to separate file"""
+    try:
+        data = {"head_users": head_users}
+        with open(HEAD_USERS_FILE, "w") as f:
+            json.dump(data, f, indent=2)
+        print(f"Saved {len(head_users)} head users to {HEAD_USERS_FILE}")
+    except Exception as e:
+        print(f"Error saving head users: {e}")
+        raise Exception(f"Failed to save head users: {e}")
+
 
 class OrganizationManager:
     """Handles organization data management"""
@@ -218,16 +245,20 @@ class RoleSelectionDialog(QDialog):
         if signup_dialog.exec_() == QDialog.Accepted:
             # Get user data and open dashboard
             user_data = signup_dialog.get_user_data()
+            print(f"DEBUG: Signup dialog returned Accepted. User data: {user_data}")
             if user_data:
                 self.signup_user_data = user_data
+                print(f"DEBUG: signup_user_data set to: {self.signup_user_data}")
                 self.accept()  # Close the role selection dialog
                 # Open dashboard will be handled by the calling code
             else:
                 # Sign-up failed or was cancelled
+                print("DEBUG: User data is None after signup")
                 self.selected_role = None
                 self.selected_organization = None
         else:
             # Sign-up was cancelled
+            print("DEBUG: Signup dialog was cancelled or rejected")
             self.selected_role = None
             self.selected_organization = None
     
@@ -501,34 +532,35 @@ class SignUpDialog(QDialog):
             'signup_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
-        # Save to users.json (using existing user management)
+        # Save to head_users.json (for Head Doctor and Head HCP roles)
         try:
-            # Import user management functions from main
-            import sys
-            import os
-            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            from main import load_users, save_users
-            
-            users = load_users()
+            print("DEBUG: Attempting to save head user data...")
+            head_users = load_head_users()
             username = phone  # Use phone as unique identifier
             
-            if username in users:
+            if username in head_users:
+                print(f"DEBUG: Head user {username} already exists")
                 QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
                 return
             
-            users[username] = self.user_data
-            save_users(users)
+            head_users[username] = self.user_data
+            save_head_users(head_users)
+            print("DEBUG: Head user data saved successfully")
             
             self.signup_successful = True
+            print("DEBUG: signup_successful set to True")
             QMessageBox.information(self, "Success", "Sign-up successful! Your dashboard will now open.")
             self.accept()
             
         except Exception as e:
+            print(f"DEBUG: Exception during head user signup: {e}")
             QMessageBox.critical(self, "Error", f"Failed to save user data: {str(e)}")
     
     def get_user_data(self):
         """Return the signed-up user data"""
-        return self.user_data if self.signup_successful else None
+        result = self.user_data if self.signup_successful else None
+        print(f"DEBUG: get_user_data called. signup_successful={self.signup_successful}, result={result}")
+        return result
 
 
 class LoginDialog(QDialog):
@@ -697,34 +729,44 @@ class LoginDialog(QDialog):
             QMessageBox.warning(self, "Error", "Both full name and password are required.")
             return
         
-        # Check credentials against users.json
+        # Check credentials against head_users.json for Head roles
         try:
-            # Import user management functions from main
-            import sys
-            import os
-            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            from main import load_users
-            
-            users = load_users()
+            print(f"DEBUG: Looking for full_name='{full_name}', role='{self.role}', org='{self.organization}'")
+            head_users = load_head_users()
+            print(f"DEBUG: Available head users: {head_users}")
             
             # Find user by full name and role
             found_user = None
-            for username, user_record in users.items():
-                if (user_record.get('full_name', '').lower() == full_name.lower() and 
-                    user_record.get('role', '') == self.role and
-                    user_record.get('organization', '') == self.organization):
+            for username, user_record in head_users.items():
+                record_full_name = user_record.get('full_name', '').lower()
+                record_role = user_record.get('role', '')
+                record_org = user_record.get('organization', '')
+                input_full_name = full_name.lower()
+                
+                print(f"DEBUG: Checking head user {username}: full_name='{record_full_name}' vs '{input_full_name}', role='{record_role}' vs '{self.role}', org='{record_org}' vs '{self.organization}'")
+                
+                if (record_full_name == input_full_name and 
+                    record_role == self.role and
+                    record_org == self.organization):
                     found_user = user_record
+                    print(f"DEBUG: Found matching head user: {found_user}")
                     break
             
             if found_user and found_user.get('password') == password:
+                print(f"DEBUG: Password matches for head user")
                 self.user_data = found_user
                 self.login_successful = True
                 QMessageBox.information(self, "Success", "Login successful! Your dashboard will now open.")
                 self.accept()
             else:
+                if not found_user:
+                    print(f"DEBUG: No head user found with matching credentials")
+                else:
+                    print(f"DEBUG: Password mismatch. Expected: {found_user.get('password')}, Got: {password}")
                 QMessageBox.warning(self, "Error", "Invalid credentials. Please check your full name and password.")
                 
         except Exception as e:
+            print(f"DEBUG: Exception during head user login: {e}")
             QMessageBox.critical(self, "Error", f"Login failed: {str(e)}")
     
     def handle_phone_login(self):
@@ -784,18 +826,14 @@ class LoginDialog(QDialog):
                 QMessageBox.warning(phone_dialog, "Error", "Phone number is required.")
                 return
             
-            # Check credentials against users.json
+            # Check credentials against head_users.json
             try:
-                import sys
-                import os
-                sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                from main import load_users
-                
-                users = load_users()
+                head_users = load_head_users()
+                print(f"DEBUG: Available head users for phone login: {head_users}")
                 
                 # Find user by phone and role
                 found_user = None
-                for username, user_record in users.items():
+                for username, user_record in head_users.items():
                     if (user_record.get('phone', '') == phone and 
                         user_record.get('role', '') == self.role and
                         user_record.get('organization', '') == self.organization):
@@ -957,6 +995,23 @@ class DashboardWindow(QDialog):
             add_users_btn.clicked.connect(self.show_add_users_dialog)
             left_layout.addWidget(add_users_btn)
             left_layout.addSpacing(10)
+            
+            # User count display for Doctor Head and HCP Head
+            if self.user_data.get('role') in ['Doctor Head', 'HCP Head']:
+                user_count = self.get_user_count()
+                count_label = QLabel(f"Users: {user_count}")
+                count_label.setStyleSheet("""
+                    QLabel {
+                        background: rgba(40, 167, 69, 0.2);
+                        color: #28a745;
+                        border-radius: 6px;
+                        padding: 8px 12px;
+                        font-size: 12px;
+                        font-weight: bold;
+                    }
+                """)
+                count_label.setAlignment(Qt.AlignCenter)
+                left_layout.addWidget(count_label)
         
         left_layout.addStretch()
         
@@ -1040,6 +1095,22 @@ class DashboardWindow(QDialog):
         """Show dialog for adding users based on role hierarchy"""
         dialog = AddUsersDialog(self, self.user_data)
         dialog.exec_()
+    
+    def get_user_count(self):
+        """Get count of users in the same organization"""
+        try:
+            from main import load_users
+            users = load_users()
+            current_org = self.user_data.get('organization', '')
+            count = 0
+            
+            for username, user_data in users.items():
+                if user_data.get('organization') == current_org:
+                    count += 1
+            
+            return count
+        except Exception:
+            return 0
 
 
 class OrganizationRequestHandler:
@@ -1133,12 +1204,136 @@ class OrganizationRequestHandler:
         title.setStyleSheet("font-size: 18px; margin-bottom: 20px;")
         layout.addWidget(title)
         
-        # Organization list
-        from PyQt5.QtWidgets import QListWidget
+        # Organization list with delete functionality
+        from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QWidget, QHBoxLayout
         org_list = QListWidget()
         
         for org_name in organizations.keys():
-            org_list.addItem(org_name)
+            # Create custom widget for each organization item
+            item_widget = QWidget()
+            item_layout = QHBoxLayout(item_widget)
+            item_layout.setContentsMargins(5, 5, 5, 5)
+            
+            # Organization name label
+            org_label = QLabel(org_name)
+            org_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold;")
+            item_layout.addWidget(org_label)
+            
+            # Add stretch to push delete button to the right
+            item_layout.addStretch()
+            
+            # Delete button
+            delete_btn = QPushButton("X")
+            delete_btn.setFixedSize(30, 30)
+            delete_btn.setStyleSheet("""
+                QPushButton {
+                    background: rgba(255, 0, 0, 0.8);
+                    border: none;
+                    border-radius: 15px;
+                    color: white;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background: rgba(255, 0, 0, 1.0);
+                }
+            """)
+            
+            # Connect delete button to delete function
+            def delete_organization(org=org_name, dlg=dialog):
+                reply = QMessageBox.question(
+                    dlg, 
+                    "Confirm Delete", 
+                    f"Are you sure you want to delete the organization '{org}'?\n\nThis action cannot be undone.",
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.No
+                )
+                
+                if reply == QMessageBox.Yes:
+                    # Remove organization from the organizations dict
+                    organizations.pop(org, None)
+                    # Save updated organizations
+                    if self.org_manager.save_organizations(organizations):
+                        QMessageBox.information(dlg, "Success", f"Organization '{org}' deleted successfully.")
+                        # Clear and rebuild the organization list
+                        org_list.clear()
+                        for org_name in organizations.keys():
+                            # Create custom widget for each organization item
+                            item_widget = QWidget()
+                            item_layout = QHBoxLayout(item_widget)
+                            item_layout.setContentsMargins(5, 5, 5, 5)
+                            
+                            # Organization name label
+                            org_label = QLabel(org_name)
+                            org_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold;")
+                            item_layout.addWidget(org_label)
+                            
+                            # Add stretch to push delete button to the right
+                            item_layout.addStretch()
+                            
+                            # Delete button
+                            delete_btn = QPushButton("X")
+                            delete_btn.setFixedSize(30, 30)
+                            delete_btn.setStyleSheet("""
+                                QPushButton {
+                                    background: rgba(255, 0, 0, 0.8);
+                                    border: none;
+                                    border-radius: 15px;
+                                    color: white;
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                }
+                                QPushButton:hover {
+                                    background: rgba(255, 0, 0, 1.0);
+                                }
+                            """)
+                            
+                            # Connect delete button to delete function
+                            def delete_organization_new(org_new=org_name, dlg_new=dlg):
+                                reply_new = QMessageBox.question(
+                                    dlg_new, 
+                                    "Confirm Delete", 
+                                    f"Are you sure you want to delete the organization '{org_new}'?\n\nThis action cannot be undone.",
+                                    QMessageBox.Yes | QMessageBox.No,
+                                    QMessageBox.No
+                                )
+                                
+                                if reply_new == QMessageBox.Yes:
+                                    # Remove organization from the organizations dict
+                                    organizations.pop(org_new, None)
+                                    # Save updated organizations
+                                    if self.org_manager.save_organizations(organizations):
+                                        QMessageBox.information(dlg_new, "Success", f"Organization '{org_new}' deleted successfully.")
+                                        # Remove the item from the list
+                                        for i in range(org_list.count()):
+                                            item = org_list.item(i)
+                                            widget = org_list.itemWidget(item)
+                                            if widget:
+                                                # Find the organization label in the widget
+                                                for child in widget.children():
+                                                    if isinstance(child, QLabel) and child.text() == org_new:
+                                                        org_list.takeItem(i)
+                                                        return
+                                    else:
+                                        QMessageBox.warning(dlg_new, "Error", "Failed to delete organization.")
+                            
+                            delete_btn.clicked.connect(delete_organization_new)
+                            item_layout.addWidget(delete_btn)
+                            
+                            # Create list item and set the custom widget
+                            list_item = QListWidgetItem(org_list)
+                            list_item.setSizeHint(item_widget.sizeHint())
+                            org_list.setItemWidget(list_item, item_widget)
+                    else:
+                        QMessageBox.warning(dlg, "Error", "Failed to delete organization.")
+            
+            delete_btn.clicked.connect(delete_organization)
+            item_layout.addWidget(delete_btn)
+            
+            # Create list item and set the custom widget
+            list_item = QListWidgetItem(org_list)
+            list_item.setSizeHint(item_widget.sizeHint())
+            org_list.setItemWidget(list_item, item_widget)
         
         layout.addWidget(org_list)
         
@@ -1150,10 +1345,18 @@ class OrganizationRequestHandler:
         def select_organization():
             current_item = org_list.currentItem()
             if current_item:
-                selected_org = current_item.text()
-                dialog.accept()
-                # Show role selection dialog
-                self.show_role_selection_dialog(selected_org, is_existing_organization=True)
+                # Get the widget from the list item to extract organization name
+                widget = org_list.itemWidget(current_item)
+                if widget:
+                    # Find the organization label in the widget
+                    for child in widget.children():
+                        if isinstance(child, QLabel) and "X" not in child.text():
+                            selected_org = child.text()
+                            dialog.accept()
+                            # Show role selection dialog
+                            self.show_role_selection_dialog(selected_org, is_existing_organization=True)
+                            return
+                QMessageBox.warning(dialog, "Warning", "Please select an organization.")
             else:
                 QMessageBox.warning(dialog, "Warning", "Please select an organization.")
         
@@ -1303,7 +1506,7 @@ class AddUsersDialog(QDialog):
     def init_ui(self):
         """Initialize the add users dialog UI"""
         self.setWindowTitle("Add Users")
-        self.setMinimumSize(600, 500)
+        self.setMinimumSize(700, 600)  # Made dialog bigger
         self.setModal(True)
         
         # Set background gradient
@@ -1349,7 +1552,7 @@ class AddUsersDialog(QDialog):
         
         # Role selection based on current user
         if self.current_role == "Doctor Head":
-            # Doctor Head can add Clinical Users (Sr. Clinical, Jr. Clinical)
+            # Doctor Head can add Clinical Users (Sr. Clinical Doctor, Jr. Clinical Doctor)
             subtitle = QLabel("Select user type to add:")
             subtitle.setStyleSheet("font-size: 16px; margin-bottom: 15px;")
             layout.addWidget(subtitle)
@@ -1357,14 +1560,14 @@ class AddUsersDialog(QDialog):
             # Clinical User buttons
             clinical_layout = QHBoxLayout()
             
-            sr_clinical_btn = QPushButton("Add Sr. Clinical")
+            sr_clinical_btn = QPushButton("Add Sr. Clinical Doctor")
             sr_clinical_btn.setObjectName("add_btn")
-            sr_clinical_btn.clicked.connect(lambda: self.show_user_form("Sr. Clinical"))
+            sr_clinical_btn.clicked.connect(lambda: self.show_user_form("Sr. Clinical Doctor"))
             clinical_layout.addWidget(sr_clinical_btn)
             
-            jr_clinical_btn = QPushButton("Add Jr. Clinical")
+            jr_clinical_btn = QPushButton("Add Jr. Clinical Doctor")
             jr_clinical_btn.setObjectName("add_btn")
-            jr_clinical_btn.clicked.connect(lambda: self.show_user_form("Jr. Clinical"))
+            jr_clinical_btn.clicked.connect(lambda: self.show_user_form("Jr. Clinical Doctor"))
             clinical_layout.addWidget(jr_clinical_btn)
             
             layout.addLayout(clinical_layout)
@@ -1436,7 +1639,7 @@ class UserCreationDialog(QDialog):
     def init_ui(self):
         """Initialize the user creation dialog UI"""
         self.setWindowTitle(f"Create {self.user_role}")
-        self.setMinimumSize(500, 600)
+        self.setMinimumSize(700, 750)  # Made dialog bigger
         self.setModal(True)
         
         # Set background gradient
@@ -1515,12 +1718,12 @@ class UserCreationDialog(QDialog):
                 field = QLineEdit()
                 field.setPlaceholderText(placeholder)
                 field.setEchoMode(QLineEdit.Password)
-                field.setMaximumWidth(300)
+                field.setMaximumWidth(250)  # Made input box smaller
                 field.returnPressed.connect(self.handle_create_user)
             else:
                 field = QLineEdit()
                 field.setPlaceholderText(placeholder)
-                field.setMaximumWidth(300)
+                field.setMaximumWidth(250)  # Made input box smaller
                 if field_name == 'confirm_password':
                     field.returnPressed.connect(self.handle_create_user)
             
@@ -1536,6 +1739,25 @@ class UserCreationDialog(QDialog):
         create_btn.setObjectName("create_btn")
         create_btn.clicked.connect(self.handle_create_user)
         layout.addWidget(create_btn)
+        
+        # Existing User link
+        existing_user_link = QPushButton("Existing User")
+        existing_user_link.setStyleSheet("""
+            QPushButton {
+                background: transparent;
+                color: #007bff;
+                border: none;
+                text-decoration: underline;
+                font-size: 12px;
+                padding: 5px;
+            }
+            QPushButton:hover {
+                color: #0056b3;
+                background: rgba(0, 123, 255, 0.1);
+            }
+        """)
+        existing_user_link.clicked.connect(self.handle_existing_user)
+        layout.addWidget(existing_user_link)
         
         layout.addStretch()
     
@@ -1588,11 +1810,138 @@ class UserCreationDialog(QDialog):
             
             self.user_data = new_user
             QMessageBox.information(self, "Success", f"{self.user_role} created successfully!")
+            
+            # Open user management dashboard
+            self.open_user_management_dashboard()
             self.accept()
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to create user: {str(e)}")
     
+    def handle_existing_user(self):
+        """Handle existing user link - close all dialogs and go to login"""
+        # Close all dialogs and go to login
+        self.parent().parent().close()  # Close AddUsersDialog
+        self.parent().close()  # Close DashboardWindow
+        # The main application will return to login screen
+    
+    def open_user_management_dashboard(self):
+        """Open user management dashboard with user count"""
+        user_mgmt_dialog = UserManagementDashboard(self, self.current_user_data)
+        user_mgmt_dialog.exec_()
+    
     def get_user_data(self):
         """Return the created user data"""
         return self.user_data if hasattr(self, 'user_data') else None
+
+
+class UserManagementDashboard(QDialog):
+    """Dashboard for managing users with count display"""
+    
+    def __init__(self, parent, current_user_data):
+        super().__init__(parent)
+        self.current_user_data = current_user_data
+        self.init_ui()
+    
+    def init_ui(self):
+        """Initialize user management dashboard UI"""
+        self.setWindowTitle("User Management")
+        self.setMinimumSize(900, 600)
+        self.setModal(True)
+        
+        # Set background gradient
+        self.setStyleSheet("""
+            QDialog {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                    stop:0 #1a1a2e, stop:1 #16213e);
+                color: white;
+            }
+            QLabel {
+                color: white;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton {
+                background: #ff6600;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background: #ff8800;
+            }
+            QFrame {
+                background: rgba(255,255,255,0.1);
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.2);
+            }
+        """)
+        
+        layout = QVBoxLayout(self)
+        layout.setSpacing(20)
+        layout.setContentsMargins(30, 30, 30, 30)
+        
+        # Header
+        header_label = QLabel("User Management Dashboard")
+        header_label.setStyleSheet("font-size: 24px; font-weight: bold; margin-bottom: 20px;")
+        layout.addWidget(header_label)
+        
+        # User count section
+        count_frame = QFrame()
+        count_layout = QVBoxLayout(count_frame)
+        count_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Calculate user count
+        user_count = self.get_user_count()
+        
+        count_label = QLabel(f"Total Users: {user_count}")
+        count_label.setStyleSheet("font-size: 32px; font-weight: bold; color: #28a745; margin-bottom: 10px;")
+        count_label.setAlignment(Qt.AlignCenter)
+        count_layout.addWidget(count_label)
+        
+        subtitle_label = QLabel("Users created under your organization")
+        subtitle_label.setStyleSheet("font-size: 14px; color: #ccc;")
+        subtitle_label.setAlignment(Qt.AlignCenter)
+        count_layout.addWidget(subtitle_label)
+        
+        layout.addWidget(count_frame)
+        
+        # Action buttons
+        buttons_frame = QFrame()
+        buttons_layout = QHBoxLayout(buttons_frame)
+        
+        back_btn = QPushButton("Back to Dashboard")
+        back_btn.clicked.connect(self.accept)
+        buttons_layout.addWidget(back_btn)
+        
+        add_more_btn = QPushButton("Add More Users")
+        add_more_btn.clicked.connect(self.add_more_users)
+        buttons_layout.addWidget(add_more_btn)
+        
+        layout.addWidget(buttons_frame)
+        layout.addStretch()
+    
+    def get_user_count(self):
+        """Get count of users in the same organization"""
+        try:
+            from main import load_users
+            users = load_users()
+            current_org = self.current_user_data.get('organization', '')
+            count = 0
+            
+            for username, user_data in users.items():
+                if user_data.get('organization') == current_org:
+                    count += 1
+            
+            return count
+        except Exception:
+            return 0
+    
+    def add_more_users(self):
+        """Open add users dialog again"""
+        self.accept()
+        add_dialog = AddUsersDialog(self.parent(), self.current_user_data)
+        add_dialog.exec_()
