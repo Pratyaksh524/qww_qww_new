@@ -11,6 +11,7 @@ os.environ['QT_AUTO_SCREEN_SCALE_FACTOR'] = '0'
 # ─────────────────────────────────────────────────────────────────────────────
 
 import json
+from datetime import datetime
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -491,6 +492,11 @@ class LoginRegisterDialog(QDialog):
         self.confirm_eye_btn.clicked.connect(lambda: self.toggle_password_visibility(self.reg_confirm, self.confirm_eye_btn))
         confirm_row.addWidget(self.confirm_eye_btn)
         
+        # Organization buttons (imported from organization module)
+        from organization import create_organization_buttons_layout
+        self.org_buttons_layout, self.new_org_handler, self.existing_org_handler = create_organization_buttons_layout(self)
+        
+        layout.addLayout(self.org_buttons_layout)
         layout.addWidget(self.reg_serial)
         layout.addWidget(self.reg_name)
         layout.addWidget(self.reg_age)
