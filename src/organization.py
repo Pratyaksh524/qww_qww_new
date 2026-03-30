@@ -16,32 +16,236 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
 from config.settings import resource_path
 
-# File paths for different user types
-HEAD_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "head_users.json")
+
+class BaseDialogMixin:
+    """Mixin class to handle common dialog close behavior"""
+    def closeEvent(self, event):
+        """Handle close event - return to role selection dialog"""
+        # Instead of closing, reject this dialog and return to role selection
+        self.reject()
+        # The parent RoleSelectionDialog will handle showing the role selection again
+        event.ignore()
+
+
+# File paths for different user types based on organization
+DOCTOR_HEAD_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "doctor_head_users.json")
+HCP_HEAD_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hcp_head_users.json")
+ORGANIZATIONS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "organizations.json")
+
+def get_created_users_file(creator_full_name, creator_role):
+    """Get the JSON file path for users created by a specific Doctor Head/HCP Head"""
+    # Sanitize the creator name to create a valid filename
+    safe_name = creator_full_name.replace(" ", "_").replace("/", "_").replace("\\", "_").lower()
+    filename = f"users_created_by_{safe_name}_{creator_role.lower().replace(' ', '_')}.json"
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+
+def load_created_users(creator_full_name, creator_role):
+    """Load users created by a specific Doctor Head/HCP Head"""
+    try:
+        users_file = get_created_users_file(creator_full_name, creator_role)
+        if os.path.exists(users_file):
+            with open(users_file, "r") as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading created users for {creator_full_name}: {e}")
+        return {}
+
+def save_created_users(users, creator_full_name, creator_role):
+    """Save users created by a specific Doctor Head/HCP Head"""
+    try:
+        users_file = get_created_users_file(creator_full_name, creator_role)
+        with open(users_file, "w") as f:
+            json.dump(users, f, indent=2)
+        print(f"Saved {len(users)} users created by {creator_full_name} ({creator_role}) to {users_file}")
+        return True
+    except Exception as e:
+        print(f"Error saving created users: {e}")
+        return False
+
+def get_all_created_users_count(creator_full_name, creator_role, organization=None):
+    """Get count of users created by a specific Doctor Head/HCP Head, optionally filtered by organization"""
+    try:
+        created_users = load_created_users(creator_full_name, creator_role)
+        count = 0
+        
+        if organization:
+            # Count users in specific organization
+            for username, user_data in created_users.items():
+                if user_data.get('organization') == organization:
+                    count += 1
+        else:
+            # Count all users
+            count = len(created_users)
+        
+        return count
+    except Exception:
+        return 0
+
+def cleanup_orphaned_users():
+    """Remove users whose organizations no longer exist"""
+    try:
+        # Load current organizations
+        if os.path.exists(ORGANIZATIONS_FILE):
+            with open(ORGANIZATIONS_FILE, "r") as f:
+                organizations = json.load(f)
+        else:
+            organizations = {}
+        
+        print(f"DEBUG: Current organizations: {list(organizations.keys())}")
+        
+        # Clean Doctor Head users
+        doctor_head_users = load_doctor_head_users()
+        orphaned_users = []
+        for username, user_data in doctor_head_users.items():
+            user_org = user_data.get('organization')
+            if user_org not in organizations:
+                orphaned_users.append(username)
+                print(f"DEBUG: Found orphaned Doctor Head user {username} with non-existent org {user_org}")
+        
+        for username in orphaned_users:
+            doctor_head_users.pop(username, None)
+            print(f"DEBUG: Removed orphaned Doctor Head user {username}")
+        
+        if orphaned_users:
+            save_head_users(doctor_head_users, 'Doctor Head')
+            print(f"DEBUG: Cleaned up {len(orphaned_users)} orphaned Doctor Head users")
+        
+        # Clean HCP Head users
+        hcp_head_users = load_hcp_head_users()
+        orphaned_users = []
+        for username, user_data in hcp_head_users.items():
+            user_org = user_data.get('organization')
+            if user_org not in organizations:
+                orphaned_users.append(username)
+                print(f"DEBUG: Found orphaned HCP Head user {username} with non-existent org {user_org}")
+        
+        for username in orphaned_users:
+            hcp_head_users.pop(username, None)
+            print(f"DEBUG: Removed orphaned HCP Head user {username}")
+        
+        if orphaned_users:
+            save_head_users(hcp_head_users, 'HCP Head')
+            print(f"DEBUG: Cleaned up {len(orphaned_users)} orphaned HCP Head users")
+        
+        # Clean creator-specific user files for orphaned organizations
+        import glob
+        src_dir = os.path.dirname(os.path.abspath(__file__))
+        creator_user_files = glob.glob(os.path.join(src_dir, "users_created_by_*.json"))
+        
+        for file_path in creator_user_files:
+            try:
+                with open(file_path, "r") as f:
+                    created_users = json.load(f)
+                
+                orphaned_created_users = []
+                for username, user_data in created_users.items():
+                    user_org = user_data.get('organization')
+                    if user_org not in organizations:
+                        orphaned_created_users.append(username)
+                        print(f"DEBUG: Found orphaned created user {username} in {os.path.basename(file_path)} with non-existent org {user_org}")
+                
+                if orphaned_created_users:
+                    for username in orphaned_created_users:
+                        created_users.pop(username, None)
+                        print(f"DEBUG: Removed orphaned created user {username} from {os.path.basename(file_path)}")
+                    
+                    # Save updated file
+                    with open(file_path, "w") as f:
+                        json.dump(created_users, f, indent=2)
+                    print(f"DEBUG: Cleaned up {len(orphaned_created_users)} orphaned users from {os.path.basename(file_path)}")
+                    
+                    # Remove empty files
+                    if not created_users:
+                        os.remove(file_path)
+                        print(f"DEBUG: Removed empty creator file: {os.path.basename(file_path)}")
+                        
+            except Exception as e:
+                print(f"DEBUG: Error cleaning up creator file {os.path.basename(file_path)}: {e}")
+            
+    except Exception as e:
+        print(f"DEBUG: Error cleaning up orphaned users: {e}")
+
 
 def load_head_users():
-    """Load head users from separate file"""
+    """Load head users from appropriate file based on role"""
     try:
-        if os.path.exists(HEAD_USERS_FILE):
-            with open(HEAD_USERS_FILE, "r") as f:
-                data = json.load(f)
-                return data.get("head_users", {})
+        # Load Doctor Head users
+        if self.role == 'Doctor Head':
+            return load_doctor_head_users()
+        elif self.role == 'HCP Head':
+            return load_hcp_head_users()
         else:
             return {}
     except Exception as e:
         print(f"Error loading head users: {e}")
         return {}
 
-def save_head_users(head_users):
-    """Save head users to separate file"""
+def save_head_users(head_users, role):
+    """Save head users to appropriate file based on role"""
     try:
-        data = {"head_users": head_users}
-        with open(HEAD_USERS_FILE, "w") as f:
-            json.dump(data, f, indent=2)
-        print(f"Saved {len(head_users)} head users to {HEAD_USERS_FILE}")
+        if role == 'Doctor Head':
+            with open(DOCTOR_HEAD_USERS_FILE, "w") as f:
+                json.dump(head_users, f, indent=2)
+            print(f"Saved {len(head_users)} Doctor Head users to {DOCTOR_HEAD_USERS_FILE}")
+        elif role == 'HCP Head':
+            with open(HCP_HEAD_USERS_FILE, "w") as f:
+                json.dump(head_users, f, indent=2)
+            print(f"Saved {len(head_users)} HCP Head users to {HCP_HEAD_USERS_FILE}")
+        return True
     except Exception as e:
         print(f"Error saving head users: {e}")
-        raise Exception(f"Failed to save head users: {e}")
+        return False
+
+def save_user_to_main_users(user_data, username):
+    """Save user to main users.json file for normal login"""
+    try:
+        # Save to the root users.json file (where sign_in.py looks for it)
+        users_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "users.json")
+        
+        # Load existing users
+        users = {}
+        if os.path.exists(users_file):
+            with open(users_file, "r") as f:
+                users = json.load(f)
+        
+        # Add/update user in main users file
+        users[username] = user_data
+        
+        # Save to main users file
+        with open(users_file, "w") as f:
+            json.dump(users, f, indent=2)
+        
+        print(f"Saved user {username} to main users.json file")
+        return True
+    except Exception as e:
+        print(f"Error saving user to main users.json: {e}")
+        return False
+
+def load_doctor_head_users():
+    """Load Doctor Head users from separate file"""
+    try:
+        if os.path.exists(DOCTOR_HEAD_USERS_FILE):
+            with open(DOCTOR_HEAD_USERS_FILE, "r") as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading Doctor Head users: {e}")
+        return {}
+
+def load_hcp_head_users():
+    """Load HCP Head users from separate file"""
+    try:
+        if os.path.exists(HCP_HEAD_USERS_FILE):
+            with open(HCP_HEAD_USERS_FILE, "r") as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading HCP Head users: {e}")
+        return {}
+
+# Clean up orphaned users on module import (after all helper functions are defined)
+cleanup_orphaned_users()
 
 
 class OrganizationManager:
@@ -64,8 +268,11 @@ class OrganizationManager:
     def save_organizations(self, organizations):
         """Save organizations to file"""
         try:
+            print(f"DEBUG: Saving organizations to {self.organizations_file}")
+            print(f"DEBUG: Organizations data: {organizations}")
             with open(self.organizations_file, "w") as f:
                 json.dump(organizations, f, indent=2)
+            print(f"DEBUG: File saved successfully")
             return True
         except Exception as e:
             print(f"Error saving organizations: {e}")
@@ -100,12 +307,24 @@ class RoleSelectionDialog(QDialog):
     """Dialog for selecting user role after organization creation"""
     
     def __init__(self, parent=None, organization_name="", is_existing_organization=False):
-        super().__init__(parent)
+        super().__init__(parent.parent_dialog if parent else None)  # Pass the actual QWidget parent
         self.organization_name = organization_name
         self.is_existing_organization = is_existing_organization
         self.selected_role = None
         self.selected_organization = organization_name
+        self.parent_handler = parent  # Store reference to parent handler
         self.init_ui()
+    
+    def closeEvent(self, event):
+        """Handle close event - return to existing organization dialog"""
+        if self.is_existing_organization and self.parent_handler:
+            # Instead of closing, reject this dialog and return to existing org dialog
+            self.reject()
+            # Reopen the existing organization dialog
+            self.parent_handler.handle_existing_organization_request()
+        else:
+            # For new organizations, just close normally
+            super().closeEvent(event)
     
     def init_ui(self):
         """Initialize the role selection dialog UI"""
@@ -155,8 +374,8 @@ class RoleSelectionDialog(QDialog):
         self.is_login = False
         
         # Role buttons
-        doctor_head_btn = QPushButton("Sign up as Head Doctor")
-        hcp_head_btn = QPushButton("Sign up as Head HCP")
+        doctor_head_btn = QPushButton("Sign up as Doctor Head")
+        hcp_head_btn = QPushButton("Sign up as HCP Head")
         
         # Store selected role and organization
         def select_doctor_head():
@@ -256,11 +475,12 @@ class RoleSelectionDialog(QDialog):
                 print("DEBUG: User data is None after signup")
                 self.selected_role = None
                 self.selected_organization = None
+                self.reject()
         else:
-            # Sign-up was cancelled
-            print("DEBUG: Signup dialog was cancelled or rejected")
-            self.selected_role = None
-            self.selected_organization = None
+            # Sign-up was cancelled via close button - return to role selection
+            print("DEBUG: Signup dialog was cancelled or rejected - returning to role selection")
+            # Don't set role/org to None, keep the role selection dialog open
+            # User can choose a different option or close the main dialog
     
     def show_login_dialog(self):
         """Show the login dialog for the selected role"""
@@ -277,13 +497,15 @@ class RoleSelectionDialog(QDialog):
                 # Login failed or was cancelled
                 self.selected_role = None
                 self.selected_organization = None
+                self.reject()
         else:
-            # Login was cancelled
-            self.selected_role = None
-            self.selected_organization = None
+            # Login was cancelled via close button - return to role selection
+            print("DEBUG: Login dialog was cancelled or rejected - returning to role selection")
+            # Don't set role/org to None, keep the role selection dialog open
+            # User can choose a different option or close the main dialog
 
 
-class SignUpDialog(QDialog):
+class SignUpDialog(QDialog, BaseDialogMixin):
     """Sign-up dialog that matches the provided image design"""
     
     def __init__(self, parent=None, role="", organization=""):
@@ -532,20 +754,38 @@ class SignUpDialog(QDialog):
             'signup_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         
-        # Save to head_users.json (for Head Doctor and Head HCP roles)
+        # Save to appropriate file based on role
         try:
             print("DEBUG: Attempting to save head user data...")
-            head_users = load_head_users()
-            username = phone  # Use phone as unique identifier
             
-            if username in head_users:
-                print(f"DEBUG: Head user {username} already exists")
-                QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
-                return
-            
-            head_users[username] = self.user_data
-            save_head_users(head_users)
-            print("DEBUG: Head user data saved successfully")
+            if self.role == 'Doctor Head':
+                doctor_head_users = load_doctor_head_users()
+                username = phone  # Use phone as unique identifier
+                
+                if username in doctor_head_users:
+                    print(f"DEBUG: Doctor Head user {username} already exists")
+                    QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
+                    return
+                
+                doctor_head_users[username] = self.user_data
+                save_head_users(doctor_head_users, 'Doctor Head')
+                
+                # Also save to main users.json for normal login
+                save_user_to_main_users(self.user_data, username)
+            elif self.role == 'HCP Head':
+                hcp_head_users = load_hcp_head_users()
+                username = phone  # Use phone as unique identifier
+                
+                if username in hcp_head_users:
+                    print(f"DEBUG: HCP Head user {username} already exists")
+                    QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
+                    return
+                
+                hcp_head_users[username] = self.user_data
+                save_head_users(hcp_head_users, 'HCP Head')
+                
+                # Also save to main users.json for normal login
+                save_user_to_main_users(self.user_data, username)
             
             self.signup_successful = True
             print("DEBUG: signup_successful set to True")
@@ -563,7 +803,7 @@ class SignUpDialog(QDialog):
         return result
 
 
-class LoginDialog(QDialog):
+class LoginDialog(QDialog, BaseDialogMixin):
     """Login dialog for existing Head Doctor and Head HCP users"""
     
     def __init__(self, parent=None, role="", organization=""):
@@ -729,10 +969,17 @@ class LoginDialog(QDialog):
             QMessageBox.warning(self, "Error", "Both full name and password are required.")
             return
         
-        # Check credentials against head_users.json for Head roles
+        # Check credentials against appropriate file for Head roles
         try:
             print(f"DEBUG: Looking for full_name='{full_name}', role='{self.role}', org='{self.organization}'")
-            head_users = load_head_users()
+            
+            if self.role == 'Doctor Head':
+                head_users = load_doctor_head_users()
+            elif self.role == 'HCP Head':
+                head_users = load_hcp_head_users()
+            else:
+                head_users = {}
+                
             print(f"DEBUG: Available head users: {head_users}")
             
             # Find user by full name and role
@@ -826,9 +1073,15 @@ class LoginDialog(QDialog):
                 QMessageBox.warning(phone_dialog, "Error", "Phone number is required.")
                 return
             
-            # Check credentials against head_users.json
+            # Check credentials against appropriate file for phone login
             try:
-                head_users = load_head_users()
+                if self.role == 'Doctor Head':
+                    head_users = load_doctor_head_users()
+                elif self.role == 'HCP Head':
+                    head_users = load_hcp_head_users()
+                else:
+                    head_users = {}
+                    
                 print(f"DEBUG: Available head users for phone login: {head_users}")
                 
                 # Find user by phone and role
@@ -878,7 +1131,7 @@ class DashboardWindow(QDialog):
         """Initialize the dashboard UI"""
         self.setWindowTitle("Dashboard")
         self.showMaximized()  # Full screen
-        self.setModal(False)  # Non-modal so user can interact with other windows if needed
+        self.setModal(True)  # Modal to prevent background interaction
         
         # Enable window flags for better window management
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
@@ -1074,11 +1327,64 @@ class DashboardWindow(QDialog):
         activity_title.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 15px;")
         center_layout.addWidget(activity_title)
         
-        # Activity placeholder
-        activity_placeholder = QLabel("No recent activity to display.")
-        activity_placeholder.setStyleSheet("color: #ccc; font-style: italic; padding: 20px;")
-        activity_placeholder.setAlignment(Qt.AlignCenter)
-        center_layout.addWidget(activity_placeholder)
+        # Load and display recently created users
+        recent_users_frame = QFrame()
+        recent_users_frame.setStyleSheet("""
+            QFrame {
+                background: transparent;
+                border: none;
+            }
+        """)
+        recent_users_layout = QVBoxLayout(recent_users_frame)
+        recent_users_layout.setContentsMargins(10, 10, 10, 10)
+        
+        # Get recently created users
+        recent_users = self.get_recent_users()
+        
+        if recent_users:
+            # Create scrollable area for user cards
+            from PyQt5.QtWidgets import QScrollArea
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setMaximumHeight(300)
+            scroll_area.setStyleSheet("""
+                QScrollArea {
+                    background: transparent;
+                    border: none;
+                    border-radius: 0px;
+                }
+            """)
+            
+            cards_container = QWidget()
+            cards_container.setFixedSize(450, 450)
+            cards_container.setStyleSheet("""
+                QWidget {
+                    background: transparent;
+                    border: 2px solid white;
+                    border-radius: 15px;
+                    padding: 20px;
+                }
+            """)
+            cards_layout = QVBoxLayout(cards_container)
+            cards_layout.setSpacing(10)
+            cards_layout.setContentsMargins(0, 0, 0, 0)
+            
+            for user_data in recent_users:
+                user_card = self.create_user_card(user_data)
+                cards_layout.addWidget(user_card)
+            
+            cards_layout.addStretch()
+            scroll_area.setWidget(cards_container)
+            recent_users_layout.addWidget(scroll_area)
+        else:
+            # No users created yet
+            no_users_label = QLabel("No users created yet. Click 'Add Users' to get started.")
+            no_users_label.setStyleSheet("color: #ccc; font-style: italic; padding: 20px;")
+            no_users_label.setAlignment(Qt.AlignCenter)
+            recent_users_layout.addWidget(no_users_label)
+        
+        center_layout.addWidget(recent_users_frame)
         
         center_layout.addStretch()
         main_content.addWidget(center_frame, 1)
@@ -1095,20 +1401,332 @@ class DashboardWindow(QDialog):
         """Show dialog for adding users based on role hierarchy"""
         dialog = AddUsersDialog(self, self.user_data)
         dialog.exec_()
+        
+        # Refresh recent activity after adding users
+        self.refresh_recent_activity()
+    
+    def get_recent_users(self):
+        """Get recently created users by current Doctor Head/HCP Head"""
+        try:
+            current_role = self.user_data.get('role', '')
+            creator_name = self.user_data.get('full_name', '')
+            
+            if current_role in ['Doctor Head', 'HCP Head']:
+                # Get users from creator-specific file
+                created_users = load_created_users(creator_name, current_role)
+                
+                # Convert to list and sort by signup_date (most recent first)
+                users_list = []
+                for username, user_data in created_users.items():
+                    user_data['username'] = username
+                    users_list.append(user_data)
+                
+                # Sort by signup_date
+                users_list.sort(key=lambda x: x.get('signup_date', ''), reverse=True)
+                
+                # Return only last 5 users
+                return users_list[:5]
+            else:
+                return []
+        except Exception as e:
+            print(f"DEBUG: Error getting recent users: {e}")
+            return []
+    
+    def create_user_card(self, user_data):
+        """Create a clickable user card"""
+        from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy
+        from PyQt5.QtCore import Qt
+        
+        card = QFrame()
+        card.setMinimumSize(350, 80)
+        card.setMaximumHeight(100)
+        card.setStyleSheet("""
+            QFrame {
+                background: rgba(30,30,40,0.8);
+                border: 2px solid white;
+                border-radius: 10px;
+                padding: 12px;
+            }
+            QFrame:hover {
+                background: rgba(40,40,50,0.9);
+                border: 2px solid red;
+            }
+        """)
+        
+        layout = QHBoxLayout(card)
+        layout.setContentsMargins(15, 10, 15, 10)
+        
+        # User info
+        info_layout = QVBoxLayout()
+        
+        # Name and role
+        name_label = QLabel(f"{user_data.get('full_name', 'N/A')}")
+        name_label.setStyleSheet("font-size: 15px; font-weight: bold; color: white; margin-bottom: 3px;")
+        name_label.setWordWrap(True)
+        name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        info_layout.addWidget(name_label)
+        
+        role_label = QLabel(f"{user_data.get('role', 'N/A')} • {user_data.get('phone', 'N/A')}")
+        role_label.setStyleSheet("font-size: 13px; color: #bbb;")
+        role_label.setWordWrap(True)
+        role_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        info_layout.addWidget(role_label)
+        
+        layout.addLayout(info_layout)
+        layout.addStretch()
+        
+        # Click handler for login
+        def show_login_dialog():
+            login_dialog = UserLoginDialog(self, user_data)
+            if login_dialog.exec_() == QDialog.Accepted:
+                # Login successful - close current sign-up page and start main application
+                self.close()  # Close sign-up page
+                self.start_main_application(user_data.get('full_name', 'User'))
+        
+        # Make card clickable
+        from PyQt5.QtWidgets import QPushButton
+        card_btn = QPushButton()
+        card_btn.setStyleSheet("QPushButton { border: none; background: transparent; }")
+        card_btn.setCursor(Qt.PointingHandCursor)
+        card_btn.clicked.connect(show_login_dialog)
+        card_btn.setLayout(layout)
+        
+        return card_btn
+    
+    def start_main_application(self, user_name):
+        """Start main application - open main dashboard like normal login"""
+        try:
+            # Import required modules
+            import sys
+            import os
+            
+            # Add src directory to path if not already there
+            src_dir = os.path.dirname(os.path.abspath(__file__))
+            if src_dir not in sys.path:
+                sys.path.insert(0, src_dir)
+            
+            # Import main dashboard and login
+            from main import get_dashboard_module, LoginRegisterDialog
+            
+            # Get dashboard class
+            Dashboard = get_dashboard_module()
+            if Dashboard is None:
+                QMessageBox.critical(self, "Error", "Failed to load Dashboard module.")
+                return
+            
+            # Create and show main dashboard with user data
+            dashboard = Dashboard(username=user_name,  # Use actual user name
+                                 role=self.user_data.get('role'), 
+                                 user_details=self.user_data)
+            dashboard.show()
+            
+            # Run application event loop
+            from PyQt5.QtWidgets import QApplication
+            app = QApplication.instance()
+            
+            # Wait for dashboard to close
+            app.exec_()
+            
+            # Check if dashboard was closed by sign out
+            if getattr(dashboard, "closed_by_sign_out", False):
+                # User signed out - reopen sign-up page
+                from organization import DashboardWindow
+                signup_window = DashboardWindow(user_data=self.parent_user_data if hasattr(self, 'parent_user_data') else None)
+                signup_window.exec_()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to start main application: {e}")
+        
+    def refresh_recent_activity(self):
+        """Refresh the recent activity section"""
+        # This would be called after adding new users
+        # For now, you can restart the dashboard to see updates
+        pass
     
     def get_user_count(self):
-        """Get count of users in the same organization"""
+        """Get count of users created by current Doctor Head/HCP Head in the same organization"""
         try:
-            from main import load_users
-            users = load_users()
+            current_role = self.user_data.get('role', '')
             current_org = self.user_data.get('organization', '')
-            count = 0
+            creator_name = self.user_data.get('full_name', '')
             
-            for username, user_data in users.items():
-                if user_data.get('organization') == current_org:
-                    count += 1
+            if current_role in ['Doctor Head', 'HCP Head']:
+                # For Doctor Head/HCP Head, count ONLY users they created in their organization
+                return get_all_created_users_count(creator_name, current_role, current_org)
+            else:
+                # For other roles, count all users in the organization from clinical_users.json
+                import os
+                CLINICAL_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+                count = 0
+                
+                if os.path.exists(CLINICAL_USERS_FILE):
+                    with open(CLINICAL_USERS_FILE, "r") as f:
+                        clinical_users = json.load(f)
+                        for username, user_data in clinical_users.items():
+                            if isinstance(user_data, dict) and user_data.get('organization') == current_org:
+                                count += 1
+                
+                return count
+        except Exception:
+            return 0
+
+
+class UserLoginDialog(QDialog):
+    """Dialog for user login with full name and password"""
+    
+    def __init__(self, parent, user_data):
+        super().__init__(parent)
+        self.user_data = user_data
+        self.init_ui()
+    
+    def init_ui(self):
+        """Initialize login dialog UI"""
+        self.setWindowTitle("User Login")
+        self.setFixedSize(600, 500)
+        self.setModal(True)
+        
+        # Set background
+        self.setStyleSheet("""
+            QDialog {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
+                    stop:0 #f8f9fa, stop:1 #e9ecef);
+            }
+            QLabel {
+                color: #333;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QLineEdit {
+                padding: 12px;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                font-size: 14px;
+                background: white;
+                min-height: 20px;
+            }
+            QLineEdit:focus {
+                border: 2px solid #007bff;
+            }
+            QPushButton {
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                min-height: 15px;
+            }
+            QPushButton:hover {
+                background: #0056b3;
+            }
+            QPushButton#cancel_btn {
+                background: #6c757d;
+            }
+            QPushButton#cancel_btn:hover {
+                background: #545b62;
+            }
+        """)
+        
+        layout = QVBoxLayout(self)
+        layout.setSpacing(30)
+        layout.setContentsMargins(50, 50, 50, 50)
+        
+        # Title
+        title = QLabel("Login to Continue")
+        title.setAlignment(Qt.AlignCenter)
+        title.setStyleSheet("font-size: 24px; color: #007bff; margin-bottom: 15px;")
+        layout.addWidget(title)
+        
+        # User info
+        user_info = QLabel(f"Welcome, {self.user_data.get('full_name', 'User')}")
+        user_info.setAlignment(Qt.AlignCenter)
+        user_info.setStyleSheet("font-size: 16px; color: #666; margin-bottom: 25px;")
+        layout.addWidget(user_info)
+        
+        # Full Name input
+        name_label = QLabel("Full Name:")
+        layout.addWidget(name_label)
+        
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Enter your full name")
+        self.name_input.setMinimumSize(400, 40)
+        layout.addWidget(self.name_input)
+        
+        # Password input
+        password_label = QLabel("Password:")
+        layout.addWidget(password_label)
+        
+        self.password_input = QLineEdit()
+        self.password_input.setEchoMode(QLineEdit.Password)
+        self.password_input.setPlaceholderText("Enter your password")
+        self.password_input.setMinimumSize(400, 40)
+        layout.addWidget(self.password_input)
+        
+        # Buttons
+        buttons_layout = QHBoxLayout()
+        
+        login_btn = QPushButton("Login")
+        login_btn.clicked.connect(self.validate_login)
+        login_btn.setMinimumSize(120, 40)
+        buttons_layout.addWidget(login_btn)
+        
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setObjectName("cancel_btn")
+        cancel_btn.clicked.connect(self.reject)
+        cancel_btn.setMinimumSize(120, 40)
+        buttons_layout.addWidget(cancel_btn)
+        
+        layout.addLayout(buttons_layout)
+        
+        # Set default values for testing (remove in production)
+        self.name_input.setText(self.user_data.get('full_name', ''))
+        self.password_input.setFocus()
+    
+    def validate_login(self):
+        """Validate login credentials"""
+        entered_name = self.name_input.text().strip()
+        entered_password = self.password_input.text().strip()
+        
+        if not entered_name or not entered_password:
+            QMessageBox.warning(self, "Error", "Please enter both full name and password.")
+            return
+        
+        # Check if credentials match (simple validation)
+        stored_name = self.user_data.get('full_name', '')
+        stored_password = self.user_data.get('password', '')  # Assuming password is stored
+        
+        if entered_name == stored_name and entered_password == stored_password:
+            self.accept()  # Login successful
+        else:
+            QMessageBox.warning(self, "Login Failed", "Invalid full name or password. Please try again.")
+            self.password_input.clear()
+            self.password_input.setFocus()
+    
+    def get_user_count(self):
+        """Get count of users created by current Doctor Head/HCP Head in the same organization"""
+        try:
+            current_role = self.user_data.get('role', '')
+            current_org = self.user_data.get('organization', '')
+            creator_name = self.user_data.get('full_name', '')
             
-            return count
+            if current_role in ['Doctor Head', 'HCP Head']:
+                # For Doctor Head/HCP Head, count ONLY users they created in their organization
+                return get_all_created_users_count(creator_name, current_role, current_org)
+            else:
+                # For other roles, count all users in the organization from clinical_users.json
+                import os
+                CLINICAL_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+                count = 0
+                
+                if os.path.exists(CLINICAL_USERS_FILE):
+                    with open(CLINICAL_USERS_FILE, "r") as f:
+                        clinical_users = json.load(f)
+                        for username, user_data in clinical_users.items():
+                            if isinstance(user_data, dict) and user_data.get('organization') == current_org:
+                                count += 1
+                
+                return count
         except Exception:
             return 0
 
@@ -1121,7 +1739,7 @@ class OrganizationRequestHandler:
         self.org_manager = OrganizationManager()
     
     def handle_organization_request(self):
-        """Handle request for new organization name"""
+        """Handle request for new organization"""
         org_name, ok = QInputDialog.getText(
             self.parent_dialog, 
             "Request New Organization", 
@@ -1134,10 +1752,7 @@ class OrganizationRequestHandler:
             success, message = self.org_manager.add_organization(org_name.strip())
             
             if success:
-                QMessageBox.information(self.parent_dialog, "Success", "New organization added successfully!")
-                
-                # Show role selection dialog
-                self.show_role_selection_dialog(org_name.strip())
+                QMessageBox.information(self.parent_dialog, "Success", f"'{org_name.strip()}' added successfully!")
             else:
                 QMessageBox.warning(self.parent_dialog, "Error", message)
     
@@ -1154,7 +1769,7 @@ class OrganizationRequestHandler:
         # Create a dialog to select existing organization
         dialog = QDialog(self.parent_dialog)
         dialog.setWindowTitle("Select Existing Organization")
-        dialog.setMinimumSize(400, 300)
+        dialog.setMinimumSize(500, 400)
         dialog.setStyleSheet("""
             QDialog {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
@@ -1187,9 +1802,11 @@ class OrganizationRequestHandler:
                 font-size: 14px;
             }
             QListWidget::item {
-                padding: 8px;
+                padding: 5px;
                 margin: 2px;
+                border: none;
                 border-radius: 4px;
+                min-height: 30px;
             }
             QListWidget::item:selected {
                 background: #ff6600;
@@ -1207,6 +1824,7 @@ class OrganizationRequestHandler:
         # Organization list with delete functionality
         from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QWidget, QHBoxLayout
         org_list = QListWidget()
+        org_list.setMaximumHeight(160)
         
         for org_name in organizations.keys():
             # Create custom widget for each organization item
@@ -1216,7 +1834,7 @@ class OrganizationRequestHandler:
             
             # Organization name label
             org_label = QLabel(org_name)
-            org_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold;")
+            org_label.setStyleSheet("color: white; font-size: 13px; font-weight: bold; min-width: 200px; min-height: 15px; border: none;")
             item_layout.addWidget(org_label)
             
             # Add stretch to push delete button to the right
@@ -1227,7 +1845,6 @@ class OrganizationRequestHandler:
             delete_btn.setFixedSize(30, 30)
             delete_btn.setStyleSheet("""
                 QPushButton {
-                    background: rgba(255, 0, 0, 0.8);
                     border: none;
                     border-radius: 15px;
                     color: white;
@@ -1240,94 +1857,81 @@ class OrganizationRequestHandler:
             """)
             
             # Connect delete button to delete function
-            def delete_organization(org=org_name, dlg=dialog):
+            def delete_organization(current_org_name, current_dialog):
                 reply = QMessageBox.question(
-                    dlg, 
+                    current_dialog, 
                     "Confirm Delete", 
-                    f"Are you sure you want to delete the organization '{org}'?\n\nThis action cannot be undone.",
+                    f"Are you sure you want to delete the organization '{current_org_name}'?\n\nThis will also remove all Doctor Head and HCP Head users associated with this organization.\n\nThis action cannot be undone.",
                     QMessageBox.Yes | QMessageBox.No,
                     QMessageBox.No
                 )
                 
                 if reply == QMessageBox.Yes:
+                    print(f"DEBUG: Attempting to delete organization '{current_org_name}'")
+                    
+                    # Remove associated Doctor Head users
+                    try:
+                        doctor_head_users = load_doctor_head_users()
+                        print(f"DEBUG: Loaded Doctor Head users: {list(doctor_head_users.keys())}")
+                        users_to_remove = []
+                        for username, user_data in doctor_head_users.items():
+                            print(f"DEBUG: Checking user {username}: org='{user_data.get('organization')}' vs '{current_org_name}'")
+                            if user_data.get('organization') == current_org_name:
+                                users_to_remove.append(username)
+                        
+                        print(f"DEBUG: Doctor Head users to remove: {users_to_remove}")
+                        for username in users_to_remove:
+                            doctor_head_users.pop(username, None)
+                            print(f"DEBUG: Removed Doctor Head user {username} from organization {current_org_name}")
+                        
+                        if users_to_remove:
+                            save_head_users(doctor_head_users, 'Doctor Head')
+                            print(f"DEBUG: Removed {len(users_to_remove)} Doctor Head users for organization {current_org_name}")
+                        else:
+                            print(f"DEBUG: No Doctor Head users found for organization {current_org_name}")
+                    except Exception as e:
+                        print(f"DEBUG: Error removing Doctor Head users: {e}")
+                    
+                    # Remove associated HCP Head users
+                    try:
+                        hcp_head_users = load_hcp_head_users()
+                        print(f"DEBUG: Loaded HCP Head users: {list(hcp_head_users.keys())}")
+                        users_to_remove = []
+                        for username, user_data in hcp_head_users.items():
+                            print(f"DEBUG: Checking HCP user {username}: org='{user_data.get('organization')}' vs '{current_org_name}'")
+                            if user_data.get('organization') == current_org_name:
+                                users_to_remove.append(username)
+                        
+                        print(f"DEBUG: HCP Head users to remove: {users_to_remove}")
+                        for username in users_to_remove:
+                            hcp_head_users.pop(username, None)
+                            print(f"DEBUG: Removed HCP Head user {username} from organization {current_org_name}")
+                        
+                        if users_to_remove:
+                            save_head_users(hcp_head_users, 'HCP Head')
+                            print(f"DEBUG: Removed {len(users_to_remove)} HCP Head users for organization {current_org_name}")
+                        else:
+                            print(f"DEBUG: No HCP Head users found for organization {current_org_name}")
+                    except Exception as e:
+                        print(f"DEBUG: Error removing HCP Head users: {e}")
+                    
                     # Remove organization from the organizations dict
-                    organizations.pop(org, None)
+                    organizations.pop(current_org_name, None)
+                    print(f"DEBUG: Organization removed from dict. Remaining: {list(organizations.keys())}")
+                    
                     # Save updated organizations
                     if self.org_manager.save_organizations(organizations):
-                        QMessageBox.information(dlg, "Success", f"Organization '{org}' deleted successfully.")
-                        # Clear and rebuild the organization list
-                        org_list.clear()
-                        for org_name in organizations.keys():
-                            # Create custom widget for each organization item
-                            item_widget = QWidget()
-                            item_layout = QHBoxLayout(item_widget)
-                            item_layout.setContentsMargins(5, 5, 5, 5)
-                            
-                            # Organization name label
-                            org_label = QLabel(org_name)
-                            org_label.setStyleSheet("color: white; font-size: 14px; font-weight: bold;")
-                            item_layout.addWidget(org_label)
-                            
-                            # Add stretch to push delete button to the right
-                            item_layout.addStretch()
-                            
-                            # Delete button
-                            delete_btn = QPushButton("X")
-                            delete_btn.setFixedSize(30, 30)
-                            delete_btn.setStyleSheet("""
-                                QPushButton {
-                                    background: rgba(255, 0, 0, 0.8);
-                                    border: none;
-                                    border-radius: 15px;
-                                    color: white;
-                                    font-size: 16px;
-                                    font-weight: bold;
-                                }
-                                QPushButton:hover {
-                                    background: rgba(255, 0, 0, 1.0);
-                                }
-                            """)
-                            
-                            # Connect delete button to delete function
-                            def delete_organization_new(org_new=org_name, dlg_new=dlg):
-                                reply_new = QMessageBox.question(
-                                    dlg_new, 
-                                    "Confirm Delete", 
-                                    f"Are you sure you want to delete the organization '{org_new}'?\n\nThis action cannot be undone.",
-                                    QMessageBox.Yes | QMessageBox.No,
-                                    QMessageBox.No
-                                )
-                                
-                                if reply_new == QMessageBox.Yes:
-                                    # Remove organization from the organizations dict
-                                    organizations.pop(org_new, None)
-                                    # Save updated organizations
-                                    if self.org_manager.save_organizations(organizations):
-                                        QMessageBox.information(dlg_new, "Success", f"Organization '{org_new}' deleted successfully.")
-                                        # Remove the item from the list
-                                        for i in range(org_list.count()):
-                                            item = org_list.item(i)
-                                            widget = org_list.itemWidget(item)
-                                            if widget:
-                                                # Find the organization label in the widget
-                                                for child in widget.children():
-                                                    if isinstance(child, QLabel) and child.text() == org_new:
-                                                        org_list.takeItem(i)
-                                                        return
-                                    else:
-                                        QMessageBox.warning(dlg_new, "Error", "Failed to delete organization.")
-                            
-                            delete_btn.clicked.connect(delete_organization_new)
-                            item_layout.addWidget(delete_btn)
-                            
-                            # Create list item and set the custom widget
-                            list_item = QListWidgetItem(org_list)
-                            list_item.setSizeHint(item_widget.sizeHint())
-                            org_list.setItemWidget(list_item, item_widget)
+                        print(f"DEBUG: Organizations saved successfully")
+                        QMessageBox.information(current_dialog, "Success", f"Organization '{current_org_name}' and all associated users deleted successfully.")
+                        # Close and reopen the dialog to refresh the list
+                        current_dialog.accept()
+                        self.handle_existing_organization_request()
+                        return
                     else:
-                        QMessageBox.warning(dlg, "Error", "Failed to delete organization.")
+                        print(f"DEBUG: Failed to save organizations")
+                        QMessageBox.warning(current_dialog, "Error", "Failed to delete organization.")
             
-            delete_btn.clicked.connect(delete_organization)
+            delete_btn.clicked.connect(lambda: delete_organization(org_name, dialog))
             item_layout.addWidget(delete_btn)
             
             # Create list item and set the custom widget
@@ -1372,10 +1976,17 @@ class OrganizationRequestHandler:
     
     def show_role_selection_dialog(self, organization_name, is_existing_organization=False):
         """Show role selection dialog with Doctor Head and HCP Head options"""
-        dialog = RoleSelectionDialog(self.parent_dialog, organization_name, is_existing_organization)
+        dialog = RoleSelectionDialog(self, organization_name, is_existing_organization)
         
         if dialog.exec_() == QDialog.Accepted:
             role, org, is_login = dialog.get_selection()
+            print(f"DEBUG: RoleSelectionDialog returned - role: {role}, org: {org}, is_login: {is_login}")
+            print(f"DEBUG: hasattr login_user_data: {hasattr(dialog, 'login_user_data')}")
+            print(f"DEBUG: hasattr signup_user_data: {hasattr(dialog, 'signup_user_data')}")
+            if hasattr(dialog, 'login_user_data'):
+                print(f"DEBUG: login_user_data: {dialog.login_user_data}")
+            if hasattr(dialog, 'signup_user_data'):
+                print(f"DEBUG: signup_user_data: {dialog.signup_user_data}")
             
             # Store the selection in the parent dialog
             self.parent_dialog.selected_role = role
@@ -1426,7 +2037,7 @@ class OrganizationRequestHandler:
 
 def create_organization_request_button(parent_dialog):
     """Create and return the organization request button with connected handler"""
-    org_request_btn = QPushButton("Request for New Organization Name")
+    org_request_btn = QPushButton("Request for New Organization")
     org_request_btn.setStyleSheet("""
         QPushButton {
             background: transparent;
@@ -1478,18 +2089,25 @@ def create_existing_organization_button(parent_dialog):
 
 def create_organization_buttons_layout(parent_dialog):
     """Create a layout with both organization buttons and return the layout and handlers"""
-    from PyQt5.QtWidgets import QHBoxLayout
+    from PyQt5.QtWidgets import QVBoxLayout
     
-    # Create buttons layout
-    buttons_layout = QHBoxLayout()
+    # Create buttons layout (vertical)
+    buttons_layout = QVBoxLayout()
+    
+    # Add some spacing at the top to prevent cropping
+    buttons_layout.addSpacing(10)
     
     # Create both buttons
     new_org_btn, new_handler = create_organization_request_button(parent_dialog)
     existing_org_btn, existing_handler = create_existing_organization_button(parent_dialog)
     
-    # Add buttons to layout
+    # Add buttons to layout vertically
     buttons_layout.addWidget(new_org_btn)
+    buttons_layout.addSpacing(15)  # Space between buttons
     buttons_layout.addWidget(existing_org_btn)
+    
+    # Add some spacing at the bottom
+    buttons_layout.addSpacing(10)
     
     return buttons_layout, new_handler, existing_handler
 
@@ -1702,6 +2320,7 @@ class UserCreationDialog(QDialog):
             ("Gender:", "gender", "Enter gender"),
             ("Address:", "address", "Enter address"),
             ("Phone Number:", "phone", "Enter phone number"),
+            ("Email ID:", "email", "Enter email ID"),
             ("Password:", "password", "Enter password"),
             ("Confirm Password:", "confirm_password", "Confirm password")
         ]
@@ -1769,6 +2388,7 @@ class UserCreationDialog(QDialog):
         gender = self.field_widgets['gender'].text().strip()
         address = self.field_widgets['address'].text().strip()
         phone = self.field_widgets['phone'].text().strip()
+        email = self.field_widgets['email'].text().strip()
         password = self.field_widgets['password'].text()
         confirm_password = self.field_widgets['confirm_password'].text()
         
@@ -1785,7 +2405,19 @@ class UserCreationDialog(QDialog):
             # Import user management functions
             from main import load_users, save_users
             
-            users = load_users()
+            # Use separate file for clinical users
+            import os
+            CLINICAL_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+            
+            # Load existing clinical users or create new dict
+            if os.path.exists(CLINICAL_USERS_FILE):
+                with open(CLINICAL_USERS_FILE, "r") as f:
+                    clinical_users = json.load(f)
+            else:
+                clinical_users = {}
+            
+            # Generate username from phone or use full name
+            username = phone if phone else full_name.replace(' ', '_').lower()
             
             # Create new user record
             new_user = {
@@ -1794,19 +2426,41 @@ class UserCreationDialog(QDialog):
                 'gender': gender,
                 'address': address,
                 'phone': phone,
+                'email': email,
                 'password': password,
                 'role': self.user_role,
                 'organization': self.current_user_data.get('organization', ''),
-                'signup_date': f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-                'created_by': self.current_user_data.get('full_name', '')
+                'signup_date': f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
             }
             
-            # Generate username from phone or use full name
-            username = phone if phone else full_name.replace(' ', '_').lower()
-            users[username] = new_user
+            # Only add created_by for clinical users, not regular users
+            if self.user_role in ['Sr. Clinical Doctor', 'Jr. Clinical Doctor', 'Sr. Admin', 'Jr. Admin', 'Employee', 'Receptionist']:
+                new_user['created_by'] = self.current_user_data.get('full_name', '')
             
-            # Save users
-            save_users(users)
+            # Check if creator is Doctor Head/HCP Head and save to creator-specific file
+            creator_role = self.current_user_data.get('role', '')
+            creator_name = self.current_user_data.get('full_name', '')
+            
+            if creator_role in ['Doctor Head', 'HCP Head']:
+                # Load existing users created by this Doctor Head/HCP Head
+                created_users = load_created_users(creator_name, creator_role)
+                created_users[username] = new_user
+                
+                # Save to creator-specific file
+                if save_created_users(created_users, creator_name, creator_role):
+                    print(f"DEBUG: User {username} saved to creator-specific file for {creator_name} ({creator_role})")
+                else:
+                    print(f"DEBUG: Failed to save user to creator-specific file")
+            
+            # Also save to clinical_users.json for clinical users (existing behavior)
+            if self.user_role in ['Sr. Clinical Doctor', 'Jr. Clinical Doctor', 'Sr. Admin', 'Jr. Admin', 'Employee', 'Receptionist']:
+                clinical_users[username] = new_user
+                
+                # Save clinical users
+                with open(CLINICAL_USERS_FILE, "w") as f:
+                    json.dump(clinical_users, f, indent=2)
+                
+                print(f"DEBUG: Clinical user {username} saved to clinical_users.json")
             
             self.user_data = new_user
             QMessageBox.information(self, "Success", f"{self.user_role} created successfully!")
@@ -1854,7 +2508,6 @@ class UserManagementDashboard(QDialog):
             QDialog {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
                     stop:0 #1a1a2e, stop:1 #16213e);
-                color: white;
             }
             QLabel {
                 color: white;
@@ -1920,26 +2573,37 @@ class UserManagementDashboard(QDialog):
         add_more_btn = QPushButton("Add More Users")
         add_more_btn.clicked.connect(self.add_more_users)
         buttons_layout.addWidget(add_more_btn)
-        
+
         layout.addWidget(buttons_frame)
         layout.addStretch()
-    
+
     def get_user_count(self):
-        """Get count of users in the same organization"""
+        """Get count of users created by current Doctor Head/HCP Head in the same organization"""
         try:
-            from main import load_users
-            users = load_users()
+            current_role = self.current_user_data.get('role', '')
             current_org = self.current_user_data.get('organization', '')
-            count = 0
+            creator_name = self.current_user_data.get('full_name', '')
             
-            for username, user_data in users.items():
-                if user_data.get('organization') == current_org:
-                    count += 1
-            
-            return count
+            if current_role in ['Doctor Head', 'HCP Head']:
+                # For Doctor Head/HCP Head, count ONLY users they created in their organization
+                return get_all_created_users_count(creator_name, current_role, current_org)
+            else:
+                # For other roles, count all users in the organization from clinical_users.json
+                import os
+                CLINICAL_USERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+                count = 0
+                
+                if os.path.exists(CLINICAL_USERS_FILE):
+                    with open(CLINICAL_USERS_FILE, "r") as f:
+                        clinical_users = json.load(f)
+                        for username, user_data in clinical_users.items():
+                            if isinstance(user_data, dict) and user_data.get('organization') == current_org:
+                                count += 1
+                
+                return count
         except Exception:
             return 0
-    
+
     def add_more_users(self):
         """Open add users dialog again"""
         self.accept()

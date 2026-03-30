@@ -786,7 +786,13 @@ def main():
         # Main application loop
         while True:
             try:
-                if login.exec_() == QDialog.Accepted and login.result:
+                login_result = login.exec_()
+                print(f"DEBUG: login.exec_() returned: {login_result}")
+                print(f"DEBUG: login.result: {login.result}")
+                print(f"DEBUG: login.username: {login.username}")
+                print(f"DEBUG: QDialog.Accepted: {QDialog.Accepted}")
+                
+                if login_result == QDialog.Accepted and login.result:
                     logger.info(f"User {login.username} logged in successfully")
                     # Attach machine serial ID to crash logger for email subject/body   tagging
                     try:
@@ -842,6 +848,9 @@ def main():
                     except Exception:
                         _splash = None
 
+                    # Close login dialog and other background windows before showing dashboard
+                    login.close()
+                    
                     # Create and show dashboard with user details
                     Dashboard = get_dashboard_module()
                     if Dashboard is None:
