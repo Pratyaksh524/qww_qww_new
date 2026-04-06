@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
     QMessageBox, QInputDialog, QLineEdit, QWidget, QSizePolicy, QFrame
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.QtGui import QFont, QPixmap, QIntValidator
 from config.settings import resource_path
 
 
@@ -222,6 +222,18 @@ def save_user_to_main_users(user_data, username):
         print(f"Error saving user to main users.json: {e}")
         return False
 
+def load_main_users():
+    """Load the root users.json (shared login store)."""
+    try:
+        users_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "users.json")
+        if os.path.exists(users_file):
+            with open(users_file, "r") as f:
+                return json.load(f)
+        return {}
+    except Exception as e:
+        print(f"Error loading main users.json: {e}")
+        return {}
+
 def load_doctor_head_users():
     """Load Doctor Head users from separate file"""
     try:
@@ -244,8 +256,8 @@ def load_hcp_head_users():
         print(f"Error loading HCP Head users: {e}")
         return {}
 
-# Clean up orphaned users on module import (after all helper functions are defined)
-cleanup_orphaned_users()
+# Note: cleanup_orphaned_users() is now only called when needed (e.g., after organization deletion)
+# Not running on module import to prevent premature cleanup
 
 
 class OrganizationManager:
@@ -381,12 +393,14 @@ class RoleSelectionDialog(QDialog):
         def select_doctor_head():
             self.selected_role = "Doctor Head"
             self.selected_organization = self.organization_name
+            self.is_login = False
             # Show sign-up dialog instead of just accepting
             self.show_signup_dialog()
             
         def select_hcp_head():
             self.selected_role = "HCP Head"
             self.selected_organization = self.organization_name
+            self.is_login = False
             # Show sign-up dialog instead of just accepting
             self.show_signup_dialog()
         
@@ -652,6 +666,8 @@ class SignUpDialog(QDialog, BaseDialogMixin):
         self.phone_edit = QLineEdit()
         self.phone_edit.setPlaceholderText("Enter your phone number")
         self.phone_edit.setMaximumWidth(200)
+        self.phone_edit.setValidator(QIntValidator(0, 2147483647, self))
+        self.phone_edit.setMaxLength(10)
         phone_layout.addWidget(phone_label)
         phone_layout.addWidget(self.phone_edit)
         phone_layout.addStretch()
@@ -731,6 +747,11 @@ class SignUpDialog(QDialog, BaseDialogMixin):
         # Validate fields
         if not all([full_name, age, gender, address, phone, password, confirm_password]):
             QMessageBox.warning(self, "Error", "All fields are required.")
+            return
+
+        # Enforce numeric phone number with length up to 10 digits
+        if not phone.isdigit() or len(phone) > 10:
+            QMessageBox.warning(self, "Error", "Phone number must be numbers only and at most 10 digits.")
             return
         
         if password != confirm_password:
@@ -1127,14 +1148,34 @@ class DashboardWindow(QDialog):
         self.user_data = user_data or {}
         self.init_ui()
     
+    def keyPressEvent(self, event):
+        """Handle key press events to prevent Enter key from closing dialog"""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Check if the focus widget is a QLineEdit that has returnPressed connected
+            focus_widget = self.focusWidget()
+            if isinstance(focus_widget, QLineEdit):
+                # Let the QLineEdit handle the Enter key (for returnPressed signals)
+                focus_widget.keyPressEvent(event)
+                return
+            # Otherwise, ignore Enter key to prevent accidental dialog closure
+            event.ignore()
+            return
+        # Handle other keys normally
+        super().keyPressEvent(event)
+
     def init_ui(self):
         """Initialize the dashboard UI"""
         self.setWindowTitle("Dashboard")
-        self.showMaximized()  # Full screen
         self.setModal(True)  # Modal to prevent background interaction
         
         # Enable window flags for better window management
         self.setWindowFlags(Qt.Window | Qt.WindowMinimizeButtonHint | Qt.WindowMaximizeButtonHint | Qt.WindowCloseButtonHint)
+
+        # Full screen
+        self.showMaximized()
+        
+        # Disable default button behavior to prevent Enter key from closing dialog
+        self.buttonGroup = None
         
         # Set background gradient
         self.setStyleSheet("""
@@ -1188,6 +1229,8 @@ class DashboardWindow(QDialog):
         # Logout button
         logout_btn = QPushButton("Logout")
         logout_btn.clicked.connect(self.close)
+        logout_btn.setAutoDefault(False)  # Prevent this button from being triggered by Enter
+        logout_btn.setDefault(False)  # Explicitly set as non-default
         header_layout.addWidget(logout_btn)
         
         layout.addLayout(header_layout)
@@ -1246,6 +1289,8 @@ class DashboardWindow(QDialog):
                 }
             """)
             add_users_btn.clicked.connect(self.show_add_users_dialog)
+            add_users_btn.setAutoDefault(False)  # Prevent this button from being triggered by Enter
+            add_users_btn.setDefault(False)  # Explicitly set as non-default
             left_layout.addWidget(add_users_btn)
             left_layout.addSpacing(10)
             
@@ -1264,6 +1309,7 @@ class DashboardWindow(QDialog):
                     }
                 """)
                 count_label.setAlignment(Qt.AlignCenter)
+                self.user_count_label = count_label
                 left_layout.addWidget(count_label)
         
         left_layout.addStretch()
@@ -1324,65 +1370,25 @@ class DashboardWindow(QDialog):
         
         # Recent activity section
         activity_title = QLabel("Recent Activity")
-        activity_title.setStyleSheet("font-size: 18px; font-weight: bold; margin-bottom: 15px;")
+        activity_title.setStyleSheet("font-size: 20px; font-weight: bold; color: #fff7ef; margin-bottom: 8px;")
         center_layout.addWidget(activity_title)
         
         # Load and display recently created users
         recent_users_frame = QFrame()
         recent_users_frame.setStyleSheet("""
             QFrame {
-                background: transparent;
-                border: none;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 rgba(255,255,255,0.06),
+                    stop:1 rgba(255,255,255,0.03));
+                border: 1px solid rgba(255,255,255,0.10);
+                border-radius: 22px;
             }
         """)
         recent_users_layout = QVBoxLayout(recent_users_frame)
-        recent_users_layout.setContentsMargins(10, 10, 10, 10)
-        
-        # Get recently created users
-        recent_users = self.get_recent_users()
-        
-        if recent_users:
-            # Create scrollable area for user cards
-            from PyQt5.QtWidgets import QScrollArea
-            scroll_area = QScrollArea()
-            scroll_area.setWidgetResizable(True)
-            scroll_area.setWidgetResizable(True)
-            scroll_area.setMaximumHeight(300)
-            scroll_area.setStyleSheet("""
-                QScrollArea {
-                    background: transparent;
-                    border: none;
-                    border-radius: 0px;
-                }
-            """)
-            
-            cards_container = QWidget()
-            cards_container.setFixedSize(450, 450)
-            cards_container.setStyleSheet("""
-                QWidget {
-                    background: transparent;
-                    border: 2px solid white;
-                    border-radius: 15px;
-                    padding: 20px;
-                }
-            """)
-            cards_layout = QVBoxLayout(cards_container)
-            cards_layout.setSpacing(10)
-            cards_layout.setContentsMargins(0, 0, 0, 0)
-            
-            for user_data in recent_users:
-                user_card = self.create_user_card(user_data)
-                cards_layout.addWidget(user_card)
-            
-            cards_layout.addStretch()
-            scroll_area.setWidget(cards_container)
-            recent_users_layout.addWidget(scroll_area)
-        else:
-            # No users created yet
-            no_users_label = QLabel("No users created yet. Click 'Add Users' to get started.")
-            no_users_label.setStyleSheet("color: #ccc; font-style: italic; padding: 20px;")
-            no_users_label.setAlignment(Qt.AlignCenter)
-            recent_users_layout.addWidget(no_users_label)
+        recent_users_layout.setContentsMargins(18, 18, 18, 18)
+        recent_users_layout.setSpacing(12)
+        self.recent_users_layout = recent_users_layout
+        self._populate_recent_users()
         
         center_layout.addWidget(recent_users_frame)
         
@@ -1406,20 +1412,25 @@ class DashboardWindow(QDialog):
         self.refresh_recent_activity()
     
     def get_recent_users(self):
-        """Get recently created users by current Doctor Head/HCP Head"""
+        """Get recently created users by current Doctor Head/HCP Head in current organization"""
         try:
             current_role = self.user_data.get('role', '')
             creator_name = self.user_data.get('full_name', '')
+            current_organization = self.user_data.get('organization', '')
             
             if current_role in ['Doctor Head', 'HCP Head']:
                 # Get users from creator-specific file
                 created_users = load_created_users(creator_name, current_role)
                 
-                # Convert to list and sort by signup_date (most recent first)
+                # Convert to list and filter by current organization
                 users_list = []
                 for username, user_data in created_users.items():
-                    user_data['username'] = username
-                    users_list.append(user_data)
+                    # Only include users created in the current organization
+                    if user_data.get('organization') == current_organization:
+                        user_data['username'] = username
+                        users_list.append(user_data)
+                    else:
+                        print(f"DEBUG: Skipping user {username} - org {user_data.get('organization')} != current org {current_organization}")
                 
                 # Sort by signup_date
                 users_list.sort(key=lambda x: x.get('signup_date', ''), reverse=True)
@@ -1434,8 +1445,9 @@ class DashboardWindow(QDialog):
     
     def create_user_card(self, user_data):
         """Create a clickable user card"""
-        from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy
+        from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QGraphicsDropShadowEffect
         from PyQt5.QtCore import Qt
+        from PyQt5.QtGui import QColor
         
         card = QFrame()
         card.setMinimumSize(350, 80)
@@ -1480,8 +1492,7 @@ class DashboardWindow(QDialog):
             login_dialog = UserLoginDialog(self, user_data)
             if login_dialog.exec_() == QDialog.Accepted:
                 # Login successful - close current sign-up page and start main application
-                self.close()  # Close sign-up page
-                self.start_main_application(user_data.get('full_name', 'User'))
+                self.start_main_application(login_dialog.user_data)
         
         # Make card clickable
         from PyQt5.QtWidgets import QPushButton
@@ -1492,9 +1503,704 @@ class DashboardWindow(QDialog):
         card_btn.setLayout(layout)
         
         return card_btn
+
+    def create_recent_activity_card(self, user_data):
+        """Create a polished recent activity card with the same user details"""
+        from PyQt5.QtWidgets import QFrame, QHBoxLayout, QVBoxLayout, QLabel, QSizePolicy, QGraphicsDropShadowEffect, QPushButton
+        from PyQt5.QtCore import Qt
+        from PyQt5.QtGui import QColor
+
+        full_name = user_data.get('full_name', 'N/A')
+        role_text = user_data.get('role', 'N/A')
+        phone_text = user_data.get('phone', 'N/A')
+
+        initials_parts = [part[0].upper() for part in full_name.split() if part]
+        initials = "".join(initials_parts[:2]) or "NA"
+
+        accent_options = [
+            ("#6a338f", "#8d5bc6", "#f3e7ff"),
+            ("#2e98ab", "#92d4dc", "#ebfdff"),
+            ("#ff7849", "#ffb06a", "#fff1e8"),
+            ("#2f7b65", "#67bea4", "#e8fff7"),
+        ]
+        accent_seed = sum(ord(ch) for ch in f"{full_name}{role_text}")
+        accent_color, accent_soft, accent_bg = accent_options[accent_seed % len(accent_options)]
+
+        card = QFrame()
+        card.setCursor(Qt.PointingHandCursor)
+        card.setMinimumHeight(122)
+        card.setStyleSheet(f"""
+            QFrame {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 {accent_color},
+                    stop:1 {accent_soft});
+                border: 1px solid rgba(255,255,255,0.16);
+                border-radius: 20px;
+            }}
+            QFrame:hover {{
+                border: 1px solid rgba(255,255,255,0.32);
+            }}
+            QLabel {{
+                background: transparent;
+                border: none;
+                color: white;
+            }}
+        """)
+
+        shadow = QGraphicsDropShadowEffect(card)
+        shadow.setBlurRadius(26)
+        shadow.setOffset(0, 10)
+        shadow.setColor(QColor(0, 0, 0, 75))
+        card.setGraphicsEffect(shadow)
+
+        layout = QHBoxLayout(card)
+        layout.setContentsMargins(18, 16, 80, 16)
+        layout.setSpacing(14)
+
+        avatar = QLabel(initials)
+        avatar.setAlignment(Qt.AlignCenter)
+        avatar.setFixedSize(52, 52)
+        avatar.setStyleSheet(f"""
+            QLabel {{
+                background: {accent_bg};
+                color: {accent_color};
+                border-radius: 26px;
+                font-size: 16px;
+                font-weight: bold;
+            }}
+        """)
+        layout.addWidget(avatar, 0, Qt.AlignTop)
+
+        info_layout = QVBoxLayout()
+        info_layout.setSpacing(6)
+
+        name_label = QLabel(full_name)
+        name_label.setStyleSheet("font-size: 18px; font-weight: bold; color: white;")
+        name_label.setWordWrap(True)
+        name_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        info_layout.addWidget(name_label)
+
+        role_label = QLabel(role_text)
+        role_label.setStyleSheet("font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.92);")
+        role_label.setWordWrap(True)
+        role_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        info_layout.addWidget(role_label)
+
+        phone_label = QLabel(phone_text)
+        phone_label.setStyleSheet("""
+            font-size: 12px;
+            color: rgba(255,255,255,0.84);
+            background: rgba(0,0,0,0.14);
+            border-radius: 10px;
+            padding: 5px 10px;
+        """)
+        phone_label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        info_layout.addWidget(phone_label, 0, Qt.AlignLeft)
+
+        progress_track = QFrame()
+        progress_track.setFixedHeight(8)
+        progress_track.setStyleSheet("background: rgba(255,255,255,0.24); border-radius: 4px;")
+        progress_fill = QFrame(progress_track)
+        progress_fill.setStyleSheet("background: rgba(255,255,255,0.96); border-radius: 4px;")
+
+        def resize_progress(event=None):
+            fill_width = max(96, int(progress_track.width() * 0.72))
+            progress_fill.setGeometry(0, 0, fill_width, progress_track.height())
+            if event is not None:
+                QFrame.resizeEvent(progress_track, event)
+
+        progress_track.resizeEvent = resize_progress
+        info_layout.addWidget(progress_track)
+        info_layout.addStretch()
+
+        layout.addLayout(info_layout, 1)
+
+        action_layout = QHBoxLayout()
+        action_layout.setSpacing(8)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+
+        pill_style = """
+            QPushButton {
+                color: white;
+                font-size: 11px;
+                font-weight: bold;
+                background: rgba(0,0,0,0.14);
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 14px;
+                padding: 0px 10px;
+                letter-spacing: 0.5px;
+            }
+            QPushButton:hover {
+                background: rgba(0,0,0,0.22);
+            }
+        """
+
+        open_btn = QPushButton("OPEN")
+        open_btn.setFixedSize(56, 28)
+        open_btn.setCursor(Qt.PointingHandCursor)
+        open_btn.setStyleSheet(pill_style)
+        action_layout.addWidget(open_btn, 0, Qt.AlignTop)
+
+        view_btn = QPushButton("VIEW")
+        view_btn.setFixedSize(56, 28)
+        view_btn.setCursor(Qt.PointingHandCursor)
+        view_btn.setStyleSheet(pill_style)
+        action_layout.addWidget(view_btn, 0, Qt.AlignTop)
+
+        edit_btn = QPushButton("EDIT")
+        edit_btn.setFixedSize(56, 28)
+        edit_btn.setCursor(Qt.PointingHandCursor)
+        edit_btn.setStyleSheet(pill_style)
+        action_layout.addWidget(edit_btn, 0, Qt.AlignTop)
+
+        delete_btn = QPushButton("DELETE")
+        delete_btn.setFixedSize(96, 30)
+        delete_btn.setCursor(Qt.PointingHandCursor)
+        delete_btn.setStyleSheet("""
+            QPushButton {
+                color: white;
+                font-size: 11px;
+                font-weight: bold;
+                background: rgba(190, 40, 40, 0.85);
+                border: 1px solid rgba(255,255,255,0.20);
+                border-radius: 14px;
+                padding: 0px 10px;
+            }
+            QPushButton:hover {
+                background: rgba(220, 60, 60, 0.95);
+            }
+        """)
+        action_layout.addWidget(delete_btn, 0, Qt.AlignTop)
+
+        layout.addLayout(action_layout, 0)
+        resize_progress()
+
+        def show_login_dialog():
+            login_dialog = UserLoginDialog(self, user_data)
+            if login_dialog.exec_() == QDialog.Accepted:
+                self.start_main_application(login_dialog.user_data)
+
+        def delete_user_card():
+            self.delete_created_user(user_data)
+
+        def view_user_card():
+            self.view_created_user_details(user_data)
+
+        def edit_user_card():
+            if self.edit_created_user_details(user_data):
+                self.refresh_recent_activity()
+
+        open_btn.clicked.connect(show_login_dialog)
+        view_btn.clicked.connect(view_user_card)
+        edit_btn.clicked.connect(edit_user_card)
+        delete_btn.clicked.connect(delete_user_card)
+
+        original_mouse_press = card.mousePressEvent
+
+        def handle_card_press(event):
+            if event.button() == Qt.LeftButton:
+                show_login_dialog()
+                return
+            original_mouse_press(event)
+
+        card.mousePressEvent = handle_card_press
+        return card
+
+    def view_created_user_details(self, user_data):
+        """Show all details for a created sub-user."""
+        try:
+            from PyQt5.QtWidgets import (
+                QDialog,
+                QVBoxLayout,
+                QHBoxLayout,
+                QLabel,
+                QPushButton,
+                QFrame,
+                QScrollArea,
+                QWidget,
+                QGridLayout,
+            )
+            from PyQt5.QtCore import Qt
+
+            full_name = str(user_data.get("full_name", "") or "User")
+            role_text = str(user_data.get("role", "") or "")
+            org_text = str(user_data.get("organization", "") or "")
+
+            details_order = [
+                ("Full Name", user_data.get("full_name", "")),
+                ("Role", user_data.get("role", "")),
+                ("Organization", user_data.get("organization", "")),
+                ("Phone", user_data.get("phone", "")),
+                ("Email", user_data.get("email", "")),
+                ("Age", user_data.get("age", "")),
+                ("Gender", user_data.get("gender", "")),
+                ("Address", user_data.get("address", "")),
+                ("Created By", user_data.get("created_by", "")),
+                ("Signup Date", user_data.get("signup_date", "")),
+            ]
+
+            initials_parts = [part[0].upper() for part in full_name.split() if part]
+            initials = "".join(initials_parts[:2]) or "U"
+
+            dialog = QDialog(self)
+            dialog.setWindowTitle("User Details")
+            dialog.setModal(True)
+            dialog.setMinimumSize(520, 480)
+            dialog.setStyleSheet("""
+                QDialog {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #131730,
+                        stop:0.55 #1b2140,
+                        stop:1 #0f1327);
+                }
+                QLabel {
+                    background: transparent;
+                    border: none;
+                    color: #f7f2ee;
+                    font-size: 13px;
+                    font-weight: 600;
+                }
+                QFrame#detailsCard {
+                    background: rgba(12,16,30,0.62);
+                    border: 1px solid rgba(255,255,255,0.10);
+                    border-radius: 22px;
+                }
+                QLabel#title {
+                    font-size: 22px;
+                    font-weight: 800;
+                    color: #fff8f2;
+                }
+                QLabel#subtitle {
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: rgba(255,255,255,0.68);
+                }
+                QLabel#avatar {
+                    background: rgba(255, 122, 26, 0.18);
+                    border: 1px solid rgba(255, 160, 95, 0.45);
+                    color: #ff9a3d;
+                    border-radius: 22px;
+                    font-size: 16px;
+                    font-weight: 800;
+                }
+                QLabel#key {
+                    color: rgba(255,255,255,0.75);
+                    font-weight: 700;
+                }
+                QLabel#value {
+                    color: #fff8f2;
+                    font-weight: 700;
+                }
+                QScrollArea {
+                    background: transparent;
+                    border: none;
+                }
+                QScrollBar:vertical {
+                    background: rgba(255,255,255,0.08);
+                    width: 12px;
+                    margin: 4px 0 4px 0;
+                    border-radius: 6px;
+                }
+                QScrollBar::handle:vertical {
+                    background: rgba(255, 122, 26, 0.9);
+                    min-height: 34px;
+                    border-radius: 6px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background: rgba(255, 145, 54, 1.0);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    height: 0px;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: transparent;
+                }
+                QPushButton#okBtn {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                        stop:0 #ff6a00, stop:1 #ff9533);
+                    color: white;
+                    border: 1px solid rgba(255,255,255,0.12);
+                    border-radius: 14px;
+                    padding: 10px 18px;
+                    font-size: 14px;
+                    font-weight: 800;
+                    min-width: 110px;
+                    min-height: 42px;
+                }
+                QPushButton#okBtn:hover {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                        stop:0 #ff7b14, stop:1 #ffa347);
+                }
+            """)
+
+            root = QVBoxLayout(dialog)
+            root.setContentsMargins(22, 22, 22, 22)
+            root.setSpacing(14)
+
+            card = QFrame()
+            card.setObjectName("detailsCard")
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(22, 20, 22, 18)
+            card_layout.setSpacing(14)
+            root.addWidget(card)
+
+            header_row = QHBoxLayout()
+            header_row.setSpacing(12)
+
+            avatar = QLabel(initials)
+            avatar.setObjectName("avatar")
+            avatar.setAlignment(Qt.AlignCenter)
+            avatar.setFixedSize(44, 44)
+            header_row.addWidget(avatar, 0, Qt.AlignTop)
+
+            header_text = QVBoxLayout()
+            header_text.setSpacing(2)
+
+            title = QLabel("User Details")
+            title.setObjectName("title")
+            header_text.addWidget(title)
+
+            subtitle_parts = [part for part in [role_text, org_text] if part]
+            subtitle = QLabel(" • ".join(subtitle_parts) if subtitle_parts else "Created account")
+            subtitle.setObjectName("subtitle")
+            header_text.addWidget(subtitle)
+
+            header_row.addLayout(header_text, 1)
+            card_layout.addLayout(header_row)
+
+            scroll = QScrollArea()
+            scroll.setWidgetResizable(True)
+            try:
+                scroll.viewport().setStyleSheet("background: transparent;")
+            except Exception:
+                pass
+
+            scroll_body = QWidget()
+            scroll_body.setStyleSheet("background: transparent;")
+            grid = QGridLayout(scroll_body)
+            grid.setContentsMargins(6, 6, 6, 6)
+            grid.setHorizontalSpacing(14)
+            grid.setVerticalSpacing(10)
+
+            row_idx = 0
+            for key, value in details_order:
+                safe_value = "" if value is None else str(value)
+                key_label = QLabel(f"{key}:")
+                key_label.setObjectName("key")
+                value_label = QLabel(safe_value if safe_value else "—")
+                value_label.setObjectName("value")
+                value_label.setWordWrap(True)
+
+                grid.addWidget(key_label, row_idx, 0, Qt.AlignTop)
+                grid.addWidget(value_label, row_idx, 1)
+                row_idx += 1
+
+            grid.setColumnStretch(0, 0)
+            grid.setColumnStretch(1, 1)
+            scroll.setWidget(scroll_body)
+            card_layout.addWidget(scroll, 1)
+
+            footer_row = QHBoxLayout()
+            footer_row.addStretch()
+            ok_btn = QPushButton("OK")
+            ok_btn.setObjectName("okBtn")
+            ok_btn.clicked.connect(dialog.accept)
+            footer_row.addWidget(ok_btn)
+            card_layout.addLayout(footer_row)
+
+            dialog.exec_()
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to show user details: {e}")
+
+    def edit_created_user_details(self, user_data):
+        """Edit and update an existing created sub-user across storage."""
+        try:
+            from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
+            from PyQt5.QtGui import QIntValidator
+
+            original_username = user_data.get("username") or user_data.get("phone") or ""
+            if not original_username:
+                QMessageBox.warning(self, "Error", "Could not identify this user record for editing.")
+                return False
+
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Edit User")
+            dialog.setMinimumSize(700, 750)
+            dialog.setModal(True)
+            dialog.setStyleSheet("""
+                QDialog {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #f8f9fa, stop:1 #e9ecef);
+                }
+                QLabel {
+                    color: #333;
+                    font-size: 13px;
+                    font-weight: bold;
+                }
+                QLineEdit {
+                    background: white;
+                    border: 2px solid #dee2e6;
+                    border-radius: 8px;
+                    padding: 10px 12px;
+                    font-size: 13px;
+                    color: #333;
+                    min-height: 34px;
+                }
+                QLineEdit:focus {
+                    border-color: #007bff;
+                }
+                QPushButton {
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px 14px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    min-height: 38px;
+                    min-width: 120px;
+                }
+                QPushButton:hover {
+                    background: #0056b3;
+                }
+                QPushButton#cancel_btn {
+                    background: #6c757d;
+                }
+                QPushButton#cancel_btn:hover {
+                    background: #5a6268;
+                }
+            """)
+
+            outer = QVBoxLayout(dialog)
+            outer.setContentsMargins(40, 40, 40, 40)
+            outer.setSpacing(15)
+
+            header = QLabel(f"Edit {user_data.get('role', 'User')}")
+            header.setAlignment(Qt.AlignCenter)
+            header.setStyleSheet("font-size: 24px; color: #007bff; margin-bottom: 20px;")
+            outer.addWidget(header)
+
+            info = QLabel(f"{user_data.get('role', '')} • {user_data.get('organization', '')}")
+            info.setAlignment(Qt.AlignCenter)
+            info.setStyleSheet("font-size: 12px; color: #6c757d; font-weight: 600;")
+            outer.addWidget(info)
+
+            fields = [
+                ("Full Name", "full_name"),
+                ("Age", "age"),
+                ("Gender", "gender"),
+                ("Address", "address"),
+                ("Phone Number", "phone"),
+                ("Email ID", "email"),
+                ("Password", "password"),
+                ("Confirm Password", "confirm_password"),
+            ]
+
+            def toggle_visibility(password_field, eye_button):
+                if password_field.echoMode() == QLineEdit.Password:
+                    password_field.setEchoMode(QLineEdit.Normal)
+                    eye_button.setText("🔒")
+                else:
+                    password_field.setEchoMode(QLineEdit.Password)
+                    eye_button.setText("👁")
+
+            widgets = {}
+            for label_text, key in fields:
+                row = QHBoxLayout()
+                row.setSpacing(12)
+
+                label = QLabel(f"{label_text}:")
+                label.setFixedWidth(120)
+
+                edit = QLineEdit()
+                edit.setMaximumWidth(250)
+                edit.setText(str(user_data.get(key, "")) if user_data.get(key, "") is not None else "")
+
+                if key in ["password", "confirm_password"]:
+                    edit.setEchoMode(QLineEdit.Password)
+                    edit.returnPressed.connect(dialog.accept)
+
+                    toggle_btn = QPushButton("👁")
+                    toggle_btn.setFixedSize(36, 36)
+                    toggle_btn.setStyleSheet("""
+                        QPushButton {
+                            background: #6c757d;
+                            color: white;
+                            border: none;
+                            border-radius: 8px;
+                            min-width: 36px;
+                            max-width: 36px;
+                            min-height: 36px;
+                            max-height: 36px;
+                            font-size: 15px;
+                            font-weight: bold;
+                            padding: 0px;
+                        }
+                        QPushButton:hover {
+                            background: #5a6268;
+                        }
+                    """)
+                    toggle_btn.clicked.connect(lambda checked=False, pwd_field=edit, btn=toggle_btn: toggle_visibility(pwd_field, btn))
+                else:
+                    toggle_btn = None
+
+                if key == "phone":
+                    edit.setValidator(QIntValidator(0, 2147483647, dialog))
+                    edit.setMaxLength(10)
+
+                if key == "confirm_password":
+                    edit.returnPressed.connect(dialog.accept)
+
+                widgets[key] = edit
+                row.addWidget(label)
+                row.addWidget(edit)
+                if toggle_btn is not None:
+                    row.addWidget(toggle_btn)
+                row.addStretch()
+                outer.addLayout(row)
+                outer.addSpacing(8)
+
+            if widgets.get("confirm_password") and widgets.get("password"):
+                widgets["confirm_password"].setText(widgets["password"].text())
+
+            button_row = QHBoxLayout()
+            button_row.setSpacing(12)
+            save_btn = QPushButton("Save Changes")
+            save_btn.setStyleSheet("""
+                QPushButton {
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background: #218838;
+                }
+            """)
+            cancel_btn = QPushButton("Cancel")
+            cancel_btn.setStyleSheet("""
+                QPushButton {
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 12px;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background: #5a6268;
+                }
+            """)
+            save_btn.clicked.connect(dialog.accept)
+            cancel_btn.clicked.connect(dialog.reject)
+            button_row.addWidget(save_btn)
+            button_row.addWidget(cancel_btn)
+            outer.addSpacing(12)
+            outer.addLayout(button_row)
+
+            if dialog.exec_() != QDialog.Accepted:
+                return False
+
+            updated = dict(user_data)
+            updated["full_name"] = widgets["full_name"].text().strip()
+            updated["age"] = widgets["age"].text().strip()
+            updated["gender"] = widgets["gender"].text().strip()
+            updated["address"] = widgets["address"].text().strip()
+            updated["phone"] = widgets["phone"].text().strip()
+            updated["email"] = widgets["email"].text().strip()
+            updated_password = widgets["password"].text()
+            updated_confirm = widgets["confirm_password"].text()
+
+            if not updated["full_name"]:
+                QMessageBox.warning(self, "Error", "Full name is required.")
+                return False
+            if not updated["email"]:
+                QMessageBox.warning(self, "Error", "Email ID is required.")
+                return False
+            if updated["phone"] and (not updated["phone"].isdigit() or len(updated["phone"]) > 10):
+                QMessageBox.warning(self, "Error", "Phone number must be numbers only and at most 10 digits.")
+                return False
+            if not updated_password:
+                QMessageBox.warning(self, "Error", "Password is required.")
+                return False
+            if updated_password != updated_confirm:
+                QMessageBox.warning(self, "Error", "Passwords do not match.")
+                return False
+
+            updated["password"] = updated_password
+
+            new_username = updated["phone"] if updated["phone"] else original_username
+            if not self._update_created_user_across_stores(original_username, new_username, updated):
+                return False
+
+            user_data.clear()
+            user_data.update(updated)
+            user_data["username"] = new_username
+            return True
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to edit user: {e}")
+            return False
+
+    def _update_created_user_across_stores(self, old_username, new_username, updated_user):
+        """Update a created user record across creator file, clinical_users.json, and root users.json."""
+        try:
+            creator_role = self.user_data.get('role', '')
+            creator_name = self.user_data.get('full_name', '')
+
+            main_users = load_main_users()
+            for key, record in main_users.items():
+                if key == old_username:
+                    continue
+                if not isinstance(record, dict):
+                    continue
+                if new_username and key == new_username:
+                    QMessageBox.warning(self, "Error", "A user with this phone/username already exists.")
+                    return False
+                if updated_user.get("phone") and str(record.get("phone", "")).strip() == str(updated_user.get("phone", "")).strip():
+                    QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
+                    return False
+                if updated_user.get("full_name") and str(record.get("full_name", "")).strip().lower() == str(updated_user.get("full_name", "")).strip().lower():
+                    QMessageBox.warning(self, "Error", "A user with this full name already exists.")
+                    return False
+
+            if creator_role in ['Doctor Head', 'HCP Head'] and creator_name:
+                created_users = load_created_users(creator_name, creator_role)
+                if old_username in created_users:
+                    created_users.pop(old_username, None)
+                created_users[new_username] = updated_user
+                save_created_users(created_users, creator_name, creator_role)
+
+            clinical_users_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+            if os.path.exists(clinical_users_file):
+                with open(clinical_users_file, "r") as f:
+                    clinical_users = json.load(f)
+            else:
+                clinical_users = {}
+            if old_username in clinical_users:
+                clinical_users.pop(old_username, None)
+            clinical_users[new_username] = updated_user
+            with open(clinical_users_file, "w") as f:
+                json.dump(clinical_users, f, indent=2)
+
+            if old_username in main_users:
+                main_users.pop(old_username, None)
+            main_users[new_username] = updated_user
+            root_users_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "users.json")
+            with open(root_users_file, "w") as f:
+                json.dump(main_users, f, indent=2)
+
+            return True
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to update user storage: {e}")
+            return False
     
-    def start_main_application(self, user_name):
-        """Start main application - open main dashboard like normal login"""
+    def start_main_application(self, logged_in_user_data):
+        """Start the main dashboard for a created user in view-only mode"""
         try:
             # Import required modules
             import sys
@@ -1505,43 +2211,219 @@ class DashboardWindow(QDialog):
             if src_dir not in sys.path:
                 sys.path.insert(0, src_dir)
             
-            # Import main dashboard and login
-            from main import get_dashboard_module, LoginRegisterDialog
-            
-            # Get dashboard class
-            Dashboard = get_dashboard_module()
-            if Dashboard is None:
+            # Use the restricted wrapper dashboard for users created by Doctor/HCP heads.
+            from dashboard.restricted_dashboard import RestrictedDashboard
+            if RestrictedDashboard is None:
                 QMessageBox.critical(self, "Error", "Failed to load Dashboard module.")
                 return
+
+            user_record = logged_in_user_data or {}
+            username = (
+                user_record.get('username')
+                or user_record.get('phone')
+                or user_record.get('full_name')
+                or 'User'
+            )
             
-            # Create and show main dashboard with user data
-            dashboard = Dashboard(username=user_name,  # Use actual user name
-                                 role=self.user_data.get('role'), 
-                                 user_details=self.user_data)
-            dashboard.show()
-            
-            # Run application event loop
-            from PyQt5.QtWidgets import QApplication
-            app = QApplication.instance()
-            
-            # Wait for dashboard to close
-            app.exec_()
-            
-            # Check if dashboard was closed by sign out
-            if getattr(dashboard, "closed_by_sign_out", False):
-                # User signed out - reopen sign-up page
-                from organization import DashboardWindow
-                signup_window = DashboardWindow(user_data=self.parent_user_data if hasattr(self, 'parent_user_data') else None)
-                signup_window.exec_()
+            # Keep a reference so the new window is not garbage-collected.
+            self.main_dashboard = RestrictedDashboard(
+                username=username,
+                role=user_record.get('role'),
+                user_details=user_record,
+                return_on_sign_out=self,
+                root_login_dialog=self.parent(),
+                parent=self.parent(),
+            )
+
+            # Keep the organization dashboard available so sign-out can return here.
+            self.hide()
+            self.main_dashboard.show()
+            self.main_dashboard.raise_()
+            self.main_dashboard.activateWindow()
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to start main application: {e}")
         
     def refresh_recent_activity(self):
         """Refresh the recent activity section"""
-        # This would be called after adding new users
-        # For now, you can restart the dashboard to see updates
-        pass
+        if hasattr(self, 'user_count_label') and self.user_count_label:
+            self.user_count_label.setText(f"Users: {self.get_user_count()}")
+        self._populate_recent_users()
+
+    def delete_created_user(self, user_data):
+        """Delete a created user from all relevant JSON stores."""
+        try:
+            creator_role = self.user_data.get('role', '')
+            creator_name = self.user_data.get('full_name', '')
+            current_org = self.user_data.get('organization', '')
+            username = user_data.get('username') or user_data.get('phone') or ''
+
+            confirm_name = user_data.get('full_name', username or 'this user')
+            reply = QMessageBox.question(
+                self,
+                "Delete User",
+                f"Delete '{confirm_name}' permanently?\n\nThis will remove all saved user data.",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+            if reply != QMessageBox.Yes:
+                return
+
+            removed_any = False
+
+            if creator_role in ['Doctor Head', 'HCP Head'] and creator_name and username:
+                created_users = load_created_users(creator_name, creator_role)
+                if username in created_users:
+                    created_users.pop(username, None)
+                    save_created_users(created_users, creator_name, creator_role)
+                    removed_any = True
+
+            clinical_users_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "clinical_users.json")
+            if os.path.exists(clinical_users_file):
+                with open(clinical_users_file, "r") as f:
+                    clinical_users = json.load(f)
+
+                removed_from_clinical = False
+                if username and username in clinical_users:
+                    clinical_users.pop(username, None)
+                    removed_from_clinical = True
+                else:
+                    for key, record in list(clinical_users.items()):
+                        if not isinstance(record, dict):
+                            continue
+                        if (
+                            record.get('phone') == user_data.get('phone') and
+                            record.get('full_name') == user_data.get('full_name') and
+                            record.get('organization') == current_org
+                        ):
+                            clinical_users.pop(key, None)
+                            removed_from_clinical = True
+                            break
+
+                if removed_from_clinical:
+                    with open(clinical_users_file, "w") as f:
+                        json.dump(clinical_users, f, indent=2)
+                    removed_any = True
+
+            root_users_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "users.json")
+            if os.path.exists(root_users_file):
+                with open(root_users_file, "r") as f:
+                    all_users = json.load(f)
+
+                removed_from_root = False
+                if username and username in all_users:
+                    all_users.pop(username, None)
+                    removed_from_root = True
+                else:
+                    for key, record in list(all_users.items()):
+                        if not isinstance(record, dict):
+                            continue
+                        if (
+                            record.get('phone') == user_data.get('phone') and
+                            record.get('full_name') == user_data.get('full_name') and
+                            record.get('organization') == current_org
+                        ):
+                            all_users.pop(key, None)
+                            removed_from_root = True
+                            break
+
+                if removed_from_root:
+                    with open(root_users_file, "w") as f:
+                        json.dump(all_users, f, indent=2)
+                    removed_any = True
+
+            if removed_any:
+                self.refresh_recent_activity()
+                QMessageBox.information(self, "Deleted", "User deleted successfully.")
+            else:
+                QMessageBox.warning(self, "Not Found", "User record was not found in storage.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to delete user: {e}")
+
+    def _clear_layout(self, layout):
+        """Remove all widgets/items from a layout safely"""
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+            child_layout = item.layout()
+            if widget is not None:
+                widget.deleteLater()
+            elif child_layout is not None:
+                self._clear_layout(child_layout)
+                child_layout.deleteLater()
+
+    def _populate_recent_users(self):
+        """Render recent users list in the dashboard panel"""
+        if not hasattr(self, 'recent_users_layout') or self.recent_users_layout is None:
+            return
+
+        self._clear_layout(self.recent_users_layout)
+        recent_users = self.get_recent_users()
+
+        if recent_users:
+            from PyQt5.QtWidgets import QScrollArea
+            scroll_area = QScrollArea()
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setMaximumHeight(300)
+            scroll_area.setStyleSheet("""
+                QScrollArea {
+                    background: transparent;
+                    border: none;
+                    border-radius: 16px;
+                }
+                QScrollBar:vertical {
+                    background: rgba(255,255,255,0.08);
+                    width: 12px;
+                    margin: 4px 0 4px 0;
+                    border-radius: 6px;
+                }
+                QScrollBar::handle:vertical {
+                    background: rgba(255, 122, 26, 0.9);
+                    min-height: 34px;
+                    border-radius: 6px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background: rgba(255, 145, 54, 1.0);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    height: 0px;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: transparent;
+                }
+            """)
+
+            cards_container = QWidget()
+            cards_container.setMinimumWidth(460)
+            cards_container.setStyleSheet("""
+                QWidget {
+                    background: transparent;
+                    border: none;
+                }
+            """)
+            cards_layout = QVBoxLayout(cards_container)
+            cards_layout.setSpacing(14)
+            cards_layout.setContentsMargins(4, 4, 28, 4)
+
+            for user_data in recent_users:
+                cards_layout.addWidget(self.create_recent_activity_card(user_data))
+
+            cards_layout.addStretch()
+            scroll_area.setWidget(cards_container)
+            self.recent_users_layout.addWidget(scroll_area)
+            return
+
+        no_users_label = QLabel("No users created yet. Click 'Add Users' to get started.")
+        no_users_label.setStyleSheet("""
+            color: #d8d9df;
+            font-style: italic;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed rgba(255,255,255,0.16);
+            border-radius: 16px;
+        """)
+        no_users_label.setAlignment(Qt.AlignCenter)
+        self.recent_users_layout.addWidget(no_users_label)
     
     def get_user_count(self):
         """Get count of users created by current Doctor Head/HCP Head in the same organization"""
@@ -1579,109 +2461,185 @@ class UserLoginDialog(QDialog):
         self.user_data = user_data
         self.init_ui()
     
+    def keyPressEvent(self, event):
+        """Handle key press events to prevent Enter key from closing dialog"""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Check if the focus widget is a QLineEdit that has returnPressed connected
+            focus_widget = self.focusWidget()
+            if isinstance(focus_widget, QLineEdit):
+                # Let the QLineEdit handle the Enter key (for returnPressed signals)
+                focus_widget.keyPressEvent(event)
+                return
+            # Otherwise, ignore Enter key to prevent accidental dialog closure
+            event.ignore()
+            return
+        # Handle other keys normally
+        super().keyPressEvent(event)
+    
     def init_ui(self):
         """Initialize login dialog UI"""
         self.setWindowTitle("User Login")
-        self.setFixedSize(600, 500)
+        self.setFixedSize(620, 520)
         self.setModal(True)
         
         # Set background
         self.setStyleSheet("""
             QDialog {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                    stop:0 #f8f9fa, stop:1 #e9ecef);
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #161a31, stop:0.55 #1d2444, stop:1 #101427);
             }
             QLabel {
-                color: #333;
-                font-size: 16px;
-                font-weight: bold;
+                color: #f5f1ea;
+                font-size: 15px;
+                font-weight: 600;
             }
             QLineEdit {
-                padding: 12px;
-                border: 2px solid #ddd;
-                border-radius: 8px;
+                padding: 14px 16px;
+                border: 1px solid rgba(255,255,255,0.14);
+                border-radius: 14px;
                 font-size: 14px;
-                background: white;
-                min-height: 20px;
+                background: rgba(255,255,255,0.08);
+                color: #fffaf5;
+                min-height: 22px;
             }
             QLineEdit:focus {
-                border: 2px solid #007bff;
+                border: 1px solid #ff8d33;
+                background: rgba(255,255,255,0.12);
+            }
+            QLineEdit::placeholder {
+                color: rgba(255,255,255,0.45);
             }
             QPushButton {
-                background: #007bff;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff6a00, stop:1 #ff9533);
                 color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 10px;
-                font-size: 16px;
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 14px;
+                padding: 12px;
+                font-size: 15px;
                 font-weight: bold;
-                min-height: 15px;
+                min-height: 18px;
             }
             QPushButton:hover {
-                background: #0056b3;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff7b14, stop:1 #ffa347);
             }
             QPushButton#cancel_btn {
-                background: #6c757d;
+                background: rgba(255,255,255,0.10);
+                color: #fff7ef;
             }
             QPushButton#cancel_btn:hover {
-                background: #545b62;
+                background: rgba(255,255,255,0.16);
+            }
+            QFrame#loginCard {
+                background: rgba(12,16,30,0.62);
+                border: 1px solid rgba(255,255,255,0.10);
+                border-radius: 24px;
             }
         """)
         
         layout = QVBoxLayout(self)
-        layout.setSpacing(30)
-        layout.setContentsMargins(50, 50, 50, 50)
-        
+        layout.setSpacing(0)
+        layout.setContentsMargins(24, 24, 24, 24)
+
+        card = QFrame()
+        card.setObjectName("loginCard")
+        card_layout = QVBoxLayout(card)
+        card_layout.setSpacing(18)
+        card_layout.setContentsMargins(32, 30, 32, 28)
+        layout.addWidget(card)
+
         # Title
         title = QLabel("Login to Continue")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size: 24px; color: #007bff; margin-bottom: 15px;")
-        layout.addWidget(title)
+        title.setStyleSheet("font-size: 30px; font-weight: bold; color: #fff8f2; margin-top: 6px; border: none; background: transparent;")
+        card_layout.addWidget(title)
         
         # User info
         user_info = QLabel(f"Welcome, {self.user_data.get('full_name', 'User')}")
         user_info.setAlignment(Qt.AlignCenter)
-        user_info.setStyleSheet("font-size: 16px; color: #666; margin-bottom: 25px;")
-        layout.addWidget(user_info)
+        user_info.setStyleSheet("font-size: 15px; color: rgba(255,255,255,0.72); margin-bottom: 8px; border: none; background: transparent;")
+        card_layout.addWidget(user_info)
         
         # Full Name input
         name_label = QLabel("Full Name:")
-        layout.addWidget(name_label)
+        name_label.setStyleSheet("font-size: 14px; font-weight: 700; color: #fff0e6; margin-top: 8px; border: none; background: transparent;")
+        card_layout.addWidget(name_label)
         
         self.name_input = QLineEdit()
         self.name_input.setPlaceholderText("Enter your full name")
         self.name_input.setMinimumSize(400, 40)
-        layout.addWidget(self.name_input)
+        self.name_input.returnPressed.connect(self.validate_login)
+        card_layout.addWidget(self.name_input)
         
         # Password input
         password_label = QLabel("Password:")
-        layout.addWidget(password_label)
+        password_label.setStyleSheet("font-size: 14px; font-weight: 700; color: #fff0e6; margin-top: 6px; border: none; background: transparent;")
+        card_layout.addWidget(password_label)
         
         self.password_input = QLineEdit()
         self.password_input.setEchoMode(QLineEdit.Password)
         self.password_input.setPlaceholderText("Enter your password")
         self.password_input.setMinimumSize(400, 40)
-        layout.addWidget(self.password_input)
+        self.password_input.returnPressed.connect(self.validate_login)
+        password_row = QHBoxLayout()
+        password_row.setSpacing(12)
+        password_row.addWidget(self.password_input)
+
+        self.password_toggle_btn = QPushButton("👁")
+        self.password_toggle_btn.setFixedSize(40, 40)
+        self.password_toggle_btn.setStyleSheet("""
+            QPushButton {
+                background: #6c757d;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-size: 15px;
+                font-weight: bold;
+                padding: 0px;
+            }
+            QPushButton:hover {
+                background: #5a6268;
+            }
+        """)
+        self.password_toggle_btn.clicked.connect(
+            lambda: self.toggle_password_visibility(self.password_input, self.password_toggle_btn)
+        )
+        password_row.addWidget(self.password_toggle_btn)
+        card_layout.addLayout(password_row)
         
         # Buttons
         buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(14)
         
         login_btn = QPushButton("Login")
         login_btn.clicked.connect(self.validate_login)
-        login_btn.setMinimumSize(120, 40)
+        login_btn.setMinimumSize(120, 46)
+        login_btn.setAutoDefault(True)
+        login_btn.setDefault(True)
         buttons_layout.addWidget(login_btn)
         
         cancel_btn = QPushButton("Cancel")
         cancel_btn.setObjectName("cancel_btn")
         cancel_btn.clicked.connect(self.reject)
-        cancel_btn.setMinimumSize(120, 40)
+        cancel_btn.setMinimumSize(120, 46)
         buttons_layout.addWidget(cancel_btn)
         
-        layout.addLayout(buttons_layout)
+        card_layout.addSpacing(8)
+        card_layout.addLayout(buttons_layout)
         
         # Set default values for testing (remove in production)
         self.name_input.setText(self.user_data.get('full_name', ''))
         self.password_input.setFocus()
+
+    def toggle_password_visibility(self, password_field, eye_button):
+        """Toggle password visibility between hidden and visible"""
+        if password_field.echoMode() == QLineEdit.Password:
+            password_field.setEchoMode(QLineEdit.Normal)
+            eye_button.setText("🔒")
+        else:
+            password_field.setEchoMode(QLineEdit.Password)
+            eye_button.setText("👁")
     
     def validate_login(self):
         """Validate login credentials"""
@@ -1740,12 +2698,124 @@ class OrganizationRequestHandler:
     
     def handle_organization_request(self):
         """Handle request for new organization"""
-        org_name, ok = QInputDialog.getText(
-            self.parent_dialog, 
-            "Request New Organization", 
-            "Enter organization name:",
-            QLineEdit.Normal
-        )
+        dialog = QDialog(self.parent_dialog)
+        dialog.setWindowTitle("Request New Organization")
+        dialog.setModal(True)
+        dialog.setFixedSize(480, 270)
+        dialog.setStyleSheet("""
+            QDialog {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #171b31, stop:0.55 #1d2444, stop:1 #12162a);
+            }
+            QFrame#requestCard {
+                background: rgba(12,16,30,0.62);
+                border: 1px solid rgba(255,255,255,0.10);
+                border-radius: 22px;
+            }
+            QLabel {
+                color: #f6f1eb;
+                font-size: 14px;
+                font-weight: 600;
+                background: transparent;
+                border: none;
+            }
+            QLabel#requestTitle {
+                font-size: 22px;
+                font-weight: bold;
+                color: #fff8f2;
+            }
+            QLabel#requestSubtitle {
+                font-size: 13px;
+                font-weight: 500;
+                color: rgba(255,255,255,0.68);
+            }
+            QLineEdit {
+                padding: 12px 14px;
+                border: 1px solid rgba(255,255,255,0.14);
+                border-radius: 14px;
+                font-size: 14px;
+                color: #fffaf5;
+                background: rgba(255,255,255,0.08);
+            }
+            QLineEdit:focus {
+                border: 1px solid #ff8d33;
+                background: rgba(255,255,255,0.12);
+            }
+            QLineEdit::placeholder {
+                color: rgba(255,255,255,0.42);
+            }
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff6a00, stop:1 #ff9533);
+                color: white;
+                border: 1px solid rgba(255,255,255,0.12);
+                border-radius: 12px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: bold;
+                min-width: 110px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff7b14, stop:1 #ffa347);
+            }
+            QPushButton#cancelBtn {
+                background: rgba(255,255,255,0.10);
+                color: #fff7ef;
+            }
+            QPushButton#cancelBtn:hover {
+                background: rgba(255,255,255,0.16);
+            }
+        """)
+
+        outer_layout = QVBoxLayout(dialog)
+        outer_layout.setContentsMargins(20, 20, 20, 20)
+
+        card = QFrame()
+        card.setObjectName("requestCard")
+        card_layout = QVBoxLayout(card)
+        card_layout.setContentsMargins(26, 24, 26, 24)
+        card_layout.setSpacing(16)
+
+        title = QLabel("Request New Organization")
+        title.setObjectName("requestTitle")
+        title.setAlignment(Qt.AlignCenter)
+        card_layout.addWidget(title)
+
+        subtitle = QLabel("Enter the organization name below")
+        subtitle.setObjectName("requestSubtitle")
+        subtitle.setAlignment(Qt.AlignCenter)
+        card_layout.addWidget(subtitle)
+
+        org_name_input = QLineEdit()
+        org_name_input.setPlaceholderText("Organization name")
+        org_name_input.setMinimumHeight(46)
+        org_name_input.returnPressed.connect(dialog.accept)
+        card_layout.addWidget(org_name_input)
+
+        button_layout = QHBoxLayout()
+        button_layout.setSpacing(12)
+
+        ok_btn = QPushButton("OK")
+        ok_btn.setMinimumHeight(46)
+        ok_btn.clicked.connect(dialog.accept)
+        button_layout.addWidget(ok_btn)
+
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setObjectName("cancelBtn")
+        cancel_btn.setMinimumHeight(46)
+        cancel_btn.clicked.connect(dialog.reject)
+        button_layout.addWidget(cancel_btn)
+
+        card_layout.addLayout(button_layout)
+        outer_layout.addWidget(card)
+
+        org_name = org_name_input.text()
+        ok = False
+        org_name_input.setFocus()
+        if dialog.exec_() == QDialog.Accepted:
+            org_name = org_name_input.text()
+            ok = True
         
         if ok and org_name.strip():
             # Add the organization
@@ -1772,53 +2842,110 @@ class OrganizationRequestHandler:
         dialog.setMinimumSize(500, 400)
         dialog.setStyleSheet("""
             QDialog {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1, 
-                    stop:0 #1a1a2e, stop:1 #16213e);
-                color: white;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #141729, stop:0.55 #1b2140, stop:1 #11162c);
+                color: #f7f2ee;
             }
             QLabel {
-                color: white;
+                color: #f7f2ee;
                 font-size: 16px;
                 font-weight: bold;
             }
             QPushButton {
-                background: #ff6600;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff6a00, stop:1 #ff8a1d);
                 color: white;
-                border-radius: 10px;
+                border: 1px solid #ff9a3d;
+                border-radius: 14px;
                 padding: 12px 24px;
                 font-size: 16px;
                 font-weight: bold;
                 min-height: 50px;
             }
             QPushButton:hover {
-                background: #ff8800;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff7a14, stop:1 #ffa13c);
+                border: 1px solid #ffb45f;
+            }
+            QPushButton:pressed {
+                background: #e65f00;
+                padding-top: 13px;
             }
             QListWidget {
-                background: rgba(255,255,255,0.1);
-                border: 1px solid #ff6600;
-                border-radius: 8px;
-                padding: 5px;
-                color: white;
+                background: rgba(255,255,255,0.07);
+                border: 1px solid #ff7b1a;
+                border-radius: 14px;
+                padding: 10px;
+                color: #f7f2ee;
                 font-size: 14px;
+                outline: none;
             }
             QListWidget::item {
-                padding: 5px;
-                margin: 2px;
+                padding: 4px;
+                margin: 4px 0;
                 border: none;
-                border-radius: 4px;
+                border-radius: 10px;
                 min-height: 30px;
             }
             QListWidget::item:selected {
-                background: #ff6600;
+                background: transparent;
+            }
+            QListWidget::item:hover {
+                background: transparent;
+            }
+            QWidget#orgItem {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255, 132, 39, 0.18);
+                border-radius: 12px;
+            }
+            QWidget#orgItem[selected="true"] {
+                background: rgba(255, 116, 18, 0.22);
+                border: 1px solid #ff8f33;
+            }
+            QLabel#orgName {
+                color: #fff7f0;
+                font-size: 14px;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                border: none;
+            }
+            QPushButton#deleteOrgButton {
+                background: rgba(255, 122, 26, 0.96);
+                border: 1px solid rgba(255, 188, 127, 0.45);
+                border-radius: 15px;
+                color: white;
+                font-size: 13px;
+                font-weight: bold;
+                min-height: 30px;
+                max-height: 30px;
+                padding: 0px;
+            }
+            QPushButton#deleteOrgButton:hover {
+                background: #ff4d4d;
+                border: 1px solid #ff8a8a;
+            }
+            QPushButton#deleteOrgButton:pressed {
+                background: #d83a3a;
+            }
+            QPushButton#cancelButton {
+                background: rgba(255,255,255,0.08);
+                border: 1px solid rgba(255,255,255,0.16);
+                color: #fff7f0;
+            }
+            QPushButton#cancelButton:hover {
+                background: rgba(255,255,255,0.14);
+                border: 1px solid rgba(255,255,255,0.25);
             }
         """)
         
         layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(20, 22, 20, 18)
+        layout.setSpacing(14)
         
         # Title
         title = QLabel("Select Existing Organization")
         title.setAlignment(Qt.AlignCenter)
-        title.setStyleSheet("font-size: 18px; margin-bottom: 20px;")
+        title.setStyleSheet("font-size: 18px; margin-bottom: 18px; color: #fff9f4;")
         layout.addWidget(title)
         
         # Organization list with delete functionality
@@ -1829,12 +2956,16 @@ class OrganizationRequestHandler:
         for org_name in organizations.keys():
             # Create custom widget for each organization item
             item_widget = QWidget()
+            item_widget.setObjectName("orgItem")
+            item_widget.setProperty("selected", False)
             item_layout = QHBoxLayout(item_widget)
-            item_layout.setContentsMargins(5, 5, 5, 5)
+            item_layout.setContentsMargins(14, 8, 10, 12)
+            item_layout.setSpacing(10)
             
             # Organization name label
             org_label = QLabel(org_name)
-            org_label.setStyleSheet("color: white; font-size: 13px; font-weight: bold; min-width: 200px; min-height: 15px; border: none;")
+            org_label.setObjectName("orgName")
+            org_label.setStyleSheet("min-width: 200px; min-height: 18px; border: none;")
             item_layout.addWidget(org_label)
             
             # Add stretch to push delete button to the right
@@ -1842,19 +2973,8 @@ class OrganizationRequestHandler:
             
             # Delete button
             delete_btn = QPushButton("X")
+            delete_btn.setObjectName("deleteOrgButton")
             delete_btn.setFixedSize(30, 30)
-            delete_btn.setStyleSheet("""
-                QPushButton {
-                    border: none;
-                    border-radius: 15px;
-                    color: white;
-                    font-size: 16px;
-                    font-weight: bold;
-                }
-                QPushButton:hover {
-                    background: rgba(255, 0, 0, 1.0);
-                }
-            """)
             
             # Connect delete button to delete function
             def delete_organization(current_org_name, current_dialog):
@@ -1923,6 +3043,8 @@ class OrganizationRequestHandler:
                     if self.org_manager.save_organizations(organizations):
                         print(f"DEBUG: Organizations saved successfully")
                         QMessageBox.information(current_dialog, "Success", f"Organization '{current_org_name}' and all associated users deleted successfully.")
+                        # Clean up orphaned users after organization deletion
+                        cleanup_orphaned_users()
                         # Close and reopen the dialog to refresh the list
                         current_dialog.accept()
                         self.handle_existing_organization_request()
@@ -1932,19 +3054,35 @@ class OrganizationRequestHandler:
                         QMessageBox.warning(current_dialog, "Error", "Failed to delete organization.")
             
             delete_btn.clicked.connect(lambda: delete_organization(org_name, dialog))
-            item_layout.addWidget(delete_btn)
+            item_layout.addWidget(delete_btn, 0, Qt.AlignTop)
             
             # Create list item and set the custom widget
             list_item = QListWidgetItem(org_list)
             list_item.setSizeHint(item_widget.sizeHint())
             org_list.setItemWidget(list_item, item_widget)
+
+        def refresh_org_item_styles():
+            current_item = org_list.currentItem()
+            for index in range(org_list.count()):
+                list_item = org_list.item(index)
+                widget = org_list.itemWidget(list_item)
+                if widget:
+                    widget.setProperty("selected", list_item == current_item)
+                    widget.style().unpolish(widget)
+                    widget.style().polish(widget)
+                    widget.update()
+
+        org_list.currentItemChanged.connect(lambda current, previous: refresh_org_item_styles())
+        refresh_org_item_styles()
         
         layout.addWidget(org_list)
         
         # Buttons
         button_layout = QHBoxLayout()
+        button_layout.setSpacing(12)
         select_btn = QPushButton("Select")
         cancel_btn = QPushButton("Cancel")
+        cancel_btn.setObjectName("cancelButton")
         
         def select_organization():
             current_item = org_list.currentItem()
@@ -1953,14 +3091,23 @@ class OrganizationRequestHandler:
                 widget = org_list.itemWidget(current_item)
                 if widget:
                     # Find the organization label in the widget
+                    # Look for the first QLabel that is not the delete button
                     for child in widget.children():
-                        if isinstance(child, QLabel) and "X" not in child.text():
-                            selected_org = child.text()
-                            dialog.accept()
-                            # Show role selection dialog
-                            self.show_role_selection_dialog(selected_org, is_existing_organization=True)
-                            return
-                QMessageBox.warning(dialog, "Warning", "Please select an organization.")
+                        if isinstance(child, QLabel):
+                            # Check if this is the organization label (not delete button)
+                            # Delete button has "X" text, organization label has org name
+                            child_text = child.text()
+                            if child_text and child_text != "X" and child_text != "✕":
+                                selected_org = child_text
+                                print(f"DEBUG: Selected organization: {selected_org}")
+                                dialog.accept()
+                                # Show role selection dialog
+                                self.show_role_selection_dialog(selected_org, is_existing_organization=True)
+                                return
+                    # If no valid label found, try to get from organization data
+                    QMessageBox.warning(dialog, "Warning", "Could not extract organization name. Please try again.")
+                else:
+                    QMessageBox.warning(dialog, "Warning", "No widget found for selected item.")
             else:
                 QMessageBox.warning(dialog, "Warning", "Please select an organization.")
         
@@ -2121,6 +3268,21 @@ class AddUsersDialog(QDialog):
         self.current_role = current_user_data.get('role', '')
         self.init_ui()
     
+    def keyPressEvent(self, event):
+        """Handle key press events to prevent Enter key from closing dialog"""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Check if the focus widget is a QLineEdit that has returnPressed connected
+            focus_widget = self.focusWidget()
+            if isinstance(focus_widget, QLineEdit):
+                # Let the QLineEdit handle the Enter key (for returnPressed signals)
+                focus_widget.keyPressEvent(event)
+                return
+            # Otherwise, ignore Enter key to prevent accidental dialog closure
+            event.ignore()
+            return
+        # Handle other keys normally
+        super().keyPressEvent(event)
+    
     def init_ui(self):
         """Initialize the add users dialog UI"""
         self.setWindowTitle("Add Users")
@@ -2252,7 +3414,25 @@ class UserCreationDialog(QDialog):
         self.user_role = user_role
         self.current_user_data = current_user_data
         self.user_data = {}
+        self.return_to_dashboard_requested = False
+        self._success_popup_shown = False
+        self._create_in_progress = False
         self.init_ui()
+    
+    def keyPressEvent(self, event):
+        """Handle key press events to prevent Enter key from closing dialog"""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Check if the focus widget is a QLineEdit that has returnPressed connected
+            focus_widget = self.focusWidget()
+            if isinstance(focus_widget, QLineEdit):
+                # Let the QLineEdit handle the Enter key (for returnPressed signals)
+                focus_widget.keyPressEvent(event)
+                return
+            # Otherwise, ignore Enter key to prevent accidental dialog closure
+            event.ignore()
+            return
+        # Handle other keys normally
+        super().keyPressEvent(event)
     
     def init_ui(self):
         """Initialize the user creation dialog UI"""
@@ -2339,16 +3519,38 @@ class UserCreationDialog(QDialog):
                 field.setEchoMode(QLineEdit.Password)
                 field.setMaximumWidth(250)  # Made input box smaller
                 field.returnPressed.connect(self.handle_create_user)
+                toggle_btn = QPushButton("👁")
+                toggle_btn.setFixedSize(40, 40)
+                toggle_btn.setStyleSheet("""
+                    QPushButton {
+                        background: #6c757d;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        font-size: 15px;
+                        font-weight: bold;
+                        padding: 0px;
+                    }
+                    QPushButton:hover {
+                        background: #5a6268;
+                    }
+                """)
+                toggle_btn.clicked.connect(lambda checked, pwd_field=field, btn=toggle_btn: self.toggle_password_visibility(pwd_field, btn))
             else:
                 field = QLineEdit()
                 field.setPlaceholderText(placeholder)
                 field.setMaximumWidth(250)  # Made input box smaller
                 if field_name == 'confirm_password':
                     field.returnPressed.connect(self.handle_create_user)
+                if field_name == 'phone':
+                    field.setValidator(QIntValidator(0, 2147483647, self))
+                    field.setMaxLength(10)
             
             self.field_widgets[field_name] = field
             field_layout.addWidget(label)
             field_layout.addWidget(field)
+            if field_name in ['password', 'confirm_password']:
+                field_layout.addWidget(toggle_btn)
             field_layout.addStretch()
             layout.addLayout(field_layout)
             layout.addSpacing(8)
@@ -2379,9 +3581,22 @@ class UserCreationDialog(QDialog):
         layout.addWidget(existing_user_link)
         
         layout.addStretch()
+
+    def toggle_password_visibility(self, password_field, eye_button):
+        """Toggle password visibility between hidden and visible"""
+        if password_field.echoMode() == QLineEdit.Password:
+            password_field.setEchoMode(QLineEdit.Normal)
+            eye_button.setText("🔒")
+        else:
+            password_field.setEchoMode(QLineEdit.Password)
+            eye_button.setText("👁")
     
     def handle_create_user(self):
         """Handle user creation"""
+        if self._create_in_progress or self._success_popup_shown:
+            return
+        self._create_in_progress = True
+
         # Get form data
         full_name = self.field_widgets['full_name'].text().strip()
         age = self.field_widgets['age'].text().strip()
@@ -2396,14 +3611,25 @@ class UserCreationDialog(QDialog):
         if not full_name or not password:
             QMessageBox.warning(self, "Error", "Full name and password are required.")
             return
+
+        if not email:
+            QMessageBox.warning(self, "Error", "Email ID is required.")
+            return
+
+        if phone and (not phone.isdigit() or len(phone) > 10):
+            QMessageBox.warning(self, "Error", "Phone number must be numbers only and at most 10 digits.")
+            return
         
         if password != confirm_password:
             QMessageBox.warning(self, "Error", "Passwords do not match.")
             return
         
         try:
-            # Import user management functions
-            from main import load_users, save_users
+            # Import user management functions - move import inside function to avoid circular import
+            import importlib
+            main_module = importlib.import_module('main')
+            load_users = getattr(main_module, 'load_users')
+            save_users = getattr(main_module, 'save_users')
             
             # Use separate file for clinical users
             import os
@@ -2418,6 +3644,27 @@ class UserCreationDialog(QDialog):
             
             # Generate username from phone or use full name
             username = phone if phone else full_name.replace(' ', '_').lower()
+
+            # Ensure the created sub-user can log in from the main application login as well.
+            # Because the main login can accept full name, enforce uniqueness of phone + full name in root users.json.
+            main_users = load_main_users()
+            if username in main_users:
+                QMessageBox.warning(self, "Error", "A user with this phone/username already exists.")
+                return
+
+            input_full_name_norm = full_name.strip().lower()
+            input_phone_norm = str(phone).strip()
+            for _, record in main_users.items():
+                if not isinstance(record, dict):
+                    continue
+                existing_phone = str(record.get("phone", "")).strip()
+                existing_full_name = str(record.get("full_name", "")).strip().lower()
+                if input_phone_norm and existing_phone and input_phone_norm == existing_phone:
+                    QMessageBox.warning(self, "Error", "A user with this phone number already exists.")
+                    return
+                if input_full_name_norm and existing_full_name and input_full_name_norm == existing_full_name:
+                    QMessageBox.warning(self, "Error", "A user with this full name already exists.")
+                    return
             
             # Create new user record
             new_user = {
@@ -2461,16 +3708,34 @@ class UserCreationDialog(QDialog):
                     json.dump(clinical_users, f, indent=2)
                 
                 print(f"DEBUG: Clinical user {username} saved to clinical_users.json")
+
+            # Save to root users.json so this created user can use normal login too.
+            if not save_user_to_main_users(new_user, username):
+                QMessageBox.warning(self, "Warning", "User created, but failed to save to main users.json for normal login.")
             
             self.user_data = new_user
-            QMessageBox.information(self, "Success", f"{self.user_role} created successfully!")
-            
-            # Open user management dashboard
+
+            # Show success once only (prevents duplicate popups when returning focus).
+            if not self._success_popup_shown:
+                self._success_popup_shown = True
+                QMessageBox.information(self, "Success", f"{self.user_role} created successfully!")
+
+            # Hide this dialog so it doesn't remain visible behind the management dashboard.
+            try:
+                self.hide()
+            except Exception:
+                pass
+
+            # Open user management dashboard (modal on the AddUsersDialog instead of this dialog).
             self.open_user_management_dashboard()
+
+            # Close this creation dialog after management dashboard is handled.
             self.accept()
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to create user: {str(e)}")
+        finally:
+            self._create_in_progress = False
     
     def handle_existing_user(self):
         """Handle existing user link - close all dialogs and go to login"""
@@ -2481,8 +3746,15 @@ class UserCreationDialog(QDialog):
     
     def open_user_management_dashboard(self):
         """Open user management dashboard with user count"""
-        user_mgmt_dialog = UserManagementDashboard(self, self.current_user_data)
-        user_mgmt_dialog.exec_()
+        parent_dialog = self.parent()
+        user_mgmt_dialog = UserManagementDashboard(parent_dialog if parent_dialog is not None else self, self.current_user_data)
+        if user_mgmt_dialog.exec_() == QDialog.Accepted and user_mgmt_dialog.return_to_dashboard_requested:
+            self.return_to_dashboard_requested = True
+            if parent_dialog is not None:
+                try:
+                    parent_dialog.accept()
+                except Exception:
+                    pass
     
     def get_user_data(self):
         """Return the created user data"""
@@ -2495,7 +3767,23 @@ class UserManagementDashboard(QDialog):
     def __init__(self, parent, current_user_data):
         super().__init__(parent)
         self.current_user_data = current_user_data
+        self.return_to_dashboard_requested = False
         self.init_ui()
+    
+    def keyPressEvent(self, event):
+        """Handle key press events to prevent Enter key from closing dialog"""
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            # Check if the focus widget is a QLineEdit that has returnPressed connected
+            focus_widget = self.focusWidget()
+            if isinstance(focus_widget, QLineEdit):
+                # Let the QLineEdit handle the Enter key (for returnPressed signals)
+                focus_widget.keyPressEvent(event)
+                return
+            # Otherwise, ignore Enter key to prevent accidental dialog closure
+            event.ignore()
+            return
+        # Handle other keys normally
+        super().keyPressEvent(event)
     
     def init_ui(self):
         """Initialize user management dashboard UI"""
@@ -2567,7 +3855,7 @@ class UserManagementDashboard(QDialog):
         buttons_layout = QHBoxLayout(buttons_frame)
         
         back_btn = QPushButton("Back to Dashboard")
-        back_btn.clicked.connect(self.accept)
+        back_btn.clicked.connect(self.back_to_dashboard)
         buttons_layout.addWidget(back_btn)
         
         add_more_btn = QPushButton("Add More Users")
@@ -2605,7 +3893,10 @@ class UserManagementDashboard(QDialog):
             return 0
 
     def add_more_users(self):
-        """Open add users dialog again"""
+        """Return to existing Add Users dialog"""
         self.accept()
-        add_dialog = AddUsersDialog(self.parent(), self.current_user_data)
-        add_dialog.exec_()
+
+    def back_to_dashboard(self):
+        """Return to the main dashboard"""
+        self.return_to_dashboard_requested = True
+        self.accept()

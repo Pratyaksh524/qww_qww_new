@@ -148,10 +148,15 @@ def validate_user(username, password):
                         return False, None
                 
                 # Check phone number fallback
+                ident_norm = str(username).strip().lower()
                 for uname, user_data in users.items():
-                    if str(user_data.get('phone', '')) == username:
+                    if not isinstance(user_data, dict):
+                        continue
+                    phone_norm = str(user_data.get('phone', '')).strip().lower()
+                    full_name_norm = str(user_data.get('full_name', '')).strip().lower()
+                    if ident_norm and (phone_norm == ident_norm or full_name_norm == ident_norm):
                         if user_data.get('password') == password:
-                            logger.info(f"User {username} validated successfully via phone")
+                            logger.info(f"User {username} validated successfully via phone/full_name")
                             return True, user_data
                         else:
                             logger.warning(f"Password mismatch for user {username}")
@@ -528,7 +533,9 @@ class LoginRegisterDialog(QDialog):
         confirm_row.addWidget(self.confirm_eye_btn)
         
         # Organization buttons (imported from organization module)
-        from organization import create_organization_buttons_layout
+        import importlib
+        organization_module = importlib.import_module('organization')
+        create_organization_buttons_layout = getattr(organization_module, 'create_organization_buttons_layout')
         self.org_buttons_layout, self.new_org_handler, self.existing_org_handler = create_organization_buttons_layout(self)
         
         layout.addLayout(self.org_buttons_layout)
@@ -548,6 +555,12 @@ class LoginRegisterDialog(QDialog):
     def handle_login(self):
         identifier = self.login_email.text()  # Can be full name, username, or phone
         password_or_serial = self.login_password.text()
+        # Users can be created while the app is running (e.g., by Doctor/HCP head flows).
+        # Refresh from disk before validating so new accounts can log in immediately.
+        try:
+            self.sign_in_logic.users = self.sign_in_logic.load_users()
+        except Exception:
+            pass
         # BUG-31 FIX: Admin credentials loaded from environment variable, not hardcoded
         try:
             admin_user = os.environ.get('CARDIOX_ADMIN_USER', 'admin')
